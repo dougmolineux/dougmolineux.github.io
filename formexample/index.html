@@ -1,13 +1,21 @@
 <html>
 <div style="margin:0 auto;width:400px">
   <form>
-
+    Required (*)
+    <br />
+    <br />
+    (*)
     <label for="fname">First Name</label>
-    <input type="text" id="fname" name="firstname" placeholder="Your name..">
+    <input type="text" id="fname" name="firstname" placeholder="First Name">
     <br />
     <br />
     <label for="lname">Last Name</label>
-    <input type="text" id="lname" name="lastname" placeholder="Your last name..">
+    <input type="text" id="lname" name="lastname" placeholder="Last name" disabled>
+    <br />
+    <br />
+    (*)
+    <label for="lname">Phone Number</label>
+    <input type="text" id="phoneNumber" name="lastname" placeholder="Last name">
     <br />
     <br />
     <label for="country">Country</label>
@@ -18,18 +26,25 @@
     </select>
     <br />
     <br />
-    <label for="subject">Subject</label>
+    (*)
+    <label for="subject">Message</label>
     <br />
-
-    <textarea id="subject" name="subject" placeholder="Write something.." style="height:200px"></textarea>
+    <textarea id="message" name="subject" placeholder="Write something..." style="height:200px"></textarea>
     <br />
-
-    <input type="button" value="Submit" onclick="submit()">
-
+    <input type="button" value="Submit" onclick="buttonClicked()">
   </form>
 <script>
-  function submit() {
-    console.log("submit");
+  function buttonClicked() {
+    if(!document.getElementById('fname').value) {
+      alert("Required fields are empty!");
+    } else {
+      let results = "FirstName: "+document.getElementById('fname').value+"<br>";
+      results += "LastName: "+document.getElementById('lname').value+"<br>";
+      results += "Phone: "+document.getElementById('lname').value+"<br>";
+      results += "Country: "+document.getElementById('country').value+"<br>";
+      results += "Message: "+document.getElementById('message').value+"<br>";
+      document.write(results);
+    }
   }
 </script>
 </div>
