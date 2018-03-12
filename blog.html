@@ -95,13 +95,17 @@
                         I came across this problem today. I attempted to fix a unit test that was testing a service.
                         The service had a function that accepted a parameter, did some processing and then dispatched 
                         a change to a redux store.
-
+                    </p>
+                    <p>
                         First, the test got data from the store. Then, it made a call to the service file to change it.
                         Then it selected the changed object from the store, and "expected" that it would change.
 
                         The project had recently been updated from NgRx 2 to NgRx 4, and so a few changes had occurred.
                         Particularly, the select method now returned an Observable. Previously, the test could just 
-                        inspect an array, compare values before and after the change. So I thought I could subscribe 
+                        inspect an array, compare values before and after the change. 
+                    </p>
+                    <p>
+                        So I thought I could subscribe 
                         to the observable, inspect the value, dispatch the change, and then inspect the value again.
 
                         However, I came across some interesting behavior, the test would just hang and fail, with no 
@@ -111,9 +115,11 @@
 
                         What I wanted was for the subscription to complete after one emission, and I came across the
                         first method. This method seemingly completes after 1 emission.
-
+                    </p>
+                    <p>
                         http://reactivex.io/documentation/operators/first.html
-
+                    </p>
+                    <p>
                         This made it so that after the first subscription, and the first dispatch, we didn't re-enter
                         the subscribe method again. 
                     </p>
