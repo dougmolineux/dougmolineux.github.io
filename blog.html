@@ -53,16 +53,19 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="index.html">Home</a>
+                        <a href="https://github.com/dougmolineux">GitHub</a>
                     </li>
                     <li>
-                        <a href="about.html">About</a>
+                        <a href="https://www.linkedin.com/in/doug-molineux-0a237a96">LinkedIn</a>
                     </li>
                     <li>
-                        <a href="blog.html">Blog</a>
+                        <a href="http://stackoverflow.com/users/242934/doug-molineux">Stack Overflow</a>
                     </li>
                     <li>
-                        <a href="contact.html">Contact</a>
+                        <a href="/blog">Blog</a>
+                    </li>
+                    <li>
+                        <a href="mailto:doug.molineux@gmail.com">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -77,22 +80,47 @@
             <div class="box">
                 <div class="col-lg-12">
                     <hr>
-                    <h2 class="intro-text text-center">Company
+                    <h2 class="intro-text text-center">Doug Molineux
                         <strong>blog</strong>
                     </h2>
                     <hr>
                 </div>
                 <div class="col-lg-12 text-center">
-                    <img class="img-responsive img-border img-full" src="img/slide-1.jpg" alt="">
-                    <h2>Post Title
+                    <!-- <img class="img-responsive img-border img-full" src="img/slide-1.jpg" alt=""> -->
+                    <h2>Observables - Dispatching from within a Subscribe
                         <br>
-                        <small>October 13, 2013</small>
+                        <small>March 13, 2018</small>
                     </h2>
-                    <p>Lid est laborum dolo rumes fugats untras. Etharums ser quidem rerum facilis dolores nemis omnis fugats vitaes nemo minima rerums unsers sadips amets. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-                    <a href="#" class="btn btn-default btn-lg">Read More</a>
+                    <p>
+                        I came across this problem today. I attempted to fix a unit test that was testing a service.
+                        The service had a function that accepted a parameter, did some processing and then dispatched 
+                        a change to a redux store.
+
+                        First, the test got data from the store. Then, it made a call to the service file to change it.
+                        Then it selected the changed object from the store, and "expected" that it would change.
+
+                        The project had recently been updated from NgRx 2 to NgRx 4, and so a few changes had occurred.
+                        Particularly, the select method now returned an Observable. Previously, the test could just 
+                        inspect an array, compare values before and after the change. So I thought I could subscribe 
+                        to the observable, inspect the value, dispatch the change, and then inspect the value again.
+
+                        However, I came across some interesting behavior, the test would just hang and fail, with no 
+                        output. What was happening? After rethinking what I had implemented, I realized I was 
+                        dispatching within a subscribe, and thus creating an infinite loop. The subscribe would trigger
+                        after each dispatch (and thus never end). 
+
+                        What I wanted was for the subscription to complete after one emission, and I came across the
+                        first method. This method seemingly completes after 1 emission.
+
+                        http://reactivex.io/documentation/operators/first.html
+
+                        This made it so that after the first subscription, and the first dispatch, we didn't re-enter
+                        the subscribe method again. 
+                    </p>
+                    <!-- <a href="#" class="btn btn-default btn-lg">Read More</a> -->
                     <hr>
                 </div>
-                <div class="col-lg-12 text-center">
+                <!-- <div class="col-lg-12 text-center">
                     <img class="img-responsive img-border img-full" src="img/slide-2.jpg" alt="">
                     <h2>Post Title
                         <br>
@@ -111,15 +139,15 @@
                     <p>Lid est laborum dolo rumes fugats untras. Etharums ser quidem rerum facilis dolores nemis omnis fugats vitaes nemo minima rerums unsers sadips amets. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
                     <a href="#" class="btn btn-default btn-lg">Read More</a>
                     <hr>
-                </div>
-                <div class="col-lg-12 text-center">
+                </div> -->
+                <!-- <div class="col-lg-12 text-center">
                     <ul class="pager">
                         <li class="previous"><a href="#">&larr; Older</a>
                         </li>
                         <li class="next"><a href="#">Newer &rarr;</a>
                         </li>
                     </ul>
-                </div>
+                </div> -->
             </div>
         </div>
 
