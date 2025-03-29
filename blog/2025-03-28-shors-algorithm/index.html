@@ -1,0 +1,153 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/><meta name="generator" content="Gatsby 5.14.1"/><style>.gatsby-image-wrapper{position:relative;overflow:hidden}.gatsby-image-wrapper picture.object-fit-polyfill{position:static!important}.gatsby-image-wrapper img{bottom:0;height:100%;left:0;margin:0;max-width:none;padding:0;position:absolute;right:0;top:0;width:100%;object-fit:cover}.gatsby-image-wrapper [data-main-image]{opacity:0;transform:translateZ(0);transition:opacity .25s linear;will-change:opacity}.gatsby-image-wrapper-constrained{display:inline-block;vertical-align:top}</style><noscript><style>.gatsby-image-wrapper noscript [data-main-image]{opacity:1!important}.gatsby-image-wrapper [data-placeholder-image]{opacity:0!important}</style></noscript><script type="module">const e="undefined"!=typeof HTMLImageElement&&"loading"in HTMLImageElement.prototype;e&&document.body.addEventListener("load",(function(e){const t=e.target;if(void 0===t.dataset.mainImage)return;if(void 0===t.dataset.gatsbyImageSsr)return;let a=null,n=t;for(;null===a&&n;)void 0!==n.parentNode.dataset.gatsbyImageWrapper&&(a=n.parentNode),n=n.parentNode;const o=a.querySelector("[data-placeholder-image]"),r=new Image;r.src=t.currentSrc,r.decode().catch((()=>{})).then((()=>{t.style.opacity=1,o&&(o.style.opacity=0,o.style.transition="opacity 500ms linear")}))}),!0);</script></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" id="gatsby-focus-wrapper"><div style="max-width:1200px;margin:0 auto;padding:20px;font-family:Arial, sans-serif;line-height:1.6;color:#4A4A4A;background-color:#F9F9F9"><style>
+          h1, h2, h3, h4, h5, h6 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            color: #2C5D63; // Soft teal for headers
+          }
+
+          h1 {
+            font-size: 2.5rem;
+          }
+
+          h2 {
+            font-size: 2rem;
+          }
+
+          h3 {
+            font-size: 1.75rem;
+          }
+
+          p {
+            margin-bottom: 1.5em;
+          }
+
+          a {
+            color: #2C5D63; // Soft teal for links
+            text-decoration: none;
+          }
+
+          a:hover {
+            text-decoration: underline;
+            color: #3A7A7A; // Slightly darker teal on hover
+          }
+
+          ul, ol {
+            margin-bottom: 1.5em;
+            padding-left: 20px;
+          }
+
+          li {
+            margin-bottom: 0.5em;
+          }
+
+          code {
+            background: #E0F2F1; // Very light teal for code background
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: &quot;Courier New&quot;, monospace;
+            font-size: 0.9em;
+            color: #2C5D63; // Soft teal for code text
+          }
+
+          pre {
+            background: #E0F2F1; // Very light teal for code block background
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 1.5em;
+            color: #2C5D63; // Soft teal for code block text
+          }
+
+          blockquote {
+            border-left: 4px solid #A8DADC; // Light teal for blockquote border
+            padding-left: 15px;
+            margin: 1.5em 0;
+            color: #4A4A4A; // Soft dark gray for blockquote text
+            font-style: italic;
+          }
+
+          table {
+            width: &quot;100%&quot;,
+            border-collapse: &quot;collapse&quot;,
+            margin-bottom: &quot;1.5em&quot;,
+          }
+
+          th, td {
+            padding: &quot;10px&quot;,
+            border: &quot;1px solid #A8DADC&quot;, // Light teal for table borders
+            text-align: &quot;left&quot;,
+          }
+
+          th {
+            background: &quot;#E0F2F1&quot;, // Very light teal for table header background
+          }
+        </style><header style="border-bottom:2px solid #A8DADC;padding-bottom:10px;margin-bottom:20px"><h1 style="margin:0;color:#2C5D63">doug.molineux.blog</h1></header><a href="../">Blog</a><main><article><h1 style="font-size:2.5rem;margin-bottom:10px;color:#007acc">Shor&#x27;s Algorithm</h1><p style="color:#777;font-size:0.9rem;margin-bottom:30px">3/27/2025</p><div style="font-size:1.1rem;line-height:1.8"><h1>The Quantum Threat to Cryptography and the Future of Security</h1>
+<h2>Introduction</h2>
+<p>In 1994, mathematician Peter Shor unveiled an algorithm that would send shockwaves through the world of cryptography. <strong>Shor's algorithm</strong>—a quantum computing breakthrough—demonstrated that a sufficiently powerful quantum computer could <strong>break widely used encryption schemes</strong>, including RSA and ECC (Elliptic Curve Cryptography). This discovery forced a global re-evaluation of digital security and sparked a race toward <strong>post-quantum cryptography</strong>.</p>
+<h2>How Shor's Algorithm Works</h2>
+<h3>1. The Problem: Factoring Large Numbers</h3>
+<p>Most modern encryption relies on the difficulty of <strong>factoring large integers</strong>. For example, RSA encryption uses a public key that is the product of two massive prime numbers. Classical computers take <strong>thousands of years</strong> to factor these numbers, making brute-force attacks impractical.</p>
+<h3>2. Quantum Speedup: From Exponential to Polynomial Time</h3>
+<p>Shor's algorithm exploits quantum mechanics to factor numbers exponentially faster than classical methods:</p>
+<ol>
+<li><strong>Quantum Fourier Transform (QFT)</strong> – Converts the problem into a frequency domain</li>
+<li><strong>Modular Exponentiation</strong> – Uses quantum parallelism</li>
+<li><strong>Period Finding</strong> – Identifies patterns that reveal factors</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Time Complexity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Classical</td>
+<td>Exponential (slow)</td>
+</tr>
+<tr>
+<td>Shor's Quantum</td>
+<td>Polynomial (fast)</td>
+</tr>
+</tbody>
+</table>
+<h2>Why Shor's Algorithm Is a Threat</h2>
+<h3>Breaking RSA and ECC</h3>
+<ul>
+<li><strong>RSA</strong>: Used in HTTPS, VPNs, banking</li>
+<li><strong>ECC</strong>: Used in Bitcoin, secure messaging</li>
+<li><strong>Impact</strong>: Could decrypt historical encrypted data</li>
+</ul>
+<h3>Post-Quantum Cryptography Solutions</h3>
+<ul>
+<li>Lattice-based cryptography (e.g., CRYSTALS-Kyber)</li>
+<li>Hash-based signatures (e.g., SPHINCS+)</li>
+<li>Code-based cryptography (e.g., McEliece)</li>
+</ul>
+<h2>When Will Quantum Computers Run Shor's Algorithm?</h2>
+<h3>Hardware Requirements</h3>
+<ul>
+<li><strong>Logical Qubits Needed</strong>: ~1 million</li>
+<li><strong>Current Status</strong>: ~1,000 noisy physical qubits</li>
+<li><strong>Timeline Estimates</strong>:
+<ul>
+<li>Optimistic: 2035-2040</li>
+<li>Conservative: 2050+</li>
+</ul>
+</li>
+</ul>
+<h2>Conclusion</h2>
+<p>Shor's algorithm represents both a <strong>scientific breakthrough</strong> and <strong>security threat</strong>. While practical quantum computers capable of running it remain years away, the transition to quantum-resistant encryption must begin now.</p>
+<p><strong>Further Reading:</strong></p>
+<ul>
+<li><a href="https://csrc.nist.gov/projects/post-quantum-cryptography">NIST Post-Quantum Cryptography</a></li>
+<li><a href="https://www.ibm.com/quantum-computing/">IBM Quantum Experiments</a></li>
+<li><a href="https://arxiv.org/abs/quant-ph/9508027">Original Shor's Paper</a></li>
+</ul></div></article></main><footer style="margin-top:40px;padding-top:20px;border-top:1px solid #A8DADC;text-align:center;color:#777">© <!-- -->2025<!-- --> doug.molineux.blog. Built with Gatsby.</footer></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/2025-03-28-shors-algorithm/";/*]]>*/</script><!-- slice-start id="_gatsby-scripts-1" -->
+          <script
+            id="gatsby-chunk-mapping"
+          >
+            window.___chunkMapping="{\"app\":[\"/app-d59f5575beee8d98d129.js\"],\"component---src-pages-404-js\":[\"/component---src-pages-404-js-fdac70642d9ce559aae0.js\"],\"component---src-pages-index-js\":[\"/component---src-pages-index-js-307ff1d339d701fc853a.js\"],\"component---src-pages-using-ssr-js\":[\"/component---src-pages-using-ssr-js-51f05e37a8eae4d7b9bc.js\"],\"component---src-templates-blog-post-js\":[\"/component---src-templates-blog-post-js-10ce616beef684bf7860.js\"]}";
+          </script>
+        <script>window.___webpackCompilationHash="1d3b024cd09163d61b6b";</script><script src="/blog/webpack-runtime-e9a1906b13606e40d58c.js" async></script><script src="/blog/framework-cc4c5071f2e10a424495.js" async></script><script src="/blog/app-d59f5575beee8d98d129.js" async></script><!-- slice-end id="_gatsby-scripts-1" --></body></html>
