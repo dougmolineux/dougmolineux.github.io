@@ -81,10 +81,12 @@
           th {
             background: &quot;#E0F2F1&quot;, // Very light teal for table header background
           }
-        </style><header style="border-bottom:2px solid #A8DADC;padding-bottom:10px;margin-bottom:20px"><h1 style="margin:0;color:#2C5D63">doug.molineux.blog</h1></header><a href="../">Blog</a><main><article><h1 style="font-size:2.5rem;margin-bottom:10px;color:#007acc">Quantum Fourier Transform (QFT)</h1><p style="color:#777;font-size:0.9rem;margin-bottom:30px">3/28/2025</p><div style="font-size:1.1rem;line-height:1.8"><h1>Quantum Fourier Transform (QFT): The Mathematical Engine of Quantum Algorithms</h1>
-<h2>Introduction to QFT</h2>
+        </style><header style="border-bottom:2px solid #A8DADC;padding-bottom:10px;margin-bottom:20px"><h1 style="margin:0;color:#2C5D63">doug.molineux.blog</h1></header><a href="../">Blog</a><main><article><h1 style="font-size:2.5rem;margin-bottom:10px;color:#007acc">Quantum Fourier Transform (QFT)</h1><p style="color:#777;font-size:0.9rem;margin-bottom:30px">3/28/2025</p><div style="font-size:1.1rem;line-height:1.8"><h1>The Mathematical Engine of Quantum Algorithms</h1>
 <p>The Quantum Fourier Transform (QFT) is one of the most important tools in quantum computing, serving as the backbone for landmark algorithms like Shor's factoring algorithm and quantum phase estimation. Unlike its classical counterpart (the Fast Fourier Transform), QFT operates on quantum states, enabling exponential speedups for certain problems by exploiting quantum superposition and interference.</p>
 <h2>How QFT Works: A Quantum Perspective</h2>
+<h3>What is a Fourier transform?</h3>
+<p>The Fourier transform is to waveforms what JSON parsing is to data strings—it’s a structured way to unpack raw, tangled information into usable components. Where JSON.parse() converts a flat string into a navigable object with clear key-value pairs, the Fourier transform decomposes a messy waveform into a clean frequency spectrum, revealing which oscillations compose it and how strongly they contribute.</p>
+<p>In quantum computing, the QFT performs this same organizational magic on qubit states. Just as you’d analyze parsed JSON to extract insights, quantum algorithms like Shor’s use the QFT’s “parsed” frequency view to detect hidden mathematical patterns—the very patterns that make cracking RSA encryption possible. Both operations take opaque inputs and transform them into structured maps optimized for analysis.</p>
 <h3>Mathematical Foundation</h3>
 <p>QFT performs a discrete Fourier transform on the amplitude vector of a quantum state. For an n-qubit system, it transforms a state |x⟩ into:</p>
 <pre><code>QFT|x⟩ = (1/√N) Σ e^(2πixk/N)|k⟩
