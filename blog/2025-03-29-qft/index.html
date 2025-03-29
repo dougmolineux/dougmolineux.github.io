@@ -93,7 +93,7 @@
 <p>Where N = 2^n. This creates a superposition where each basis state's amplitude encodes frequency information.</p>
 <h2>Digging Deeper into the Formula</h2>
 <p><code>QFT|x⟩ = (1/√N) Σ e^(2πixk/N)|k⟩</code></p>
-<h3>1. Smoothie Analogy of the QFT Formula</h3>
+<p>Imagine you are trying to make a fruit smoothie and this formula represents all of the different flavors you can make:</p>
 <ul>
 <li><strong>|x⟩</strong>: Your base fruit (the unblended ingredient you start with)</li>
 <li><strong>|k⟩</strong>: All possible smoothie flavors (strawberry, mango, etc.)</li>
@@ -112,30 +112,7 @@
 </ol>
 <p>The Quantum Fourier Transform (QFT) works like a futuristic smoothie analyzer. You start by pouring in your mystery ingredient—a quantum state represented by |x⟩, which could be anything from a single particle’s properties to encoded information. The QFT "blender" then processes this input in two clever ways: First, it adds just the right amount of mathematical "ice" (the 1/√N term) to keep all the probabilities perfectly balanced so nothing overflows.</p>
 <p>Second, it uses special quantum sensors (the e^(2πixk/N) phase factors) to detect hidden flavor patterns—like identifying whether the input is more "sweet mango" or "tangy citrus" at its core. The final output is a complete flavor profile (the |k⟩ states) that reveals all the ingredient’s hidden frequencies, showing you exactly what makes up your original quantum state. This is how Shor’s algorithm "tastes the frequencies" in numbers to factor them exponentially faster than classical computers.</p>
-<h3>3. What This Actually Does</h3>
-<table>
-<thead>
-<tr>
-<th>Classical World</th>
-<th>Quantum World</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Listening to a chord</td>
-<td>Seeing which notes make the chord</td>
-</tr>
-<tr>
-<td>Looking at a pixel image</td>
-<td>Seeing the frequency components</td>
-</tr>
-<tr>
-<td>Raw data</td>
-<td>Power spectrum</td>
-</tr>
-</tbody>
-</table>
-<h3>4. Why It's Magical</h3>
+<h3>4. Why It's Important</h3>
 <ul>
 <li><strong>Reveals Hidden Patterns</strong>: Like showing the recipe of a smoothie</li>
 <li><strong>Works in Superposition</strong>: Analyzes all possibilities at once</li>
