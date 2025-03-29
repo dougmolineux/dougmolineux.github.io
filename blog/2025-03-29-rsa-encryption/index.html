@@ -81,69 +81,37 @@
           th {
             background: &quot;#E0F2F1&quot;, // Very light teal for table header background
           }
-        </style><header style="border-bottom:2px solid #A8DADC;padding-bottom:10px;margin-bottom:20px"><h1 style="margin:0;color:#2C5D63">doug.molineux.blog</h1></header><a href="../">Blog</a><main><article><h1 style="font-size:2.5rem;margin-bottom:10px;color:#007acc">Shor&#x27;s Algorithm</h1><p style="color:#777;font-size:0.9rem;margin-bottom:30px">3/27/2025</p><div style="font-size:1.1rem;line-height:1.8"><h1>The Quantum Threat to Cryptography and the Future of Security</h1>
-<p>In 1994, mathematician Peter Shor unveiled an algorithm that would send shockwaves through the world of cryptography. <strong>Shor's algorithm</strong>—a quantum computing breakthrough—demonstrated that a sufficiently powerful quantum computer could <strong>break widely used encryption schemes</strong>, including RSA and ECC (Elliptic Curve Cryptography). This discovery forced a global re-evaluation of digital security and sparked a race toward <strong>post-quantum cryptography</strong>.</p>
-<h2>How Shor's Algorithm Works</h2>
-<h3>1. The Problem: Factoring Large Numbers</h3>
-<p>Most modern encryption relies on the difficulty of <strong>factoring large integers</strong>. For example, RSA encryption uses a public key that is the product of two massive prime numbers. Classical computers take <strong>thousands of years</strong> to factor these numbers, making brute-force attacks impractical.</p>
-<h3>2. Quantum Speedup: From Exponential to Polynomial Time</h3>
-<p>Shor's algorithm exploits quantum mechanics to factor numbers exponentially faster than classical methods:</p>
+        </style><header style="border-bottom:2px solid #A8DADC;padding-bottom:10px;margin-bottom:20px"><h1 style="margin:0;color:#2C5D63">doug.molineux.blog</h1></header><a href="../">Blog</a><main><article><h1 style="font-size:2.5rem;margin-bottom:10px;color:#007acc">RSA Encryption: The Foundation of Modern Digital Security</h1><p style="color:#777;font-size:0.9rem;margin-bottom:30px">3/26/2025</p><div style="font-size:1.1rem;line-height:1.8"><h1>RSA Encryption: The Foundation of Modern Digital Security</h1>
+<h2>The Birth of Public-Key Cryptography</h2>
+<p>In 1977, three MIT researchers—Ron Rivest, Adi Shamir, and Leonard Adleman—unveiled a cryptographic breakthrough that would become the backbone of internet security. Their algorithm, named RSA after their initials, solved a fundamental problem: how to securely communicate without sharing secret keys beforehand. This "public-key" system uses two mathematically linked keys—one public (for encryption) and one private (for decryption)—enabling secure communication even over insecure channels.</p>
+<h2>How RSA Works: A Mathematical Marvel</h2>
+<p>At its core, RSA relies on the extraordinary difficulty of factoring large prime numbers. When you create an RSA key pair, you generate two massive prime numbers (typically 2048+ bits today) and multiply them together. While multiplication is easy, reversing this—factoring the product back into its original primes—is computationally infeasible for classical computers. Your public key contains this product (called the modulus), while your private key holds the original primes. When someone encrypts data with your public key, only your private key can decrypt it, creating a secure one-way communication channel.</p>
+<h2>Where RSA Protects You Every Day</h2>
+<p>This elegant system secures nearly all modern digital communication:</p>
+<ul>
+<li><strong>HTTPS websites</strong> (the padlock in your browser)</li>
+<li><strong>Secure email</strong> (PGP/GPG encryption)</li>
+<li><strong>Digital signatures</strong> (verifying software updates)</li>
+<li><strong>SSL/TLS connections</strong> (protecting credit card transactions)</li>
+<li><strong>SSH secure logins</strong> (for system administrators)</li>
+</ul>
+<h2>The Looming Quantum Threat</h2>
+<p>RSA's security depends entirely on the difficulty of prime factorization—a vulnerability that quantum computers may soon exploit. Shor's algorithm, when run on a sufficiently powerful quantum computer, could break RSA-2048 encryption in hours rather than millennia. This impending "Q-Day" has spurred global efforts to transition to post-quantum cryptography standards like lattice-based algorithms.</p>
+<h2>Why RSA Still Matters</h2>
+<p>Despite quantum threats, RSA remains crucial today because:</p>
 <ol>
-<li><strong>Quantum Fourier Transform (QFT)</strong> – Converts the problem into a frequency domain</li>
-<li><strong>Modular Exponentiation</strong> – Uses quantum parallelism</li>
-<li><strong>Period Finding</strong> – Identifies patterns that reveal factors</li>
+<li>It's deeply embedded in global digital infrastructure</li>
+<li>Current quantum computers lack enough stable qubits to break it</li>
+<li>Hybrid systems now combine RSA with quantum-resistant algorithms</li>
 </ol>
-<table>
-<thead>
-<tr>
-<th>Approach</th>
-<th>Time Complexity</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Classical</td>
-<td>Exponential (slow)</td>
-</tr>
-<tr>
-<td>Shor's Quantum</td>
-<td>Polynomial (fast)</td>
-</tr>
-</tbody>
-</table>
-<h2>Why Shor's Algorithm Is a Threat</h2>
-<h3>Breaking RSA and ECC</h3>
-<ul>
-<li><strong>RSA</strong>: Used in HTTPS, VPNs, banking</li>
-<li><strong>ECC</strong>: Used in Bitcoin, secure messaging</li>
-<li><strong>Impact</strong>: Could decrypt historical encrypted data</li>
-</ul>
-<h3>Post-Quantum Cryptography Solutions</h3>
-<ul>
-<li>Lattice-based cryptography (e.g., CRYSTALS-Kyber)</li>
-<li>Hash-based signatures (e.g., SPHINCS+)</li>
-<li>Code-based cryptography (e.g., McEliece)</li>
-</ul>
-<h2>When Will Quantum Computers Run Shor's Algorithm?</h2>
-<h3>Hardware Requirements</h3>
-<ul>
-<li><strong>Logical Qubits Needed</strong>: ~1 million</li>
-<li><strong>Current Status</strong>: ~1,000 noisy physical qubits</li>
-<li><strong>Timeline Estimates</strong>:
-<ul>
-<li>Optimistic: 2035-2040</li>
-<li>Conservative: 2050+</li>
-</ul>
-</li>
-</ul>
-<h2>Conclusion</h2>
-<p>Shor's algorithm represents both a <strong>scientific breakthrough</strong> and <strong>security threat</strong>. While practical quantum computers capable of running it remain years away, the transition to quantum-resistant encryption must begin now.</p>
+<p>The story of RSA isn't just about mathematics—it's about how three researchers built the invisible walls that still protect our digital world, and why we'll soon need new walls for the quantum age.</p>
+<hr>
 <p><strong>Further Reading:</strong></p>
 <ul>
-<li><a href="https://csrc.nist.gov/projects/post-quantum-cryptography">NIST Post-Quantum Cryptography</a></li>
-<li><a href="https://www.ibm.com/quantum-computing/">IBM Quantum Experiments</a></li>
-<li><a href="https://arxiv.org/abs/quant-ph/9508027">Original Shor's Paper</a></li>
-</ul></div></article></main><footer style="margin-top:40px;padding-top:20px;border-top:1px solid #A8DADC;text-align:center;color:#777">© <!-- -->2025<!-- --> doug.molineux.blog. Built with Gatsby.</footer></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/2025-03-28-shors-algorithm/";/*]]>*/</script><!-- slice-start id="_gatsby-scripts-1" -->
+<li><a href="https://people.csail.mit.edu/rivest/Rsapaper.pdf">Original RSA Paper (1978)</a></li>
+<li><a href="https://csrc.nist.gov/projects/post-quantum-cryptography">NIST Post-Quantum Cryptography Project</a></li>
+<li><a href="https://www.cloudflare.com/learning/ssl/what-is-rsa/">How HTTPS Uses RSA (Cloudflare Explanation)</a></li>
+</ul></div></article></main><footer style="margin-top:40px;padding-top:20px;border-top:1px solid #A8DADC;text-align:center;color:#777">© <!-- -->2025<!-- --> doug.molineux.blog. Built with Gatsby.</footer></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/2025-03-29-rsa-encryption/";/*]]>*/</script><!-- slice-start id="_gatsby-scripts-1" -->
           <script
             id="gatsby-chunk-mapping"
           >
