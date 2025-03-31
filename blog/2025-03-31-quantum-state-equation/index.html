@@ -86,6 +86,13 @@
 <h3><strong>Equation Breakdown</strong>:</h3>
 <pre><code class="language-math">QFT|x⟩ = \frac{1}{\sqrt{N}} \sum_{k=0}^{N-1} e^{2\pi i x k / N} |k⟩
 </code></pre>
+<p><img src="https://latex.codecogs.com/svg.latex?QFT%7Cx%5Crangle%20=%20%5Cfrac%7B1%7D%7B%5Csqrt%7BN%7D%7D%20%5Csum_%7Bk=0%7D%5E%7BN-1%7D%20e%5E%7B2%5Cpi%20i%20x%20k%20/%20N%7D%20%7Ck%5Crangle" alt="QFT Equation"></p>
+<div style="text-align: center; font-family: serif; font-size: 1.2em;">
+  QFT|x⟩ = <span style="font-size: 1.3em;">(1/√N)</span> 
+  <span style="font-family: Times;">∑<sub>k=0</sub><sup>N-1</sup></span> 
+  e<sup>2πixk/N</sup>|k⟩
+</div>
+<p>QFT|x⟩ = (1/√N) ∑ₖ₌₀ᴺ⁻¹ e^(2πixk/N)|k⟩</p>
 <ol>
 <li><strong>Input State</strong> <code>|x⟩</code>
 <ul>
@@ -93,7 +100,7 @@
 </ul>
 </li>
 </ol>
-<p>A basis state is a fundamental, indivisible unit vector in a quantum system’s Hilbert space (the vector space where quantum states "live"). The term "Hilbert space" honors the German mathematician David Hilbert (1862–1943), who pioneered the study of infinite-dimensional vector spaces in the early 20th century.</p>
+<p>Note: A basis state is a fundamental, indivisible unit vector in a quantum system’s Hilbert space (the vector space where quantum states "live"). The term "Hilbert space" honors the German mathematician David Hilbert (1862–1943), who pioneered the study of infinite-dimensional vector spaces in the early 20th century.</p>
 <ol start="2">
 <li>
 <p><strong>Output Superposition</strong></p>
@@ -110,7 +117,6 @@
 </li>
 </ol>
 <h2>Key Features of Quantum State Equations</h2>
-<h3>1. Dirac Notation Essentials</h3>
 <p>Dirac notation (also called bra-ket notation) is the standard way to write quantum states and operations, invented by physicist Paul Dirac in 1939. It simplifies complex linear algebra concepts in quantum mechanics into an elegant, intuitive form.</p>
 <p>In the QFT equation:</p>
 <ul>
@@ -118,38 +124,6 @@
 <li><code>|k⟩</code>: Output basis states</li>
 <li>The <code>| ⟩</code> brackets explicitly declare we're working with quantum states, not classical variables</li>
 </ul>
-<h3>2. Equation Anatomy</h3>
-<table>
-<thead>
-<tr>
-<th>Component</th>
-<th>Quantum Meaning</th>
-<th>Classical Analog</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>`QFT</td>
-<td>x⟩`</td>
-<td>Transformation of quantum state</td>
-</tr>
-<tr>
-<td><code>(1/√N)</code></td>
-<td>Probability preservation factor</td>
-<td>Normalization constant</td>
-</tr>
-<tr>
-<td><code>e^(2πixk/N)</code></td>
-<td>Quantum phase rotation</td>
-<td>Complex twiddle factor</td>
-</tr>
-<tr>
-<td>`Σ</td>
-<td>k⟩`</td>
-<td>Superposition of all output states</td>
-</tr>
-</tbody>
-</table>
 <h2>Why It's a Quantum State Equation</h2>
 <ol>
 <li>
