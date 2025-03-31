@@ -1,0 +1,183 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/><meta name="generator" content="Gatsby 5.14.1"/><style>.gatsby-image-wrapper{position:relative;overflow:hidden}.gatsby-image-wrapper picture.object-fit-polyfill{position:static!important}.gatsby-image-wrapper img{bottom:0;height:100%;left:0;margin:0;max-width:none;padding:0;position:absolute;right:0;top:0;width:100%;object-fit:cover}.gatsby-image-wrapper [data-main-image]{opacity:0;transform:translateZ(0);transition:opacity .25s linear;will-change:opacity}.gatsby-image-wrapper-constrained{display:inline-block;vertical-align:top}</style><noscript><style>.gatsby-image-wrapper noscript [data-main-image]{opacity:1!important}.gatsby-image-wrapper [data-placeholder-image]{opacity:0!important}</style></noscript><script type="module">const e="undefined"!=typeof HTMLImageElement&&"loading"in HTMLImageElement.prototype;e&&document.body.addEventListener("load",(function(e){const t=e.target;if(void 0===t.dataset.mainImage)return;if(void 0===t.dataset.gatsbyImageSsr)return;let a=null,n=t;for(;null===a&&n;)void 0!==n.parentNode.dataset.gatsbyImageWrapper&&(a=n.parentNode),n=n.parentNode;const o=a.querySelector("[data-placeholder-image]"),r=new Image;r.src=t.currentSrc,r.decode().catch((()=>{})).then((()=>{t.style.opacity=1,o&&(o.style.opacity=0,o.style.transition="opacity 500ms linear")}))}),!0);</script></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" id="gatsby-focus-wrapper"><div style="max-width:1200px;margin:0 auto;padding:20px;font-family:Arial, sans-serif;line-height:1.6;color:#4A4A4A;background-color:#F9F9F9"><style>
+          h1, h2, h3, h4, h5, h6 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            color: #2C5D63; // Soft teal for headers
+          }
+
+          h1 {
+            font-size: 2.5rem;
+          }
+
+          h2 {
+            font-size: 2rem;
+          }
+
+          h3 {
+            font-size: 1.75rem;
+          }
+
+          p {
+            margin-bottom: 1.5em;
+          }
+
+          a {
+            color: #2C5D63; // Soft teal for links
+            text-decoration: none;
+          }
+
+          a:hover {
+            text-decoration: underline;
+            color: #3A7A7A; // Slightly darker teal on hover
+          }
+
+          ul, ol {
+            margin-bottom: 1.5em;
+            padding-left: 20px;
+          }
+
+          li {
+            margin-bottom: 0.5em;
+          }
+
+          code {
+            background: #E0F2F1; // Very light teal for code background
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: &quot;Courier New&quot;, monospace;
+            font-size: 0.9em;
+            color: #2C5D63; // Soft teal for code text
+          }
+
+          pre {
+            background: #E0F2F1; // Very light teal for code block background
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 1.5em;
+            color: #2C5D63; // Soft teal for code block text
+          }
+
+          blockquote {
+            border-left: 4px solid #A8DADC; // Light teal for blockquote border
+            padding-left: 15px;
+            margin: 1.5em 0;
+            color: #4A4A4A; // Soft dark gray for blockquote text
+            font-style: italic;
+          }
+
+          table {
+            width: &quot;100%&quot;,
+            border-collapse: &quot;collapse&quot;,
+            margin-bottom: &quot;1.5em&quot;,
+          }
+
+          th, td {
+            padding: &quot;10px&quot;,
+            border: &quot;1px solid #A8DADC&quot;, // Light teal for table borders
+            text-align: &quot;left&quot;,
+          }
+
+          th {
+            background: &quot;#E0F2F1&quot;, // Very light teal for table header background
+          }
+        </style><header style="border-bottom:2px solid #A8DADC;padding-bottom:10px;margin-bottom:20px"><h1 style="margin:0;color:#2C5D63">doug.molineux.blog</h1></header><a href="../">Blog</a><main><article><h1 style="font-size:2.5rem;margin-bottom:10px;color:#007acc">Breakdown of a Quantum State Equation</h1><p style="color:#777;font-size:0.9rem;margin-bottom:30px">3/26/2025</p><div style="font-size:1.1rem;line-height:1.8"><p>A quantum state equation is any mathematical expression that describes the state of a quantum system, and then also how that state evolves under operations (e.g., unitary transformations, measurements).</p>
+<p><code>QFT|x⟩ = (1/√N) Σ e^(2πixk/N)|k⟩</code> is a <strong>Quantum State Equation</strong> - a mathematical description of how a quantum system's state transforms under the QFT operation.</p>
+<h3><strong>Equation Breakdown</strong>:</h3>
+<p>$$
+QFT|x⟩ = \frac{1}{\sqrt{N}} \sum_{k=0}^{N-1} e^{2\pi i x k / N} |k⟩
+$$</p>
+<ol>
+<li><strong>Input State</strong> <code>|x⟩</code>
+<ul>
+<li>Basis state in an $N$-dimensional Hilbert space (e.g., for $n$ qubits, $N = 2^n$).</li>
+</ul>
+</li>
+</ol>
+<p>A basis state is a fundamental, indivisible unit vector in a quantum system’s Hilbert space (the vector space where quantum states "live"). The term "Hilbert space" honors the German mathematician David Hilbert (1862–1943), who pioneered the study of infinite-dimensional vector spaces in the early 20th century.</p>
+<ol start="2">
+<li>
+<p><strong>Output Superposition</strong></p>
+<ul>
+<li>Equal-amplitude superposition of all basis states <code>|k⟩</code> ($k = 0, 1, \dots, N-1$).</li>
+<li>Weighted by phase factor $e^{2\pi i x k / N}$.</li>
+</ul>
+</li>
+<li>
+<p><strong>Normalization</strong></p>
+<ul>
+<li>$\frac{1}{\sqrt{N}}$ ensures probabilities sum to 1.</li>
+</ul>
+</li>
+</ol>
+<h2>Key Features of Quantum State Equations</h2>
+<h3>1. Dirac Notation Essentials</h3>
+<p>Dirac notation (also called bra-ket notation) is the standard way to write quantum states and operations, invented by physicist Paul Dirac in 1939. It simplifies complex linear algebra concepts in quantum mechanics into an elegant, intuitive form.</p>
+<p>In the QFT equation:</p>
+<ul>
+<li><code>|x⟩</code>: Input quantum state (ket)</li>
+<li><code>|k⟩</code>: Output basis states</li>
+<li>The <code>| ⟩</code> brackets explicitly declare we're working with quantum states, not classical variables</li>
+</ul>
+<h3>2. Equation Anatomy</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Quantum Meaning</th>
+<th>Classical Analog</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>`QFT</td>
+<td>x⟩`</td>
+<td>Transformation of quantum state</td>
+</tr>
+<tr>
+<td><code>(1/√N)</code></td>
+<td>Probability preservation factor</td>
+<td>Normalization constant</td>
+</tr>
+<tr>
+<td><code>e^(2πixk/N)</code></td>
+<td>Quantum phase rotation</td>
+<td>Complex twiddle factor</td>
+</tr>
+<tr>
+<td>`Σ</td>
+<td>k⟩`</td>
+<td>Superposition of all output states</td>
+</tr>
+</tbody>
+</table>
+<h2>Why It's a Quantum State Equation</h2>
+<ol>
+<li>
+<p><strong>Describes State Evolution</strong></p>
+<ul>
+<li>Maps an input quantum state (<code>|x⟩</code>) to an output quantum state</li>
+<li>Output is a <em>superposition</em> of basis states (<code>|k⟩</code>)</li>
+</ul>
+</li>
+<li>
+<p><strong>Maintains Quantum Rules</strong></p>
+<ul>
+<li>Preserves unitarity (reversible operation)</li>
+<li>Maintains proper probability amplitudes via <code>(1/√N)</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Reveals Quantum Advantage</strong></p>
+<ul>
+<li>Processes all <code>N</code> states simultaneously via superposition</li>
+<li>Enables exponential speedup for period finding</li>
+</ul>
+</li>
+</ol></div></article></main><footer style="margin-top:40px;padding-top:20px;border-top:1px solid #A8DADC;text-align:center;color:#777">© <!-- -->2025<!-- --> doug.molineux.blog. Built with Gatsby.</footer></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/2025-03-31-quantum-state-equation/";/*]]>*/</script><!-- slice-start id="_gatsby-scripts-1" -->
+          <script
+            id="gatsby-chunk-mapping"
+          >
+            window.___chunkMapping="{\"app\":[\"/app-3606d69e6882b8247df1.js\"],\"component---src-pages-404-js\":[\"/component---src-pages-404-js-3ea0307e216f7661015a.js\"],\"component---src-pages-index-js\":[\"/component---src-pages-index-js-d30f25ae874ed21a5d15.js\"],\"component---src-pages-using-ssr-js\":[\"/component---src-pages-using-ssr-js-145f22713734d613fd81.js\"],\"component---src-templates-blog-post-js\":[\"/component---src-templates-blog-post-js-525ef8cbf38c1fb2525c.js\"]}";
+          </script>
+        <script>window.___webpackCompilationHash="fa41b22cdec277a2cb6c";</script><script src="/blog/webpack-runtime-fe1e2786b90271c63410.js" async></script><script src="/blog/framework-9fce5d8597f27c4b157b.js" async></script><script src="/blog/app-3606d69e6882b8247df1.js" async></script><!-- slice-end id="_gatsby-scripts-1" --></body></html>
