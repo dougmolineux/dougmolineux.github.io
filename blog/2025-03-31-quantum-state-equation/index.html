@@ -82,37 +82,92 @@
             background: &quot;#E0F2F1&quot;, // Very light teal for table header background
           }
         </style><header style="border-bottom:2px solid #A8DADC;padding-bottom:10px;margin-bottom:20px"><h1 style="margin:0;color:#2C5D63">doug.molineux.blog</h1></header><a href="../">Blog</a><main><article><h1 style="font-size:2.5rem;margin-bottom:10px;color:#007acc">Breakdown of a Quantum State Equation</h1><p style="color:#777;font-size:0.9rem;margin-bottom:30px">3/30/2025</p><div style="font-size:1.1rem;line-height:1.8"><p>A <strong>quantum state equation</strong> is any mathematical expression that describes the state of a quantum system, and then also how that state evolves under operations (e.g., unitary transformations, measurements).</p>
+<h3>Javascript Equivalent</h3>
+<p>In JavaScript terms, you can think of a quantum state equation as being similar to how you'd track and manipulate application state in a complex JS application. Let me break this down using JavaScript concepts you're already familiar with:
+Imagine a quantum state as a specialized object that doesn't behave like classical data. Instead of having definite values, it exists in a probabilistic superposition:</p>
+<pre><code>// Classical state in JS
+const classicalBit = { value: 0 }; // Definitely 0
+
+// Quantum state in conceptual JS
+const qubit = {
+  // Instead of a single value, it has probability amplitudes
+  // Complex numbers that, when squared, give probabilities
+  amplitudes: {
+    '0': 0.707 + 0i,  // ~70.7% chance of measuring 0
+    '1': 0 + 0.707i   // ~70.7% chance of measuring 1
+  }
+};
+</code></pre>
+<p>A quantum state equation would be like a function that transforms this specialized state object. In quantum mechanics, these transformations are typically represented by unitary matrices, which preserve the total probability:</p>
+<pre><code>// Quantum "NOT" gate (X gate) - flips 0 to 1 and vice versa
+function applyXGate(qubit) {
+  const newQubit = { amplitudes: {} };
+  newQubit.amplitudes['0'] = qubit.amplitudes['1']; 
+  newQubit.amplitudes['1'] = qubit.amplitudes['0'];
+  return newQubit;
+}
+
+// Hadamard gate - creates superposition
+function applyHadamard(qubit) {
+  const factor = 1 / Math.sqrt(2);
+  const newQubit = { amplitudes: {} };
+  newQubit.amplitudes['0'] = factor * (qubit.amplitudes['0'] + qubit.amplitudes['1']);
+  newQubit.amplitudes['1'] = factor * (qubit.amplitudes['0'] - qubit.amplitudes['1']);
+  return newQubit;
+}
+</code></pre>
+<p>When you measure a quantum state, it's like forcing a state reduction - similar to how you might use Math.random() to resolve a probabilistic outcome in JavaScript:</p>
+<pre><code>function measureQubit(qubit) {
+  const probability0 = Math.pow(Math.abs(qubit.amplitudes['0']), 2);
+  return Math.random() &#x3C; probability0 ? 0 : 1;
+}
+</code></pre>
+<p>A full quantum state equation would be similar to a complex JavaScript pipeline that:</p>
+<ul>
+<li>Initializes qubits (like creating initial state in Redux)</li>
+<li>Applies a series of transformations (like reducers and middleware)</li>
+<li>Potentially entangles multiple qubits (like having interdependent state)</li>
+<li>Describes measurement outcomes (like state selectors with probabilistic results)</li>
+</ul>
+<p>An actual quantum circuit might look conceptually like:</p>
+<pre><code>// Initialize a quantum circuit
+function runQuantumAlgorithm() {
+  // Start with a qubit in state |0⟩
+  let qubit = { amplitudes: { '0': 1, '1': 0 } };
+  
+  // Apply gates - this would be our "quantum state equation"
+  qubit = applyHadamard(qubit);
+  // Maybe more operations...
+  
+  // Measure and get classical result
+  const result = measureQubit(qubit);
+  return result;
+}
+</code></pre>
+<p>The key difference is that quantum state equations operate on vectors in complex Hilbert spaces and follow the mathematical rules of quantum mechanics, including phenomena like superposition, entanglement, and measurement collapse - concepts that don't have direct parallels in classical programming.</p>
+<p>Just as JavaScript frameworks like React or Redux provide predictable ways to manage application state, quantum state equations provide the mathematical framework for predicting how quantum systems evolve and respond to operations.</p>
 <p><code>QFT|x⟩ = (1/√N) Σ e^(2πixk/N)|k⟩</code> is a <strong>Quantum State Equation</strong> - a mathematical description of how a quantum system's state transforms under the QFT operation.</p>
 <h3><strong>Equation Breakdown</strong>:</h3>
-<pre><code class="language-math">QFT|x⟩ = \frac{1}{\sqrt{N}} \sum_{k=0}^{N-1} e^{2\pi i x k / N} |k⟩
-</code></pre>
 <p><img src="https://latex.codecogs.com/svg.latex?QFT%7Cx%5Crangle%20=%20%5Cfrac%7B1%7D%7B%5Csqrt%7BN%7D%7D%20%5Csum_%7Bk=0%7D%5E%7BN-1%7D%20e%5E%7B2%5Cpi%20i%20x%20k%20/%20N%7D%20%7Ck%5Crangle" alt="QFT Equation"></p>
-<div style="text-align: center; font-family: serif; font-size: 1.2em;">
-  QFT|x⟩ = <span style="font-size: 1.3em;">(1/√N)</span> 
-  <span style="font-family: Times;">∑<sub>k=0</sub><sup>N-1</sup></span> 
-  e<sup>2πixk/N</sup>|k⟩
-</div>
-<p>QFT|x⟩ = (1/√N) ∑ₖ₌₀ᴺ⁻¹ e^(2πixk/N)|k⟩</p>
 <ol>
 <li><strong>Input State</strong> <code>|x⟩</code>
 <ul>
-<li>Basis state in an $N$-dimensional Hilbert space (e.g., for $n$ qubits, $N = 2^n$).</li>
+<li>Basis state in an <i>N</i>-dimensional Hilbert space (e.g., for <i>n</i> qubits, <i>N</i> = 2<sup>n</sup>).</li>
 </ul>
 </li>
 </ol>
 <p>Note: A basis state is a fundamental, indivisible unit vector in a quantum system’s Hilbert space (the vector space where quantum states "live"). The term "Hilbert space" honors the German mathematician David Hilbert (1862–1943), who pioneered the study of infinite-dimensional vector spaces in the early 20th century.</p>
 <ol start="2">
-<li>
-<p><strong>Output Superposition</strong></p>
+<li><strong>Output Superposition</strong></li>
+</ol>
 <ul>
-<li>Equal-amplitude superposition of all basis states <code>|k⟩</code> ($k = 0, 1, \dots, N-1$).</li>
-<li>Weighted by phase factor $e^{2\pi i x k / N}$.</li>
+<li>Equal-amplitude superposition of all basis states |k⟩ (<em>k</em> = 0, 1, …, <em>N</em>−1).</li>
+<li>Weighted by phase factor <img src="https://latex.codecogs.com/svg.latex?e^{2\pi i x k / N}" alt="Phase Factor" style="display: inline-block; margin: 0; vertical-align: middle;" />.</li>
 </ul>
-</li>
-<li>
-<p><strong>Normalization</strong></p>
+<ol start="3">
+<li><strong>Normalization</strong>
 <ul>
-<li>$\frac{1}{\sqrt{N}}$ ensures probabilities sum to 1.</li>
+<li><img src="https://latex.codecogs.com/svg.latex?\frac{1}{\sqrt{N}}" alt="Normalization" style="display: inline-block; height: 1.5em; vertical-align: middle;"> ensures probabilities sum to 1.</li>
 </ul>
 </li>
 </ol>
@@ -124,6 +179,17 @@
 <li><code>|k⟩</code>: Output basis states</li>
 <li>The <code>| ⟩</code> brackets explicitly declare we're working with quantum states, not classical variables</li>
 </ul>
+<p>The expression |x⟩ is called a "ket" in Dirac notation (named after physicist Paul Dirac), which is the standard notation used in quantum mechanics.
+Breaking down the symbols:</p>
+<ul>
+<li><code>|</code> (vertical bar/pipe): This is just the left delimiter of the ket notation</li>
+<li><code>x</code> (the variable): This represents whatever quantum state is being described (could be any label)</li>
+<li><code>⟩</code> (right angle bracket): This is the right delimiter of the ket notation</li>
+</ul>
+<p>Together, |x⟩ represents a quantum state vector in a Hilbert space. It's basically a mathematical way of representing a quantum system's state.</p>
+<p>In JavaScript terms, you might think of |x⟩ as somewhat similar to a variable name that references a complex object containing all the quantum information about state "x".</p>
+<p>The "ket" notation is complemented by "bra" notation, written as ⟨x| (with the angle bracket pointing left). Together they form "bra-ket" notation, which is used to represent inner products between quantum states.</p>
+<p>This notation is extremely useful in quantum mechanics because it provides a clean way to represent quantum states and the operations performed on them without having to write out all the complex mathematics every time.</p>
 <h2>Why It's a Quantum State Equation</h2>
 <ol>
 <li>
