@@ -82,7 +82,7 @@
             background: &quot;#E0F2F1&quot;, // Very light teal for table header background
           }
         </style><header style="border-bottom:2px solid #A8DADC;padding-bottom:10px;margin-bottom:20px"><h1 style="margin:0;color:#2C5D63">doug.molineux.blog</h1></header><a href="../">Blog</a><main><article><h1 style="font-size:2.5rem;margin-bottom:10px;color:#007acc">Breakdown of a Quantum State Equation</h1><p style="color:#777;font-size:0.9rem;margin-bottom:30px">3/30/2025</p><div style="font-size:1.1rem;line-height:1.8"><p>A <strong>quantum state equation</strong> is any mathematical expression that describes the state of a quantum system, and then also how that state evolves under operations (e.g., unitary transformations, measurements).</p>
-<h3>Javascript Equivalent</h3>
+<h3>Javascript Analogy</h3>
 <p>In JavaScript terms, you can think of a quantum state equation as being similar to how you'd track and manipulate application state in a complex JS application. Let me break this down using JavaScript concepts you're already familiar with:
 Imagine a quantum state as a specialized object that doesn't behave like classical data. Instead of having definite values, it exists in a probabilistic superposition:</p>
 <pre><code>// Classical state in JS
@@ -157,15 +157,16 @@ function runQuantumAlgorithm() {
 </li>
 </ol>
 <p>Note: A basis state is a fundamental, indivisible unit vector in a quantum system’s Hilbert space (the vector space where quantum states "live"). The term "Hilbert space" honors the German mathematician David Hilbert (1862–1943), who pioneered the study of infinite-dimensional vector spaces in the early 20th century.</p>
-<p>The expression |x⟩ is called a "ket" in Dirac notation (named after physicist Paul Dirac), which is the standard notation used in quantum mechanics.
+<p>The <code>| ⟩</code> brackets around <code>x</code> explicitly declare we're working with quantum states, not classical variables</p>
+<p>The expression <code>|x⟩</code> is called a "ket" in Dirac notation (named after physicist Paul Dirac), which is the standard notation used in quantum mechanics.
 Breaking down the symbols:</p>
 <ul>
 <li><code>|</code> (vertical bar/pipe): This is just the left delimiter of the ket notation</li>
 <li><code>x</code> (the variable): This represents whatever quantum state is being described (could be any label)</li>
 <li><code>⟩</code> (right angle bracket): This is the right delimiter of the ket notation</li>
 </ul>
-<p>Together, |x⟩ represents a quantum state vector in a Hilbert space. It's basically a mathematical way of representing a quantum system's state.</p>
-<p>In JavaScript terms, you might think of |x⟩ as somewhat similar to a variable name that references a complex object containing all the quantum information about state "x".</p>
+<p>Together, <code>|x⟩</code> represents a quantum state vector in a Hilbert space. It's basically a mathematical way of representing a quantum system's state.</p>
+<p>In JavaScript terms, you might think of <code>|x⟩</code> as somewhat similar to a variable name that references a complex object containing all the quantum information about state "x".</p>
 <p>The "ket" notation is complemented by "bra" notation, written as ⟨x| (with the angle bracket pointing left). Together they form "bra-ket" notation, which is used to represent inner products between quantum states.</p>
 <p>This notation is extremely useful in quantum mechanics because it provides a clean way to represent quantum states and the operations performed on them without having to write out all the complex mathematics every time.</p>
 <ol start="2">
@@ -182,14 +183,6 @@ Breaking down the symbols:</p>
 </ul>
 </li>
 </ol>
-<h2>Key Features of Quantum State Equations</h2>
-<p>Dirac notation (also called bra-ket notation) is the standard way to write quantum states and operations, invented by physicist Paul Dirac in 1939. It simplifies complex linear algebra concepts in quantum mechanics into an elegant, intuitive form.</p>
-<p>In the QFT equation:</p>
-<ul>
-<li><code>|x⟩</code>: Input quantum state (ket)</li>
-<li><code>|k⟩</code>: Output basis states</li>
-<li>The <code>| ⟩</code> brackets explicitly declare we're working with quantum states, not classical variables</li>
-</ul>
 <h2>Why It's a Quantum State Equation</h2>
 <ol>
 <li>
