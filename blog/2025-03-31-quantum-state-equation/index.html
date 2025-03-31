@@ -150,13 +150,24 @@ function runQuantumAlgorithm() {
 <h3><strong>Equation Breakdown</strong>:</h3>
 <p><img src="https://latex.codecogs.com/svg.latex?QFT%7Cx%5Crangle%20=%20%5Cfrac%7B1%7D%7B%5Csqrt%7BN%7D%7D%20%5Csum_%7Bk=0%7D%5E%7BN-1%7D%20e%5E%7B2%5Cpi%20i%20x%20k%20/%20N%7D%20%7Ck%5Crangle" alt="QFT Equation"></p>
 <ol>
-<li><strong>Input State</strong> <code>|x⟩</code>
+<li><strong>Input Quantum State</strong> <code>|x⟩</code>
 <ul>
 <li>Basis state in an <i>N</i>-dimensional Hilbert space (e.g., for <i>n</i> qubits, <i>N</i> = 2<sup>n</sup>).</li>
 </ul>
 </li>
 </ol>
 <p>Note: A basis state is a fundamental, indivisible unit vector in a quantum system’s Hilbert space (the vector space where quantum states "live"). The term "Hilbert space" honors the German mathematician David Hilbert (1862–1943), who pioneered the study of infinite-dimensional vector spaces in the early 20th century.</p>
+<p>The expression |x⟩ is called a "ket" in Dirac notation (named after physicist Paul Dirac), which is the standard notation used in quantum mechanics.
+Breaking down the symbols:</p>
+<ul>
+<li><code>|</code> (vertical bar/pipe): This is just the left delimiter of the ket notation</li>
+<li><code>x</code> (the variable): This represents whatever quantum state is being described (could be any label)</li>
+<li><code>⟩</code> (right angle bracket): This is the right delimiter of the ket notation</li>
+</ul>
+<p>Together, |x⟩ represents a quantum state vector in a Hilbert space. It's basically a mathematical way of representing a quantum system's state.</p>
+<p>In JavaScript terms, you might think of |x⟩ as somewhat similar to a variable name that references a complex object containing all the quantum information about state "x".</p>
+<p>The "ket" notation is complemented by "bra" notation, written as ⟨x| (with the angle bracket pointing left). Together they form "bra-ket" notation, which is used to represent inner products between quantum states.</p>
+<p>This notation is extremely useful in quantum mechanics because it provides a clean way to represent quantum states and the operations performed on them without having to write out all the complex mathematics every time.</p>
 <ol start="2">
 <li><strong>Output Superposition</strong></li>
 </ol>
@@ -179,17 +190,6 @@ function runQuantumAlgorithm() {
 <li><code>|k⟩</code>: Output basis states</li>
 <li>The <code>| ⟩</code> brackets explicitly declare we're working with quantum states, not classical variables</li>
 </ul>
-<p>The expression |x⟩ is called a "ket" in Dirac notation (named after physicist Paul Dirac), which is the standard notation used in quantum mechanics.
-Breaking down the symbols:</p>
-<ul>
-<li><code>|</code> (vertical bar/pipe): This is just the left delimiter of the ket notation</li>
-<li><code>x</code> (the variable): This represents whatever quantum state is being described (could be any label)</li>
-<li><code>⟩</code> (right angle bracket): This is the right delimiter of the ket notation</li>
-</ul>
-<p>Together, |x⟩ represents a quantum state vector in a Hilbert space. It's basically a mathematical way of representing a quantum system's state.</p>
-<p>In JavaScript terms, you might think of |x⟩ as somewhat similar to a variable name that references a complex object containing all the quantum information about state "x".</p>
-<p>The "ket" notation is complemented by "bra" notation, written as ⟨x| (with the angle bracket pointing left). Together they form "bra-ket" notation, which is used to represent inner products between quantum states.</p>
-<p>This notation is extremely useful in quantum mechanics because it provides a clean way to represent quantum states and the operations performed on them without having to write out all the complex mathematics every time.</p>
 <h2>Why It's a Quantum State Equation</h2>
 <ol>
 <li>
