@@ -176,6 +176,19 @@ Breaking down the symbols:</p>
 <li>Equal-amplitude superposition of all basis states |k⟩ (<em>k</em> = 0, 1, …, <em>N</em>−1).</li>
 <li>Weighted by phase factor <img src="https://latex.codecogs.com/svg.latex?e^{2\pi i x k / N}" alt="Phase Factor" style="display: inline-block; margin: 0; vertical-align: middle;" />.</li>
 </ul>
+<p>The big Σ symbol is a mathematical shorthand that means "sum up a series of things." Imagine you’re adding a list of numbers or terms—instead of writing them all out (like 1 + 2 + 3 + ...), you use Σ to compress it into a single expression.</p>
+<p>At the bottom of Σ, you’ll see a tiny variable (like k=0). This tells you where to start counting.</p>
+<p>At the top, there’s a stopping point (like N-1). This is where you stop summing.</p>
+<p>After the Σ, you’ll see a term (like <code>e^(2πi xk/N) |k⟩</code>) that changes as k increases.</p>
+<p>Σ loops through every integer value of k (from the start to end) and adds up all the terms it generates along the way.</p>
+<img src="https://latex.codecogs.com/svg.latex?\sum_{k=0}^{N-1} e^{2\pi i x k / N} |k\rangle" alt="Summation" style="display: inline-block; vertical-align: middle; height: 2em;">
+<p>This means:</p>
+<ol>
+<li>Start with k=0, calculate e^(2πi x·0/N) |0⟩, and hold onto that term.</li>
+<li>Move to k=1, calculate e^(2πi x·1/N) |1⟩, and add it to the previous term.</li>
+<li>Repeat until k=N-1, then sum everything together.</li>
+</ol>
+<p>The result is a superposition of all those phase-weighted |k⟩ states.</p>
 <ol start="3">
 <li><strong>Normalization</strong>
 <ul>
