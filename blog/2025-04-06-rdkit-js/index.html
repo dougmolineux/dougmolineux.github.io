@@ -88,32 +88,7 @@
 <p>Chemical make up of Zepbound (generated through RDKit):</p>
 <img src="../zepbound.png" />
 <p>Chemical make up of Ibuprofen:</p>
-<img src="../ibuprofen.png" />
-<p>Playground:</p>
-<!-- Load RDKit.js -->
-<script src="https://unpkg.com/@rdkit/rdkit/dist/RDKit_min.js"></script>
-<!-- Chemical Canvas -->
-<div id="molecule-container" style="width: 300px; height: 300px;"></div>
-<button id="load-aspirin">Load Aspirin</button>
-<script>
-  // Initialize RDKit and make renderAspirin globally available
-  window.renderAspirin = async function() {
-    if (!window.RDKit) {
-      window.RDKit = await window.RDKitModule();
-    }
-    const aspirin = RDKit.MolFromSmiles('CC(=O)OC1=CC=CC=C1C(=O)O');
-    const svg = RDKit.MolToSVG(aspirin, 300, 300);
-    document.getElementById('molecule-container').innerHTML = svg;
-  };
-
-  // Attach click handler after RDKit loads
-  async function init() {
-    window.RDKit = await window.RDKitModule();
-    document.getElementById('load-aspirin').onclick = renderAspirin;
-    console.log("RDKit ready!");
-  }
-  init();
-</script></div></article></main><footer style="margin-top:40px;padding-top:20px;border-top:1px solid #A8DADC;text-align:center;color:#777">© <!-- -->2025<!-- --> doug.molineux.blog. Built with Gatsby.</footer></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/2025-04-06-rdkit-js/";/*]]>*/</script><!-- slice-start id="_gatsby-scripts-1" -->
+<img src="../ibuprofen.png" /></div></article></main><footer style="margin-top:40px;padding-top:20px;border-top:1px solid #A8DADC;text-align:center;color:#777">© <!-- -->2025<!-- --> doug.molineux.blog. Built with Gatsby.</footer></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/2025-04-06-rdkit-js/";/*]]>*/</script><!-- slice-start id="_gatsby-scripts-1" -->
           <script
             id="gatsby-chunk-mapping"
           >
