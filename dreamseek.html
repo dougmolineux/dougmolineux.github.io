@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamSeek Support</title>
+    <style>
+        :root {
+            --primary: #6e48aa;
+            --secondary: #9d50bb;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+        }
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        .feature {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+        .privacy-badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1rem;
+            color: #666;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>DreamSeek</h1>
+        <p>Your private dream journal & analyzer</p>
+    </header>
+
+    <div class="feature">
+        <h2>About The App</h2>
+        <p>DreamSeek helps you record and analyze your dreams while maintaining complete privacy. Unlike other apps, all processing happens directly on your device - your dreams never leave your iPhone.</p>
+        
+        <div class="privacy-badge">100% On-Device Processing</div>
+    </div>
+
+    <div class="feature">
+        <h2>Key Features</h2>
+        <ul>
+            <li><strong>Voice Recording</strong> - Speak your dreams upon waking</li>
+            <li><strong>Theme Detection</strong> - Automatically identifies adventure, romance, nightmares and more</li>
+            <li><strong>Sentiment Analysis</strong> - Tracks emotional tone of your dreams</li>
+            <li><strong>People & Places</strong> - Shows who and where appears most frequently</li>
+            <li><strong>Visual Analytics</strong> - Interactive charts reveal patterns over time</li>
+            <li><strong>No Cloud Processing</strong> - All analysis happens locally</li>
+        </ul>
+    </div>
+
+    <div class="feature">
+        <h2>How To Use</h2>
+        <ol>
+            <li>Tap the microphone button when you wake up</li>
+            <li>Describe your dream out loud</li>
+            <li>Review the automatic analysis</li>
+            <li>Add optional title or notes</li>
+            <li>Track patterns over time in your dashboard</li>
+        </ol>
+    </div>
+
+    <div class="feature">
+        <h2>Privacy Policy</h2>
+        <p>DreamSeek does not collect, store, or transmit any of your dream data. All processing occurs locally on your device.</p>
+        <p>We do not:</p>
+        <ul>
+            <li>Upload your dreams to any servers</li>
+            <li>Use third-party analytics</li>
+            <li>Sell or share your data</li>
+        </ul>
+    </div>
+
+    <div class="feature">
+        <h2>Support</h2>
+        <p>Having issues or have feature requests? Contact us at:</p>
+        <p><a href="mailto:support@dreamseek.app">support@dreamseek.app</a></p>
+        <p>We typically respond within 48 hours.</p>
+    </div>
+
+    <footer>
+        <p>© <span id="year"></span> DreamSeek. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Auto-update year
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
