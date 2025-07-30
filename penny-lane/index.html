@@ -254,23 +254,132 @@
             margin-left: 10px;
         }
         
-        @media (max-width: 768px) {
+        /* Penny Lane Header Styles */
+        .penny-header {
+            width: 100%;
+            background: linear-gradient(90deg, #FFD700 0%, #764ba2 100%);
+            color: #fff;
+            text-align: center;
+            padding: 40px 10px 20px 10px;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 6px 24px rgba(102, 126, 234, 0.15);
+            margin-bottom: 20px;
+        }
+        .penny-header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 3em;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.18);
+        }
+        .penny-subheader {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1em;
+            font-weight: 400;
+            opacity: 0.85;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        @media (max-width: 900px) {
+            .container {
+                padding: 8px;
+            }
             .header h1 {
-                font-size: 2.5em;
+                font-size: 2em;
             }
-            
-            .stock-grid {
+            .header {
+                padding: 18px;
+            }
+            .summary-grid {
                 grid-template-columns: 1fr;
+                gap: 12px;
             }
-            
             .best-picks {
                 grid-template-columns: 1fr;
+                gap: 18px;
+            }
+            .stock-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+            .stock-card {
+                padding: 18px;
+            }
+            .pick-card {
+                padding: 18px;
+            }
+            .metrics-table th, .metrics-table td {
+                padding: 8px 7px;
+                font-size: 0.95em;
+            }
+            .footer {
+                padding: 18px;
+            }
+            .chart-container {
+                height: 220px;
+                padding: 10px;
+            }
+            .penny-header {
+                padding: 24px 5px 12px 5px;
+            }
+            .penny-header h1 {
+                font-size: 2em;
+            }
+            .penny-subheader {
+                font-size: 0.95em;
+            }
+        }
+        @media (max-width: 500px) {
+            .container {
+                padding: 2px;
+            }
+            .header h1 {
+                font-size: 1.3em;
+            }
+            .header {
+                padding: 8px;
+            }
+            .summary-card, .stock-card, .pick-card {
+                padding: 10px;
+                border-radius: 10px;
+            }
+            .summary-grid, .best-picks, .stock-grid {
+                gap: 8px;
+            }
+            .metrics-table th, .metrics-table td {
+                padding: 5px 3px;
+                font-size: 0.85em;
+            }
+            .footer {
+                padding: 8px;
+                border-radius: 10px;
+            }
+            .chart-container {
+                height: 140px;
+                padding: 2px;
+            }
+            .penny-header {
+                padding: 12px 2px 6px 2px;
+                border-radius: 0 0 12px 12px;
+            }
+            .penny-header h1 {
+                font-size: 1.2em;
+            }
+            .penny-subheader {
+                font-size: 0.8em;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Penny Lane Header -->
+        <header class="penny-header">
+            <h1>Penny Lane</h1>
+            <div class="penny-subheader">Developed by Doug Molineux</div>
+        </header>
+
         <div class="header">
             <h1>MARKET INTELLIGENCE</h1>
             <div class="subtitle">Comprehensive Stock Analysis Report - July 29, 2025</div>
