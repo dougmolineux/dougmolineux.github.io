@@ -1,0 +1,294 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/><meta name="generator" content="Gatsby 5.14.1"/><style>.gatsby-image-wrapper{position:relative;overflow:hidden}.gatsby-image-wrapper picture.object-fit-polyfill{position:static!important}.gatsby-image-wrapper img{bottom:0;height:100%;left:0;margin:0;max-width:none;padding:0;position:absolute;right:0;top:0;width:100%;object-fit:cover}.gatsby-image-wrapper [data-main-image]{opacity:0;transform:translateZ(0);transition:opacity .25s linear;will-change:opacity}.gatsby-image-wrapper-constrained{display:inline-block;vertical-align:top}</style><noscript><style>.gatsby-image-wrapper noscript [data-main-image]{opacity:1!important}.gatsby-image-wrapper [data-placeholder-image]{opacity:0!important}</style></noscript><script type="module">const e="undefined"!=typeof HTMLImageElement&&"loading"in HTMLImageElement.prototype;e&&document.body.addEventListener("load",(function(e){const t=e.target;if(void 0===t.dataset.mainImage)return;if(void 0===t.dataset.gatsbyImageSsr)return;let a=null,n=t;for(;null===a&&n;)void 0!==n.parentNode.dataset.gatsbyImageWrapper&&(a=n.parentNode),n=n.parentNode;const o=a.querySelector("[data-placeholder-image]"),r=new Image;r.src=t.currentSrc,r.decode().catch((()=>{})).then((()=>{t.style.opacity=1,o&&(o.style.opacity=0,o.style.transition="opacity 500ms linear")}))}),!0);</script></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" id="gatsby-focus-wrapper"><div style="max-width:1200px;margin:0 auto;padding:20px;font-family:Arial, sans-serif;line-height:1.6;color:#4A4A4A;background-color:#F9F9F9"><style>
+          h1, h2, h3, h4, h5, h6 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            color: #2C5D63; // Soft teal for headers
+          }
+
+          h1 {
+            font-size: 2.5rem;
+          }
+
+          h2 {
+            font-size: 2rem;
+          }
+
+          h3 {
+            font-size: 1.75rem;
+          }
+
+          p {
+            margin-bottom: 1.5em;
+          }
+
+          a {
+            color: #2C5D63; // Soft teal for links
+            text-decoration: none;
+          }
+
+          a:hover {
+            text-decoration: underline;
+            color: #3A7A7A; // Slightly darker teal on hover
+          }
+
+          ul, ol {
+            margin-bottom: 1.5em;
+            padding-left: 20px;
+          }
+
+          li {
+            margin-bottom: 0.5em;
+          }
+
+          code {
+            background: #E0F2F1; // Very light teal for code background
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: &quot;Courier New&quot;, monospace;
+            font-size: 0.9em;
+            color: #2C5D63; // Soft teal for code text
+          }
+
+          pre {
+            background: #E0F2F1; // Very light teal for code block background
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 1.5em;
+            color: #2C5D63; // Soft teal for code block text
+          }
+
+          blockquote {
+            border-left: 4px solid #A8DADC; // Light teal for blockquote border
+            padding-left: 15px;
+            margin: 1.5em 0;
+            color: #4A4A4A; // Soft dark gray for blockquote text
+            font-style: italic;
+          }
+
+          table {
+            width: &quot;100%&quot;,
+            border-collapse: &quot;collapse&quot;,
+            margin-bottom: &quot;1.5em&quot;,
+          }
+
+          th, td {
+            padding: &quot;10px&quot;,
+            border: &quot;1px solid #A8DADC&quot;, // Light teal for table borders
+            text-align: &quot;left&quot;,
+          }
+
+          th {
+            background: &quot;#E0F2F1&quot;, // Very light teal for table header background
+          }
+        </style><header style="border-bottom:2px solid #A8DADC;padding-bottom:10px;margin-bottom:20px"><h1 style="margin:0;color:#2C5D63">doug.molineux.blog</h1></header><a href="../">Blog</a><main><article><h1 style="font-size:2.5rem;margin-bottom:10px;color:#007acc">Setting Up a Local LLM with Ollama on macOS</h1><p style="color:#777;font-size:0.9rem;margin-bottom:30px">7/14/2025</p><div style="font-size:1.1rem;line-height:1.8"><p>Running large language models locally has become increasingly popular for developers and AI enthusiasts who want privacy, control, and offline access to powerful AI capabilities. Ollama makes this process remarkably straightforward on macOS, providing a simple command-line interface to download, run, and manage various open-source language models.</p>
+<h2>What is Ollama?</h2>
+<p>Ollama is an open-source tool that simplifies running large language models on your local machine. It handles model downloading, memory management, and provides a consistent API for interacting with different models like Llama 2, Code Llama, Mistral, and many others. Think of it as Docker for language models - it packages everything you need to run LLMs locally.</p>
+<h2>Hardware Requirements</h2>
+<p>Before diving into the setup, let's understand what hardware you'll need for optimal performance.</p>
+<h3>Minimum Requirements</h3>
+<ul>
+<li><strong>Mac</strong>: Any Mac with Apple Silicon (M1, M2, M3, or M4) or Intel Mac with sufficient RAM</li>
+<li><strong>RAM</strong>: 8GB minimum (16GB recommended for better performance)</li>
+<li><strong>Storage</strong>: At least 10GB free space for models (some models require 20GB+)</li>
+<li><strong>macOS</strong>: macOS 11.0 (Big Sur) or later</li>
+</ul>
+<h3>Recommended Specifications</h3>
+<p>For the best experience running local LLMs, consider these specifications:</p>
+<ul>
+<li><strong>Apple Silicon Mac</strong>: M2 or M3 with at least 16GB unified memory</li>
+<li><strong>RAM</strong>: 32GB or more for running larger models smoothly</li>
+<li><strong>Storage</strong>: 50GB+ free SSD space for multiple models</li>
+<li><strong>Network</strong>: Fast internet connection for initial model downloads</li>
+</ul>
+<h3>Model Size Considerations</h3>
+<p>Different models have varying memory requirements:</p>
+<ul>
+<li><strong>7B models</strong> (like Llama 2 7B): ~4-8GB RAM</li>
+<li><strong>13B models</strong>: ~8-16GB RAM</li>
+<li><strong>34B models</strong>: ~20-40GB RAM</li>
+<li><strong>70B models</strong>: ~40-80GB RAM</li>
+</ul>
+<p>Apple Silicon Macs with unified memory architecture perform exceptionally well for local LLM inference, often outperforming traditional GPU setups for this use case.</p>
+<h2>Installing Ollama</h2>
+<h3>Method 1: Direct Download (Recommended)</h3>
+<ol>
+<li>Visit the official Ollama website at <a href="https://ollama.ai">ollama.ai</a></li>
+<li>Click the "Download" button for macOS</li>
+<li>Once downloaded, open the <code>.dmg</code> file</li>
+<li>Drag Ollama to your Applications folder</li>
+<li>Launch Ollama from Applications</li>
+</ol>
+<h3>Method 2: Using Homebrew</h3>
+<p>If you prefer using Homebrew, you can install Ollama with:</p>
+<pre><code class="language-bash">brew install ollama
+</code></pre>
+<h3>Method 3: Using curl</h3>
+<p>For a quick installation via terminal:</p>
+<pre><code class="language-bash">curl -fsSL https://ollama.ai/install.sh | sh
+</code></pre>
+<h2>Initial Setup and Configuration</h2>
+<p>Once installed, Ollama runs as a background service. You can verify the installation by opening Terminal and running:</p>
+<pre><code class="language-bash">ollama --version
+</code></pre>
+<p>The Ollama service should start automatically, but you can manually start it with:</p>
+<pre><code class="language-bash">ollama serve
+</code></pre>
+<p>By default, Ollama stores models in <code>~/.ollama/models</code> and runs on <code>http://localhost:11434</code>.</p>
+<h2>Running Your First Model</h2>
+<h3>Downloading and Running Llama 2</h3>
+<p>Let's start with the popular Llama 2 7B model:</p>
+<pre><code class="language-bash">ollama pull llama2
+</code></pre>
+<p>This command downloads the model (approximately 3.8GB). Once complete, you can start chatting:</p>
+<pre><code class="language-bash">ollama run llama2
+</code></pre>
+<p>You'll see a prompt where you can start typing your questions or requests. Type <code>/bye</code> to exit the chat.</p>
+<h3>Exploring Available Models</h3>
+<p>Ollama supports numerous models. Here are some popular options:</p>
+<pre><code class="language-bash"># Code-focused models
+ollama pull codellama
+ollama pull deepseek-coder
+
+# General purpose models
+ollama pull mistral
+ollama pull llama2:13b
+ollama pull phi3
+
+# Specialized models
+ollama pull llava  # Vision-language model
+ollama pull orca-mini
+</code></pre>
+<p>You can see all available models at <a href="https://ollama.ai/library">ollama.ai/library</a>.</p>
+<h3>Model Variants</h3>
+<p>Many models come in different sizes. You can specify the variant:</p>
+<pre><code class="language-bash">ollama pull llama2:7b      # 7 billion parameters
+ollama pull llama2:13b     # 13 billion parameters
+ollama pull llama2:70b     # 70 billion parameters
+</code></pre>
+<h2>Managing Models</h2>
+<h3>Listing Installed Models</h3>
+<pre><code class="language-bash">ollama list
+</code></pre>
+<h3>Removing Models</h3>
+<p>To free up space, you can remove models you no longer need:</p>
+<pre><code class="language-bash">ollama rm llama2:13b
+</code></pre>
+<h3>Updating Models</h3>
+<p>Models are occasionally updated. To get the latest version:</p>
+<pre><code class="language-bash">ollama pull llama2  # Re-downloads if newer version available
+</code></pre>
+<h2>Using the API</h2>
+<p>Ollama provides a REST API that you can use in your applications. Here's a simple example using curl:</p>
+<pre><code class="language-bash">curl http://localhost:11434/api/generate -d '{
+  "model": "llama2",
+  "prompt": "Why is the sky blue?",
+  "stream": false
+}'
+</code></pre>
+<h3>Python Example</h3>
+<pre><code class="language-python">import requests
+import json
+
+def chat_with_ollama(prompt, model="llama2"):
+    url = "http://localhost:11434/api/generate"
+    data = {
+        "model": model,
+        "prompt": prompt,
+        "stream": False
+    }
+    
+    response = requests.post(url, json=data)
+    return response.json()["response"]
+
+# Example usage
+answer = chat_with_ollama("Explain quantum computing in simple terms")
+print(answer)
+</code></pre>
+<h2>Performance Optimization</h2>
+<h3>Memory Management</h3>
+<p>Ollama automatically manages memory, but you can optimize performance:</p>
+<ol>
+<li><strong>Close unnecessary applications</strong> before running large models</li>
+<li><strong>Use appropriate model sizes</strong> for your hardware</li>
+<li><strong>Monitor Activity Monitor</strong> to track memory usage</li>
+</ol>
+<h3>Model Selection</h3>
+<p>Choose models based on your needs and hardware:</p>
+<ul>
+<li><strong>For coding</strong>: CodeLlama, DeepSeek-Coder</li>
+<li><strong>For general chat</strong>: Llama 2, Mistral, Phi-3</li>
+<li><strong>For vision tasks</strong>: LLaVA</li>
+<li><strong>For speed</strong>: Smaller 7B models</li>
+<li><strong>For quality</strong>: Larger 13B+ models (if hardware allows)</li>
+</ul>
+<h2>Troubleshooting Common Issues</h2>
+<h3>Ollama Service Won't Start</h3>
+<p>If Ollama isn't responding:</p>
+<pre><code class="language-bash"># Check if service is running
+ps aux | grep ollama
+
+# Restart the service
+ollama serve
+</code></pre>
+<h3>Out of Memory Errors</h3>
+<p>If you encounter memory issues:</p>
+<ol>
+<li>Try a smaller model variant</li>
+<li>Close other applications</li>
+<li>Restart your Mac to free up memory</li>
+<li>Consider upgrading your hardware</li>
+</ol>
+<h3>Slow Performance</h3>
+<p>To improve performance:</p>
+<ol>
+<li>Ensure you're using Apple Silicon if possible</li>
+<li>Close unnecessary background applications</li>
+<li>Use SSD storage for model files</li>
+<li>Try smaller, more efficient models</li>
+</ol>
+<h3>Model Download Fails</h3>
+<p>If downloads are interrupted:</p>
+<pre><code class="language-bash"># Remove incomplete download and retry
+ollama rm model_name
+ollama pull model_name
+</code></pre>
+<h2>Advanced Usage</h2>
+<h3>Custom Model Files</h3>
+<p>You can create custom model configurations using Modelfiles:</p>
+<pre><code class="language-bash"># Create a custom model with specific parameters
+echo 'FROM llama2
+PARAMETER temperature 0.8
+PARAMETER num_ctx 4096
+SYSTEM "You are a helpful coding assistant."' > Modelfile
+
+ollama create my-coding-assistant -f Modelfile
+ollama run my-coding-assistant
+</code></pre>
+<h3>Integration with Development Tools</h3>
+<p>Ollama integrates well with various development tools:</p>
+<ul>
+<li><strong>VS Code</strong>: Use extensions like "Ollama" for code completion</li>
+<li><strong>Cursor</strong>: Configure to use local Ollama models</li>
+<li><strong>Shell scripts</strong>: Automate tasks using the API</li>
+</ul>
+<h2>Privacy and Security Benefits</h2>
+<p>Running LLMs locally with Ollama offers several advantages:</p>
+<ul>
+<li><strong>Complete privacy</strong>: Your data never leaves your machine</li>
+<li><strong>No internet dependency</strong>: Work offline once models are downloaded</li>
+<li><strong>No API costs</strong>: No per-token charges or subscription fees</li>
+<li><strong>Full control</strong>: Customize models and parameters as needed</li>
+<li><strong>Compliance</strong>: Easier to meet data governance requirements</li>
+</ul>
+<h2>Conclusion</h2>
+<p>Ollama makes running powerful language models locally on macOS incredibly accessible. Whether you're a developer looking to integrate AI into your applications, a researcher experimenting with different models, or simply someone who values privacy and control over their AI interactions, Ollama provides an excellent solution.</p>
+<p>The combination of Apple Silicon's unified memory architecture and Ollama's efficient model management creates a powerful platform for local AI development. Start with smaller models like Llama 2 7B to get familiar with the system, then experiment with larger models as your needs and hardware allow.</p>
+<p>With the rapid pace of open-source AI development, new and improved models are constantly being released. Ollama's simple interface makes it easy to stay current with the latest developments while maintaining complete control over your AI infrastructure.</p>
+<p>Remember to monitor your system resources, choose appropriate models for your hardware, and enjoy the freedom and privacy that comes with running AI models locally on your Mac.</p></div></article></main><footer style="margin-top:40px;padding-top:20px;border-top:1px solid #A8DADC;text-align:center;color:#777">© <!-- -->2025<!-- --> doug.molineux.blog. Built with Gatsby.</footer></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/2025-07-15-ollama/";/*]]>*/</script><!-- slice-start id="_gatsby-scripts-1" -->
+          <script
+            id="gatsby-chunk-mapping"
+          >
+            window.___chunkMapping="{\"app\":[\"/app-3606d69e6882b8247df1.js\"],\"component---src-pages-404-js\":[\"/component---src-pages-404-js-3ea0307e216f7661015a.js\"],\"component---src-pages-index-js\":[\"/component---src-pages-index-js-d30f25ae874ed21a5d15.js\"],\"component---src-pages-using-ssr-js\":[\"/component---src-pages-using-ssr-js-145f22713734d613fd81.js\"],\"component---src-templates-blog-post-js\":[\"/component---src-templates-blog-post-js-525ef8cbf38c1fb2525c.js\"]}";
+          </script>
+        <script>window.___webpackCompilationHash="fa41b22cdec277a2cb6c";</script><script src="/blog/webpack-runtime-fe1e2786b90271c63410.js" async></script><script src="/blog/framework-9fce5d8597f27c4b157b.js" async></script><script src="/blog/app-3606d69e6882b8247df1.js" async></script><!-- slice-end id="_gatsby-scripts-1" --></body></html>
