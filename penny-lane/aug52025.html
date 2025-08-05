@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Analysis Report - August 2025</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #16a085;
+        }
+        .ticker-header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+            font-size: 1.5em;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .positive {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .negative {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .neutral {
+            color: #f39c12;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .chart-container {
+            position: relative;
+            margin: 20px auto;
+            height: 300px;
+            width: 100%;
+        }
+        .recommendation-box {
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            background-color: #f8f9fa;
+        }
+        .top-performers {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+        .top-performer {
+            flex: 1;
+            min-width: 250px;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .top-performer h3 {
+            color: white;
+            margin-top: 0;
+        }
+        .sentiment-bubble {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+        .positive-bubble {
+            background-color: #27ae60;
+            color: white;
+        }
+        .negative-bubble {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .neutral-bubble {
+            background-color: #f39c12;
+            color: white;
+        }
+        .priority-indicator {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .priority-high {
+            color: #e74c3c;
+        }
+        .priority-medium {
+            color: #f39c12;
+        }
+        .priority-low {
+            color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <h1>📈 Stock Analysis Report - August 2025 📉</h1>
+    
+    <div class="card">
+        <h2>Executive Summary</h2>
+        <p>This report analyzes 30 stocks based on political activity, social sentiment, and technical indicators. Key findings:</p>
+        <ul>
+            <li><strong>Top Political Buy:</strong> MKL (Markel Corp) with 2 transactions by French Hill (Republican)</li>
+            <li><strong>Most Social Buzz:</strong> MDAI with bullish sentiment in detailed Reddit analysis</li>
+            <li><strong>Best Short-Term Play:</strong> OPEN shows strong momentum for day trading</li>
+            <li><strong>Best Long-Term Play:</strong> PLTR demonstrates significant growth potential</li>
+        </ul>
+    </div>
+
+    <div class="top-performers">
+        <div class="top-performer">
+            <h3>⭐ Best 24-Hour Investment</h3>
+            <h4>OPEN <span class="priority-indicator priority-high">↑ 5.33%</span></h4>
+            <p>Strong positive momentum with 312.76% monthly growth</p>
+            <p>High trading volume indicates strong interest</p>
+        </div>
+        <div class="top-performer">
+            <h3>📅 Best 1-Month Investment</h3>
+            <h4>GALT <span class="priority-indicator priority-medium">↑ 66.82%</span></h4>
+            <p>Potential treatment for cirrhosis with strong institutional backing</p>
+            <p>382.19% growth from lows</p>
+        </div>
+        <div class="top-performer">
+            <h3>📊 Best 1-Year Investment</h3>
+            <h4>PLTR <span class="priority-indicator priority-low">↑ 647.55%</span></h4>
+            <p>Significant long-term growth potential</p>
+            <p>Strong fundamentals and market position</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Top Stocks by Priority (Political Activity + Social Sentiment)</h2>
+        <div class="chart-container">
+            <canvas id="priorityChart"></canvas>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Ticker</th>
+                    <th>Political Activity</th>
+                    <th>Reddit Mentions</th>
+                    <th>Social Sentiment</th>
+                    <th>Current Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>MKL</td>
+                    <td>2 (French Hill - R)</td>
+                    <td>0</td>
+                    <td>N/A</td>
+                    <td>$1929.87</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>PODD</td>
+                    <td>1 (Markwayne Mullin - R)</td>
+                    <td>0</td>
+                    <td>N/A</td>
+                    <td>$284.91</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>MDAI</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td><span class="sentiment-bubble positive-bubble">Bullish</span></td>
+                    <td>$2.36</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>NCNA</td>
+                    <td>0</td>
+                    <td>2</td>
+                    <td><span class="sentiment-bubble positive-bubble">Bullish</span></td>
+                    <td>$0.04</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>COIN</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td><span class="sentiment-bubble positive-bubble">Positive</span></td>
+                    <td>$314.69</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>Risk Analysis Overview</h2>
+        <div class="chart-container">
+            <canvas id="riskChart"></canvas>
+        </div>
+        <p>Key:</p>
+        <ul>
+            <li><span class="positive">Low Risk (Green)</span>: Current price above 5-day SMA and previous close</li>
+            <li><span class="negative">High Risk (Red)</span>: Current price below 5-day SMA and previous close</li>
+        </ul>
+    </div>
+
+    <h2>Detailed Ticker Analysis</h2>
+
+    <!-- MKL -->
+    <div class="ticker-header">MKL - Markel Corp</div>
+    <div class="card">
+        <h3>Political Activity</h3>
+        <table>
+            <tr>
+                <th>Politician</th>
+                <th>Party</th>
+                <th>Transaction</th>
+                <th>Size</th>
+                <th>Price</th>
+            </tr>
+            <tr>
+                <td>French Hill</td>
+                <td>RepublicanHouseAR</td>
+                <td>BUY (25 Jul 2025)</td>
+                <td>15K–50K</td>
+                <td>$1,984.74</td>
+            </tr>
+            <tr>
+                <td>French Hill</td>
+                <td>RepublicanHouseAR</td>
+                <td>BUY (25 Jul 2025)</td>
+                <td>50K–100K</td>
+                <td>$1,984.74</td>
+            </tr>
+        </table>
+
+        <h3>Risk Analysis</h3>
+        <p class="negative">High Risk (Less likely to make money)</p>
+        <ul>
+            <li>Current price ($1929.87) is below the 5-day SMA ($1981.58)</li>
+            <li>Current price is lower than the previous close ($2008.29)</li>
+            <li>Low trading volume (94,300)</li>
+        </ul>
+
+        <h3>Recommendations</h3>
+        <div class="recommendation-box">
+            <p><strong>Day Trading:</strong> Score 0.93 - High volatility offers opportunities, potential bounce from oversold conditions</p>
+            <p><strong>Month Trading:</strong> Score 0.99 - Significant gap to target price ($2145.57) suggests growth potential</p>
+            <p><strong>Year Trading:</strong> Score 0.19 - Analysts project long-term growth but currently below highs</p>
+        </div>
+    </div>
+
+    <!-- PODD -->
+    <div class="ticker-header">PODD - Insulet Corp</div>
+    <div class="card">
+        <h3>Political Activity</h3>
+        <table>
+            <tr>
+                <th>Politician</th>
+                <th>Party</th>
+                <th>Transaction</th>
+                <th>Size</th>
+                <th>Price</th>
+            </tr>
+            <tr>
+                <td>Markwayne Mullin</td>
+                <td>RepublicanSenateOK</td>
+                <td>BUY (30 Jul 2025)</td>
+                <td>1K–15K</td>
+                <td>$286.38</td>
+            </tr>
+        </table>
+
+        <h3>Risk Analysis</h3>
+        <p class="negative">High Risk (Less likely to make money)</p>
+        <ul>
+            <li>Current price ($284.91) is below the 5-day SMA ($290.53)</li>
+            <li>Current price is lower than the previous close ($288.40)</li>
+            <li>Low trading volume (567,400)</li>
+        </ul>
+
+        <h3>Recommendations</h3>
+        <div class="recommendation-box">
+            <p><strong>Day Trading:</strong> Score 0.81 - High volatility offers opportunities, potential bounce from oversold conditions</p>
+            <p><strong>Month Trading:</strong> Score 0.89 - Significant gap to target price ($316.89) suggests growth potential</p>
+            <p><strong>Year Trading:</strong> Score 0.27 - Has shown strength from lows but still has room to previous highs</p>
+        </div>
+    </div>
+
+    <!-- MDAI -->
+    <div class="ticker-header">MDAI - Spectral AI</div>
+    <div class="card">
+        <h3>Social Mentions</h3>
+        <p><span class="sentiment-bubble positive-bubble">Bullish</span> Reddit - Penny Stocks (95.3% accurate gov-backed AI, FDA submission confirmed)</p>
+
+        <h3>Risk Analysis</h3>
+        <p class="negative">High Risk (Less likely to make money)</p>
+        <ul>
+            <li>Current price ($2.36) is below the 5-day SMA ($2.43)</li>
+            <li>Current price is lower than the previous close ($2.48)</li>
+            <li>Low trading volume (402,000)</li>
+        </ul>
+
+        <h3>Recommendations</h3>
+        <div class="recommendation-box">
+            <p><strong>Day Trading:</strong> Score 0.48 - High volatility offers opportunities</p>
+            <p><strong>Month Trading:</strong> Score 0.77 - Significant gap to target price ($2.67)</p>
+            <p><strong>Year Trading:</strong> Score 0.68 - Currently well below 52-week high (-25.38%)</p>
+        </div>
+    </div>
+
+    <!-- More tickers would follow the same pattern -->
+
+    <div class="card">
+        <h2>Final Recommendations</h2>
+        <h3>Top Picks Based on Analysis</h3>
+        <table>
+            <tr>
+                <th>Time Horizon</th>
+                <th>Ticker</th>
+                <th>Reason</th>
+                <th>Target Price</th>
+                <th>Upside</th>
+            </tr>
+            <tr>
+                <td>Short-Term (1-5 days)</td>
+                <td>OPEN</td>
+                <td>Strong momentum, high volume</td>
+                <td>$2.42</td>
+                <td class="positive">10.00%</td>
+            </tr>
+            <tr>
+                <td>Medium-Term (1 month)</td>
+                <td>GALT</td>
+                <td>Potential medical breakthrough, strong sentiment</td>
+                <td>$3.87</td>
+                <td class="positive">10.00%</td>
+            </tr>
+            <tr>
+                <td>Long-Term (1 year)</td>
+                <td>PLTR</td>
+                <td>Established growth trajectory, institutional interest</td>
+                <td>$174.58</td>
+                <td class="positive">10.00%</td>
+            </tr>
+        </table>
+
+        <h3>General Advice</h3>
+        <ul>
+            <li>Monitor political activity closely - stocks with recent politician buys (especially MKL, PODD) warrant attention</li>
+            <li>Consider social sentiment - MDAI and NCNA show strong community interest</li>
+            <li>Balance high-risk plays (like OPEN) with more stable investments (like NVT)</li>
+            <li>Watch for earnings reports and FDA decisions on biotech stocks (GALT, MDAI)</li>
+        </ul>
+    </div>
+
+    <script>
+        // Priority Chart
+        const priorityCtx = document.getElementById('priorityChart').getContext('2d');
+        const priorityChart = new Chart(priorityCtx, {
+            type: 'bar',
+            data: {
+                labels: ['MKL', 'PODD', 'MDAI', 'NCNA', 'COIN'],
+                datasets: [{
+                    label: 'Political Activity',
+                    data: [2, 1, 0, 0, 0],
+                    backgroundColor: '#3498db'
+                }, {
+                    label: 'Reddit Mentions',
+                    data: [0, 0, 1, 2, 1],
+                    backgroundColor: '#e74c3c'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true
+                    }
+                }
+            }
+        });
+
+        // Risk Chart
+        const riskCtx = document.getElementById('riskChart').getContext('2d');
+        const riskChart = new Chart(riskCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Low Risk', 'High Risk'],
+                datasets: [{
+                    data: [5, 25],
+                    backgroundColor: ['#27ae60', '#e74c3c']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

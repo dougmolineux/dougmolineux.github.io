@@ -3,453 +3,556 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Analysis Report - August 2025</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Penny Lane Financial Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
             line-height: 1.6;
-            color: #333;
-            max-width: 1200px;
-            margin: 0 auto;
+            margin: 0;
             padding: 20px;
-            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background-color: #1e1e1e;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.1);
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00e5ff;
+            border-bottom: 2px solid #00e5ff;
+            padding-bottom: 10px;
+            margin-top: 25px;
         }
         h1 {
-            color: #2c3e50;
-            text-align: center;
             font-size: 2.5em;
-            margin-bottom: 30px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            text-align: center;
+            border-bottom: none;
+        }
+        h1 .subtitle {
+            font-size: 0.5em;
+            color: #b0b0b0;
+            display: block;
+            margin-top: 5px;
         }
         h2 {
-            color: #3498db;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 5px;
-            margin-top: 30px;
+            font-size: 2em;
+            color: #ff4081;
         }
         h3 {
-            color: #16a085;
-        }
-        .ticker-header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-top: 30px;
             font-size: 1.5em;
-        }
-        .card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .positive {
-            color: #27ae60;
-            font-weight: bold;
-        }
-        .negative {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-        .neutral {
-            color: #f39c12;
-            font-weight: bold;
+            color: #ad5389;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin-top: 20px;
         }
         th, td {
             padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border: 1px solid #333;
         }
         th {
-            background-color: #3498db;
-            color: white;
+            background-color: #2a2a2a;
+            color: #ff4081;
+            font-weight: 700;
         }
         tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background-color: #252525;
         }
-        .chart-container {
-            position: relative;
-            margin: 20px auto;
-            height: 300px;
-            width: 100%;
+        .risk-low {
+            background-color: #00c853;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
         }
-        .recommendation-box {
-            border-left: 4px solid #3498db;
-            padding: 15px;
-            margin: 15px 0;
-            background-color: #f8f9fa;
+        .risk-high {
+            background-color: #d50000;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
         }
-        .top-performers {
+        .summary-cards {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
             flex-wrap: wrap;
-            margin: 30px 0;
+            gap: 20px;
+            margin-bottom: 30px;
         }
-        .top-performer {
+        .summary-card {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border-left: 5px solid #00e5ff;
+            padding: 20px;
+            border-radius: 10px;
             flex: 1;
-            min-width: 250px;
-            margin: 10px;
+            min-width: 280px;
+            box-shadow: 5px 5px 15px #0a0a0a, -5px -5px 15px #303030;
+        }
+        .summary-card h3 {
+            margin-top: 0;
+            color: #00e5ff;
+            border-bottom: none;
+        }
+        .summary-card .ticker {
+            font-size: 2em;
+            font-weight: bold;
+            color: #fff;
+        }
+        .summary-card .reason {
+            color: #ccc;
+            font-size: 0.9em;
+        }
+        .ticker-section {
+            background-color: #242424;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 10px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .grid-item {
+            background-color: #2c2c2c;
             padding: 15px;
             border-radius: 8px;
-            background: linear-gradient(135deg, #3498db, #2c3e50);
-            color: white;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
-        .top-performer h3 {
-            color: white;
+        .grid-item h4 {
             margin-top: 0;
+            border-bottom: 1px solid #444;
+            color: #e0e0e0;
         }
-        .sentiment-bubble {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            margin-left: 5px;
+        ul {
+            list-style-type: '✓ ';
+            padding-left: 20px;
         }
-        .positive-bubble {
-            background-color: #27ae60;
-            color: white;
+        .social-mention {
+            border: 1px solid #444;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #333;
         }
-        .negative-bubble {
-            background-color: #e74c3c;
-            color: white;
-        }
-        .neutral-bubble {
-            background-color: #f39c12;
-            color: white;
-        }
-        .priority-indicator {
-            font-size: 1.2em;
+        .social-mention .source {
             font-weight: bold;
-            margin-left: 5px;
+            color: #ff4081;
         }
-        .priority-high {
-            color: #e74c3c;
+        .sentiment-bullish { color: #00c853; font-weight: bold; }
+        .sentiment-bearish { color: #d50000; font-weight: bold; }
+        .sentiment-neutral { color: #f5f5f5; font-weight: bold; }
+
+        /* Chart Styles */
+        .chart-container {
+            margin-top: 15px;
         }
-        .priority-medium {
-            color: #f39c12;
+        .chart-title {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-bottom: 5px;
         }
-        .priority-low {
-            color: #27ae60;
+        .bar-background {
+            background-color: #444;
+            border-radius: 5px;
+            height: 20px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .bar-foreground {
+            background: linear-gradient(90deg, #ff4081, #00e5ff);
+            height: 100%;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 5px;
+            color: #fff;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .recommendation-score {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #fff;
         }
     </style>
 </head>
 <body>
-    <h1>📈 Stock Analysis Report - August 2025 📉</h1>
-    
-    <div class="card">
-        <h2>Executive Summary</h2>
-        <p>This report analyzes 30 stocks based on political activity, social sentiment, and technical indicators. Key findings:</p>
-        <ul>
-            <li><strong>Top Political Buy:</strong> MKL (Markel Corp) with 2 transactions by French Hill (Republican)</li>
-            <li><strong>Most Social Buzz:</strong> MDAI with bullish sentiment in detailed Reddit analysis</li>
-            <li><strong>Best Short-Term Play:</strong> OPEN shows strong momentum for day trading</li>
-            <li><strong>Best Long-Term Play:</strong> PLTR demonstrates significant growth potential</li>
-        </ul>
+
+    <div class="container">
+        <h1>Penny Lane
+            <span class="subtitle">Your AI-Powered Financial Edge | August 5, 2025</span>
+        </h1>
+
+        <h2>Executive Summary & Top Picks</h2>
+        <p>This report analyzes multiple stock tickers based on a comprehensive dataset including political trades, social media sentiment, risk analysis, and AI-driven recommendations. The stocks are ranked primarily by political buying activity, followed by social media mentions, as these factors often precede significant market movements.</p>
+
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3>Best for 24-Hour Trade</h3>
+                <span class="ticker">$YOLO</span>
+                <p class="reason">Boasts the highest day-trading score (0.97) driven by strong positive momentum, high volatility for entry/exit points, and a "Low Risk" profile. Reddit mentions indicate retail interest, adding to short-term potential.</p>
+            </div>
+            <div class="summary-card">
+                <h3>Best for 1-Month Investment</h3>
+                <span class="ticker">$PSTV</span>
+                <p class="reason">Exhibits an exceptionally high month-trading score (1.77) and staggering 100% momentum. Intense, bullish social media chatter about upcoming catalysts and commercialization provides a strong narrative for mid-term growth.</p>
+            </div>
+            <div class="summary-card">
+                <h3>Best for 1-Year Investment</h3>
+                <span class="ticker">$UAMY</span>
+                <p class="reason">Features a massive year-trading score of 3.26 and an astronomical 997% gain from its low. Positioned in the strategic Antimony sector, it benefits from geopolitical tailwinds and has a strong "Low Risk" profile, making it a prime candidate for long-term appreciation.</p>
+            </div>
+        </div>
+
+        <h2>Ranked Ticker Analysis</h2>
+        <p>Tickers are sorted by the most potent leading indicators: <strong>1. Politician Buys</strong>, then <strong>2. Reddit Mentions</strong>, and finally <strong>3. Social Media Sentiment</strong>.</p>
+
+        <div class="ticker-section">
+            <h2>$KO - The Coca-Cola Co</h2>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <h4>Key Metrics</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$68.96</td></tr>
+                        <tr><th>Previous Close</th><td>$68.86</td></tr>
+                        <tr><th>Volume</th><td>10,694,100</td></tr>
+                        <tr><th>5-Day SMA</th><td>$68.57</td></tr>
+                    </table>
+                </div>
+                <div class="grid-item">
+                    <h4>Risk Analysis</h4>
+                    <p><span class="risk-low">Low Risk (Likely to make money)</span></p>
+                    <ul>
+                        <li>Current price is above the 5-day SMA.</li>
+                        <li>High trading activity, which might indicate interest.</li>
+                        <li>Current price is higher than the previous close.</li>
+                        <li>This stock has multiple positive signals, making it a favorable choice.</li>
+                    </ul>
+                </div>
+                <div class="grid-item">
+                    <h4>Political Activity (1 Buy)</h4>
+                    <table>
+                        <tr><th>Name</th><td>Lloyd Doggett (Democrat)</td></tr>
+                        <tr><th>Transaction</th><td>BUY (1K–15K)</td></tr>
+                        <tr><th>Date</th><td>Today</td></tr>
+                    </table>
+                </div>
+            </div>
+            <h3>AI Recommendations</h3>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <h4>Day Trading <span class="recommendation-score">0.94</span></h4>
+                    <p>High volatility offers day trading opportunities, potential bounce from oversold conditions.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Upside to Target ($75.84)</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 90%;">10.00%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <h4>Month Trading <span class="recommendation-score">1.00</span></h4>
+                    <p>Significant gap to target price suggests growth potential.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Volatility</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 47.5%;">4.75%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <h4>Year Trading <span class="recommendation-score">0.13</span></h4>
+                    <p>Analysts project significant long-term growth.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Recovery from High</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 92.69%;">-7.31%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ticker-section">
+            <h2>$META - Meta Platforms Inc</h2>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <h4>Key Metrics</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$776.37</td></tr>
+                        <tr><th>Previous Close</th><td>$750.01</td></tr>
+                        <tr><th>Volume</th><td>15,763,800</td></tr>
+                        <tr><th>5-Day SMA</th><td>$766.61</td></tr>
+                    </table>
+                </div>
+                <div class="grid-item">
+                    <h4>Risk Analysis</h4>
+                    <p><span class="risk-low">Low Risk (Likely to make money)</span></p>
+                    <ul>
+                        <li>Current price is above the 5-day SMA.</li>
+                        <li>High trading activity, which might indicate interest.</li>
+                        <li>Current price is higher than the previous close.</li>
+                        <li>This stock has multiple positive signals, making it a favorable choice.</li>
+                    </ul>
+                </div>
+                <div class="grid-item">
+                    <h4>Political Activity (1 Buy)</h4>
+                    <table>
+                        <tr><th>Name</th><td>Shelley Moore Capito (Republican)</td></tr>
+                        <tr><th>Transaction</th><td>BUY (1K–15K)</td></tr>
+                        <tr><th>Date</th><td>Yesterday</td></tr>
+                    </table>
+                </div>
+            </div>
+             <h3>AI Recommendations</h3>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <h4>Day Trading <span class="recommendation-score">0.89</span></h4>
+                    <p>High volatility offers day trading opportunities, strong positive momentum.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Upside to Target ($845.64)</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 90%;">10.00%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <h4>Month Trading <span class="recommendation-score">1.02</span></h4>
+                    <p>Strong positive trend that may continue, significant gap to target price suggests growth potential.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Momentum</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 41.6%;">4.16%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <h4>Year Trading <span class="recommendation-score">0.29</span></h4>
+                    <p>Analysts project significant long-term growth.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Growth from Low</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 60.61%;">60.61%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ticker-section">
+            <h2>$GOOGL - Alphabet Inc</h2>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <h4>Key Metrics</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$195.04</td></tr>
+                        <tr><th>Previous Close</th><td>$189.13</td></tr>
+                        <tr><th>Volume</th><td>31,503,400</td></tr>
+                        <tr><th>5-Day SMA</th><td>$192.02</td></tr>
+                    </table>
+                </div>
+                <div class="grid-item">
+                    <h4>Risk Analysis</h4>
+                    <p><span class="risk-low">Low Risk (Likely to make money)</span></p>
+                    <ul>
+                        <li>Current price is above the 5-day SMA.</li>
+                        <li>High trading activity, which might indicate interest.</li>
+                        <li>Current price is higher than the previous close.</li>
+                        <li>This stock has multiple positive signals, making it a favorable choice.</li>
+                    </ul>
+                </div>
+                <div class="grid-item">
+                    <h4>Political Activity (1 Buy)</h4>
+                    <table>
+                        <tr><th>Name</th><td>Shelley Moore Capito (Republican)</td></tr>
+                        <tr><th>Transaction</th><td>BUY (1K–15K)</td></tr>
+                        <tr><th>Date</th><td>Yesterday</td></tr>
+                    </table>
+                </div>
+            </div>
+            <h3>AI Recommendations</h3>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <h4>Day Trading <span class="recommendation-score">0.95</span></h4>
+                    <p>High volatility, strong positive momentum, significant upside potential.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Momentum</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 100%;">11.11%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <h4>Month Trading <span class="recommendation-score">1.10</span></h4>
+                    <p>Strong positive trend that may continue, significant gap to target.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Upside to Target ($215.39)</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 90%;">10.00%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <h4>Year Trading <span class="recommendation-score">0.25</span></h4>
+                    <p>Analysts project significant long-term growth.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Growth from Low</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 39.33%;">39.33%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ticker-section">
+            <h2>$PLTR - Palantir Technologies Inc.</h2>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <h4>Key Metrics</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$160.66</td></tr>
+                        <tr><th>Previous Close</th><td>$154.27</td></tr>
+                        <tr><th>Volume</th><td>80,998,000</td></tr>
+                        <tr><th>5-Day SMA</th><td>$157.76</td></tr>
+                    </table>
+                </div>
+                <div class="grid-item">
+                    <h4>Risk Analysis</h4>
+                    <p><span class="risk-low">Low Risk (Likely to make money)</span></p>
+                    <ul>
+                        <li>Current price is above the 5-day SMA.</li>
+                        <li>High trading activity, which might indicate interest.</li>
+                        <li>Current price is higher than the previous close.</li>
+                        <li>This stock has multiple positive signals, making it a favorable choice.</li>
+                    </ul>
+                </div>
+                <div class="grid-item">
+                    <h4>Social Mentions (2)</h4>
+                    <div class="social-mention">
+                        <p class="sentiment-neutral">PLTR 160c and 170c 8/8 GAINS loading...</p>
+                    </div>
+                     <div class="social-mention">
+                        <p class="sentiment-neutral">PLTR haters gonna hate. loading...</p>
+                    </div>
+                </div>
+            </div>
+            <h3>AI Recommendations</h3>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <h4>Day Trading <span class="recommendation-score">0.84</span></h4>
+                    <p>High volatility, strong positive momentum, significant upside potential.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Volatility</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 100%;">17.37%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <h4>Month Trading <span class="recommendation-score">1.17</span></h4>
+                    <p>Strong positive trend that may continue, significant gap to target.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Momentum</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 100%;">27.11%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <h4>Year Trading <span class="recommendation-score">1.91</span></h4>
+                    <p>Analysts project significant long-term growth.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Growth from Low</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 100%;">577.63%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ticker-section">
+            <h2>$PSTV - Plus Therapeutics, Inc.</h2>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <h4>Key Metrics</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$0.74</td></tr>
+                        <tr><th>Previous Close</th><td>$0.59</td></tr>
+                        <tr><th>Volume</th><td>38,107,400</td></tr>
+                        <tr><th>5-Day SMA</th><td>$0.60</td></tr>
+                    </table>
+                </div>
+                <div class="grid-item">
+                    <h4>Risk Analysis</h4>
+                    <p><span class="risk-low">Low Risk (Likely to make money)</span></p>
+                    <ul>
+                        <li>Current price is above the 5-day SMA.</li>
+                        <li>High trading activity, which might indicate interest.</li>
+                        <li>Current price is higher than the previous close.</li>
+                    </ul>
+                </div>
+                 <div class="grid-item">
+                    <h4>Social Mentions (2)</h4>
+                    <div class="social-mention">
+                        <p><span class="source">Reddit - Penny Stocks</span> (<span class="sentiment-bullish">Bullish</span>)</p>
+                        <p>Holding PSTV? Don’t even think about selling. This might be your last shot under $1... driven by LIVE data and catalysts.</p>
+                    </div>
+                     <div class="social-mention">
+                        <p><span class="source">Reddit - Penny Stocks</span> (<span class="sentiment-bullish">Bullish</span>)</p>
+                        <p>Undervalued. Underrated. Unstoppable. PSTV Could 15x This Month! This Tiny Stock Just Changed Cancer Treatment Forever.</p>
+                    </div>
+                </div>
+            </div>
+            <h3>AI Recommendations</h3>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <h4>Day Trading <span class="recommendation-score">0.93</span></h4>
+                    <p>High volatility, strong positive momentum, significant upside potential.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Volatility</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 90%;">31.34%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <h4>Month Trading <span class="recommendation-score">1.77</span></h4>
+                    <p>Strong positive trend that may continue, significant gap to target.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Momentum</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 100%;">100.86%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <h4>Year Trading <span class="recommendation-score">1.42</span></h4>
+                    <p>Recovery potential, has shown strength from lows, analysts project significant long-term growth.</p>
+                     <div class="chart-container">
+                        <div class="chart-title">Growth from Low</div>
+                        <div class="bar-background">
+                            <div class="bar-foreground" style="width: 100%;">339.37%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
     </div>
 
-    <div class="top-performers">
-        <div class="top-performer">
-            <h3>⭐ Best 24-Hour Investment</h3>
-            <h4>OPEN <span class="priority-indicator priority-high">↑ 5.33%</span></h4>
-            <p>Strong positive momentum with 312.76% monthly growth</p>
-            <p>High trading volume indicates strong interest</p>
-        </div>
-        <div class="top-performer">
-            <h3>📅 Best 1-Month Investment</h3>
-            <h4>GALT <span class="priority-indicator priority-medium">↑ 66.82%</span></h4>
-            <p>Potential treatment for cirrhosis with strong institutional backing</p>
-            <p>382.19% growth from lows</p>
-        </div>
-        <div class="top-performer">
-            <h3>📊 Best 1-Year Investment</h3>
-            <h4>PLTR <span class="priority-indicator priority-low">↑ 647.55%</span></h4>
-            <p>Significant long-term growth potential</p>
-            <p>Strong fundamentals and market position</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>Top Stocks by Priority (Political Activity + Social Sentiment)</h2>
-        <div class="chart-container">
-            <canvas id="priorityChart"></canvas>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Ticker</th>
-                    <th>Political Activity</th>
-                    <th>Reddit Mentions</th>
-                    <th>Social Sentiment</th>
-                    <th>Current Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>MKL</td>
-                    <td>2 (French Hill - R)</td>
-                    <td>0</td>
-                    <td>N/A</td>
-                    <td>$1929.87</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>PODD</td>
-                    <td>1 (Markwayne Mullin - R)</td>
-                    <td>0</td>
-                    <td>N/A</td>
-                    <td>$284.91</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>MDAI</td>
-                    <td>0</td>
-                    <td>1</td>
-                    <td><span class="sentiment-bubble positive-bubble">Bullish</span></td>
-                    <td>$2.36</td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>NCNA</td>
-                    <td>0</td>
-                    <td>2</td>
-                    <td><span class="sentiment-bubble positive-bubble">Bullish</span></td>
-                    <td>$0.04</td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td>COIN</td>
-                    <td>0</td>
-                    <td>1</td>
-                    <td><span class="sentiment-bubble positive-bubble">Positive</span></td>
-                    <td>$314.69</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="card">
-        <h2>Risk Analysis Overview</h2>
-        <div class="chart-container">
-            <canvas id="riskChart"></canvas>
-        </div>
-        <p>Key:</p>
-        <ul>
-            <li><span class="positive">Low Risk (Green)</span>: Current price above 5-day SMA and previous close</li>
-            <li><span class="negative">High Risk (Red)</span>: Current price below 5-day SMA and previous close</li>
-        </ul>
-    </div>
-
-    <h2>Detailed Ticker Analysis</h2>
-
-    <!-- MKL -->
-    <div class="ticker-header">MKL - Markel Corp</div>
-    <div class="card">
-        <h3>Political Activity</h3>
-        <table>
-            <tr>
-                <th>Politician</th>
-                <th>Party</th>
-                <th>Transaction</th>
-                <th>Size</th>
-                <th>Price</th>
-            </tr>
-            <tr>
-                <td>French Hill</td>
-                <td>RepublicanHouseAR</td>
-                <td>BUY (25 Jul 2025)</td>
-                <td>15K–50K</td>
-                <td>$1,984.74</td>
-            </tr>
-            <tr>
-                <td>French Hill</td>
-                <td>RepublicanHouseAR</td>
-                <td>BUY (25 Jul 2025)</td>
-                <td>50K–100K</td>
-                <td>$1,984.74</td>
-            </tr>
-        </table>
-
-        <h3>Risk Analysis</h3>
-        <p class="negative">High Risk (Less likely to make money)</p>
-        <ul>
-            <li>Current price ($1929.87) is below the 5-day SMA ($1981.58)</li>
-            <li>Current price is lower than the previous close ($2008.29)</li>
-            <li>Low trading volume (94,300)</li>
-        </ul>
-
-        <h3>Recommendations</h3>
-        <div class="recommendation-box">
-            <p><strong>Day Trading:</strong> Score 0.93 - High volatility offers opportunities, potential bounce from oversold conditions</p>
-            <p><strong>Month Trading:</strong> Score 0.99 - Significant gap to target price ($2145.57) suggests growth potential</p>
-            <p><strong>Year Trading:</strong> Score 0.19 - Analysts project long-term growth but currently below highs</p>
-        </div>
-    </div>
-
-    <!-- PODD -->
-    <div class="ticker-header">PODD - Insulet Corp</div>
-    <div class="card">
-        <h3>Political Activity</h3>
-        <table>
-            <tr>
-                <th>Politician</th>
-                <th>Party</th>
-                <th>Transaction</th>
-                <th>Size</th>
-                <th>Price</th>
-            </tr>
-            <tr>
-                <td>Markwayne Mullin</td>
-                <td>RepublicanSenateOK</td>
-                <td>BUY (30 Jul 2025)</td>
-                <td>1K–15K</td>
-                <td>$286.38</td>
-            </tr>
-        </table>
-
-        <h3>Risk Analysis</h3>
-        <p class="negative">High Risk (Less likely to make money)</p>
-        <ul>
-            <li>Current price ($284.91) is below the 5-day SMA ($290.53)</li>
-            <li>Current price is lower than the previous close ($288.40)</li>
-            <li>Low trading volume (567,400)</li>
-        </ul>
-
-        <h3>Recommendations</h3>
-        <div class="recommendation-box">
-            <p><strong>Day Trading:</strong> Score 0.81 - High volatility offers opportunities, potential bounce from oversold conditions</p>
-            <p><strong>Month Trading:</strong> Score 0.89 - Significant gap to target price ($316.89) suggests growth potential</p>
-            <p><strong>Year Trading:</strong> Score 0.27 - Has shown strength from lows but still has room to previous highs</p>
-        </div>
-    </div>
-
-    <!-- MDAI -->
-    <div class="ticker-header">MDAI - Spectral AI</div>
-    <div class="card">
-        <h3>Social Mentions</h3>
-        <p><span class="sentiment-bubble positive-bubble">Bullish</span> Reddit - Penny Stocks (95.3% accurate gov-backed AI, FDA submission confirmed)</p>
-
-        <h3>Risk Analysis</h3>
-        <p class="negative">High Risk (Less likely to make money)</p>
-        <ul>
-            <li>Current price ($2.36) is below the 5-day SMA ($2.43)</li>
-            <li>Current price is lower than the previous close ($2.48)</li>
-            <li>Low trading volume (402,000)</li>
-        </ul>
-
-        <h3>Recommendations</h3>
-        <div class="recommendation-box">
-            <p><strong>Day Trading:</strong> Score 0.48 - High volatility offers opportunities</p>
-            <p><strong>Month Trading:</strong> Score 0.77 - Significant gap to target price ($2.67)</p>
-            <p><strong>Year Trading:</strong> Score 0.68 - Currently well below 52-week high (-25.38%)</p>
-        </div>
-    </div>
-
-    <!-- More tickers would follow the same pattern -->
-
-    <div class="card">
-        <h2>Final Recommendations</h2>
-        <h3>Top Picks Based on Analysis</h3>
-        <table>
-            <tr>
-                <th>Time Horizon</th>
-                <th>Ticker</th>
-                <th>Reason</th>
-                <th>Target Price</th>
-                <th>Upside</th>
-            </tr>
-            <tr>
-                <td>Short-Term (1-5 days)</td>
-                <td>OPEN</td>
-                <td>Strong momentum, high volume</td>
-                <td>$2.42</td>
-                <td class="positive">10.00%</td>
-            </tr>
-            <tr>
-                <td>Medium-Term (1 month)</td>
-                <td>GALT</td>
-                <td>Potential medical breakthrough, strong sentiment</td>
-                <td>$3.87</td>
-                <td class="positive">10.00%</td>
-            </tr>
-            <tr>
-                <td>Long-Term (1 year)</td>
-                <td>PLTR</td>
-                <td>Established growth trajectory, institutional interest</td>
-                <td>$174.58</td>
-                <td class="positive">10.00%</td>
-            </tr>
-        </table>
-
-        <h3>General Advice</h3>
-        <ul>
-            <li>Monitor political activity closely - stocks with recent politician buys (especially MKL, PODD) warrant attention</li>
-            <li>Consider social sentiment - MDAI and NCNA show strong community interest</li>
-            <li>Balance high-risk plays (like OPEN) with more stable investments (like NVT)</li>
-            <li>Watch for earnings reports and FDA decisions on biotech stocks (GALT, MDAI)</li>
-        </ul>
-    </div>
-
-    <script>
-        // Priority Chart
-        const priorityCtx = document.getElementById('priorityChart').getContext('2d');
-        const priorityChart = new Chart(priorityCtx, {
-            type: 'bar',
-            data: {
-                labels: ['MKL', 'PODD', 'MDAI', 'NCNA', 'COIN'],
-                datasets: [{
-                    label: 'Political Activity',
-                    data: [2, 1, 0, 0, 0],
-                    backgroundColor: '#3498db'
-                }, {
-                    label: 'Reddit Mentions',
-                    data: [0, 0, 1, 2, 1],
-                    backgroundColor: '#e74c3c'
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        stacked: true,
-                    },
-                    y: {
-                        stacked: true
-                    }
-                }
-            }
-        });
-
-        // Risk Chart
-        const riskCtx = document.getElementById('riskChart').getContext('2d');
-        const riskChart = new Chart(riskCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Low Risk', 'High Risk'],
-                datasets: [{
-                    data: [5, 25],
-                    backgroundColor: ['#27ae60', '#e74c3c']
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                    }
-                }
-            }
-        });
-    </script>
 </body>
 </html>
