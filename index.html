@@ -18,16 +18,16 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e9eafc 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #e3e8ee 100%);
             color: #222;
         }
         .hero {
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #5e81ac 0%, #a3be8c 100%);
             color: #fff;
             text-align: center;
             padding: 60px 20px 40px 20px;
             border-radius: 0 0 40px 40px;
-            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.12);
+            box-shadow: 0 8px 32px rgba(94, 129, 172, 0.12);
             margin-bottom: 30px;
         }
         .hero h1 {
@@ -35,7 +35,7 @@
             font-size: 3em;
             font-weight: 900;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.12);
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.10);
         }
         .hero .subtitle {
             font-size: 1.3em;
@@ -52,21 +52,35 @@
             margin-bottom: 0;
             border-radius: 0;
         }
+        .navbar-nav {
+            float: right !important;
+        }
+        .navbar-header {
+            float: left !important;
+        }
+        @media (max-width: 768px) {
+            .navbar-nav {
+                float: none !important;
+            }
+            .navbar-header {
+                float: none !important;
+            }
+        }
         .container {
             max-width: 1100px;
             margin: 0 auto;
             padding: 20px;
         }
         .box {
-            background: #fff;
-            border-radius: 18px;
-            box-shadow: 0 4px 24px rgba(102, 126, 234, 0.08);
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
             margin-bottom: 30px;
             padding: 30px 24px;
         }
         .box h2 {
             font-family: 'Orbitron', monospace;
-            color: #667eea;
+            color: #5e81ac;
             font-size: 1.6em;
             margin-bottom: 18px;
         }
@@ -80,11 +94,16 @@
             text-align: center;
             color: #fff;
             padding: 30px;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #5e81ac 0%, #a3be8c 100%);
             border-radius: 20px 20px 0 0;
             margin-top: 40px;
             font-size: 1.1em;
-            box-shadow: 0 -4px 24px rgba(102, 126, 234, 0.08);
+            box-shadow: 0 -4px 24px rgba(94, 129, 172, 0.07);
+        }
+        hr, .tagline-divider {
+            border: none;
+            border-top: 2px solid #a3be8c;
+            margin: 18px 0;
         }
         @media (max-width: 900px) {
             .hero h1 {
@@ -120,6 +139,9 @@
                 border-radius: 10px 10px 0 0;
                 font-size: 0.95em;
             }
+            hr, .tagline-divider {
+                margin: 10px 0;
+            }
         }
     </style>
 
@@ -131,7 +153,7 @@
         <h1>Doug Molineux</h1>
         <div class="subtitle">Senior Software Engineer</div>
         <div class="brand">dougmolineux.github.io</div>
-        <div class="address-bar">Coder | Hacker</div>
+        
     </section>
 
     <!-- Navigation -->
@@ -184,45 +206,23 @@
         <div class="row">
             <div class="box">
                 <div class="col-lg-12 text-center">
-                    <div id="carousel-example-generic" class="carousel slide">
-                        <!-- Indicators -->
-                        <ol class="carousel-indicators hidden-xs">
-                            <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-                            <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-                            <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-                        </ol>
-
-                        <!-- Wrapper for slides -->
-                        <div class="carousel-inner">
-                            <div class="item active">
-                                <img class="img-responsive img-full" src="img/slide-1.jpg" alt="">
-                            </div>
-                            <div class="item">
-                                <img class="img-responsive img-full" src="img/slide-2.jpg" alt="">
-                            </div>
-                            <div class="item">
-                                <img class="img-responsive img-full" src="img/slide-3.jpg" alt="">
-                            </div>
-                        </div>
-
-                        <!-- Controls -->
-                        <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
-                            <span class="icon-prev"></span>
-                        </a>
-                        <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
-                            <span class="icon-next"></span>
-                        </a>
+                    <!-- SVG Terminal Window -->
+                    <div style="display:flex; justify-content:center; align-items:center; margin-bottom:24px;">
+                        <svg width="340" height="120" viewBox="0 0 340 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+                            <rect x="2" y="2" width="336" height="116" rx="14" fill="#222" stroke="#5e81ac" stroke-width="4"/>
+                            <rect x="2" y="2" width="336" height="28" rx="10" fill="#3a4756"/>
+                            <circle cx="22" cy="16" r="5" fill="#f56565"/>
+                            <circle cx="38" cy="16" r="5" fill="#FFD700"/>
+                            <circle cx="54" cy="16" r="5" fill="#48bb78"/>
+                            <rect x="70" y="10" width="60" height="12" rx="6" fill="#667eea" opacity="0.3"/>
+                            <text x="30" y="60" fill="#fff" font-family="'Fira Mono', monospace" font-size="22">$ echo "Hello, world!"</text>
+                            <text x="30" y="90" fill="#FFD700" font-family="'Fira Mono', monospace" font-size="18">Hello, world!</text>
+                        </svg>
                     </div>
                     <h2 class="brand-before">
                         <small>Senior Software Engineer</small>
                     </h2>
                     <h1 class="brand-name">doug.molineux</h1>
-                    <hr class="tagline-divider">
-                    <h2>
-                        <small>
-                            <strong>Coder | Hacker</strong>
-                        </small>
-                    </h2>
                 </div>
             </div>
         </div>
