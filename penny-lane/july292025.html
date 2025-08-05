@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Analysis Report - July 29, 2025</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5em;
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF6347);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header .subtitle {
+            font-size: 1.3em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .summary-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+        }
+        
+        .summary-card h3 {
+            font-family: 'Orbitron', monospace;
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .best-picks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .pick-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+        }
+        
+        .pick-card h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .ticker-symbol {
+            font-size: 2.5em;
+            font-weight: 900;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+        
+        .stock-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .stock-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .stock-ticker {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .stock-price {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .risk-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .low-risk {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+        
+        .high-risk {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            color: white;
+        }
+        
+        .metrics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .metrics-table th,
+        .metrics-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .metrics-table th {
+            background: rgba(102, 126, 234, 0.1);
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        
+        .recommendation {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-style: italic;
+            box-shadow: 0 4px 20px rgba(79, 172, 254, 0.3);
+        }
+        
+        .political-activity {
+            background: rgba(255, 215, 0, 0.1);
+            border-left: 4px solid #FFD700;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .reddit-mentions {
+            background: rgba(255, 69, 0, 0.1);
+            border-left: 4px solid #FF4500;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 40px;
+        }
+        
+        .gainer-badge {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        /* Penny Lane Header Styles */
+        .penny-header {
+            width: 100%;
+            background: linear-gradient(90deg, #FFD700 0%, #764ba2 100%);
+            color: #fff;
+            text-align: center;
+            padding: 40px 10px 20px 10px;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 6px 24px rgba(102, 126, 234, 0.15);
+            margin-bottom: 20px;
+        }
+        .penny-header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 3em;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.18);
+        }
+        .penny-subheader {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1em;
+            font-weight: 400;
+            opacity: 0.85;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        @media (max-width: 900px) {
+            .container {
+                padding: 8px;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+            .header {
+                padding: 18px;
+            }
+            .summary-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .best-picks {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+            .stock-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+            .stock-card {
+                padding: 18px;
+            }
+            .pick-card {
+                padding: 18px;
+            }
+            .metrics-table th, .metrics-table td {
+                padding: 8px 7px;
+                font-size: 0.95em;
+            }
+            .footer {
+                padding: 18px;
+            }
+            .chart-container {
+                height: 220px;
+                padding: 10px;
+            }
+            .penny-header {
+                padding: 24px 5px 12px 5px;
+            }
+            .penny-header h1 {
+                font-size: 2em;
+            }
+            .penny-subheader {
+                font-size: 0.95em;
+            }
+        }
+        @media (max-width: 500px) {
+            .container {
+                padding: 2px;
+            }
+            .header h1 {
+                font-size: 1.3em;
+            }
+            .header {
+                padding: 8px;
+            }
+            .summary-card, .stock-card, .pick-card {
+                padding: 10px;
+                border-radius: 10px;
+            }
+            .summary-grid, .best-picks, .stock-grid {
+                gap: 8px;
+            }
+            .metrics-table th, .metrics-table td {
+                padding: 5px 3px;
+                font-size: 0.85em;
+            }
+            .footer {
+                padding: 8px;
+                border-radius: 10px;
+            }
+            .chart-container {
+                height: 140px;
+                padding: 2px;
+            }
+            .penny-header {
+                padding: 12px 2px 6px 2px;
+                border-radius: 0 0 12px 12px;
+            }
+            .penny-header h1 {
+                font-size: 1.2em;
+            }
+            .penny-subheader {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Penny Lane Header -->
+        <header class="penny-header">
+            <h1>Penny Lane</h1>
+            <div class="penny-subheader">Developed by Doug Molineux</div>
+        </header>
+
+        <div class="header">
+            <h1>MARKET INTELLIGENCE</h1>
+            <div class="subtitle">Comprehensive Stock Analysis Report - July 29, 2025</div>
+            <div style="margin-top: 15px; opacity: 0.8;">Real-time Analysis of 32+ Tickers with AI-Powered Insights</div>
+        </div>
+
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h3>📊 Portfolio Overview</h3>
+                <p><strong>Total Tickers Analyzed:</strong> 32</p>
+                <p><strong>Low Risk Stocks:</strong> 7 (22%)</p>
+                <p><strong>High Risk Stocks:</strong> 25 (78%)</p>
+                <p><strong>Top Gainers Today:</strong> SOFI (+12.18%), TNFA (+12.08%), ENRT (+40.24%)</p>
+            </div>
+            
+            <div class="summary-card">
+                <h3>🏛️ Political Activity</h3>
+                <p><strong>Active Politicians:</strong> 8</p>
+                <p><strong>Most Active:</strong> French Hill (4 transactions)</p>
+                <p><strong>Largest Transaction:</strong> $50K-100K ranges</p>
+                <p><strong>Popular Sectors:</strong> Insurance, Tech, Cannabis</p>
+            </div>
+            
+            <div class="summary-card">
+                <h3>📱 Social Sentiment</h3>
+                <p><strong>Reddit Mentions:</strong> 18 stocks</p>
+                <p><strong>Bullish Sentiment:</strong> NEXM, NVNI, TNFA</p>
+                <p><strong>Most Discussed:</strong> MSTR, META, PLTR</p>
+                <p><strong>Neutral/Mixed:</strong> Majority showing neutral sentiment</p>
+            </div>
+        </div>
+
+        <div class="best-picks">
+            <div class="pick-card">
+                <h3>🚀 Best 24-Hour Play</h3>
+                <div class="ticker-symbol">OPEN</div>
+                <p><strong>Score:</strong> 0.17 (High Volatility Opportunity)</p>
+                <p><strong>Current Price:</strong> $2.34</p>
+                <p><strong>Momentum:</strong> +216.12%</p>
+                <p>Extreme volatility with massive momentum. High risk, high reward day trading opportunity.</p>
+            </div>
+            
+            <div class="pick-card">
+                <h3>📈 Best Monthly Investment</h3>
+                <div class="ticker-symbol">OPEN</div>
+                <p><strong>Score:</strong> 2.25</p>
+                <p><strong>Target Price:</strong> $2.27</p>
+                <p><strong>Volatility:</strong> 98.18%</p>
+                <p>Strong positive trend continuation expected with significant growth potential.</p>
+            </div>
+            
+            <div class="pick-card">
+                <h3>📊 Best Yearly Hold</h3>
+                <div class="ticker-symbol">ETH</div>
+                <p><strong>Score:</strong> 4.43</p>
+                <p><strong>From Low:</strong> +1396.84%</p>
+                <p><strong>Target:</strong> $39.19</p>
+                <p>Exceptional long-term growth trajectory with massive upside potential from current levels.</p>
+            </div>
+        </div>
+
+        <div class="stock-grid">
+            <!-- Low Risk Stocks -->
+            <div class="stock-card">
+                <div class="stock-header">
+                    <div class="stock-ticker">ETH</div>
+                    <div>
+                        <div class="stock-price">$35.78</div>
+                        <span class="risk-badge low-risk">Low Risk</span>
+                    </div>
+                </div>
+                
+                <div class="political-activity">
+                    <strong>🏛️ Political Activity:</strong> Mike Collins (R-GA) bought $1K-15K at $2,615.51
+                </div>
+                
+                <table class="metrics-table">
+                    <tr>
+                        <th>Metric</th>
+                        <th>Day Trading</th>
+                        <th>Month Trading</th>
+                        <th>Year Trading</th>
+                    </tr>
+                    <tr>
+                        <td>Score</td>
+                        <td>0.79</td>
+                        <td>1.29</td>
+                        <td><strong>4.43</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Volatility</td>
+                        <td>24.87%</td>
+                        <td>24.87%</td>
+                        <td>24.87%</td>
+                    </tr>
+                    <tr>
+                        <td>Momentum</td>
+                        <td>46.97%</td>
+                        <td>46.97%</td>
+                        <td>46.97%</td>
+                    </tr>
+                </table>
+                
+                <div class="recommendation">
+                    <strong>💡 Recommendation:</strong> ETH shows exceptional long-term potential with 1396.84% gain from lows. Strong momentum and high volatility create excellent trading opportunities across all timeframes.
+                </div>
+            </div>
+
+            <div class="stock-card">
+                <div class="stock-header">
+                    <div class="stock-ticker">AVGO</div>
+                    <div>
+                        <div class="stock-price">$294.30</div>
+                        <span class="risk-badge low-risk">Low Risk</span>
+                    </div>
+                </div>
+                
+                <div class="political-activity">
+                    <strong>🏛️ Political Activity:</strong> Josh Gottheimer (D-NJ) bought $1K-15K at $264.65
+                </div>
+                
+                <table class="metrics-table">
+                    <tr>
+                        <th>Timeframe</th>
+                        <th>Score</th>
+                        <th>Recommendation</th>
+                    </tr>
+                    <tr>
+                        <td>Day Trading</td>
+                        <td>0.85</td>
+                        <td>High volatility + strong momentum</td>
+                    </tr>
+                    <tr>
+                        <td>Month Trading</td>
+                        <td>1.14</td>
+                        <td>Positive trend continuation expected</td>
+                    </tr>
+                    <tr>
+                        <td>Year Trading</td>
+                        <td>0.57</td>
+                        <td>131.91% from lows, near highs</td>
+                    </tr>
+                </table>
+                
+                <div class="recommendation">
+                    <strong>💡 Analysis:</strong> Strong semiconductor play with 23.11% momentum and high institutional activity. Target price $327.81 suggests 10%+ upside.
+                </div>
+            </div>
+
+            <div class="stock-card">
+                <div class="stock-header">
+                    <div class="stock-ticker">SOFI</div>
+                    <div>
+                        <div class="stock-price">$21.02</div>
+                        <span class="risk-badge high-risk">High Risk</span>
+                        <span class="gainer-badge">TOP GAINER +12.18%</span>
+                    </div>
+                </div>
+                
+                <div class="reddit-mentions">
+                    <strong>📱 Reddit Buzz:</strong> "Weeeeeee 🚀$SOFI loading..." - Neutral sentiment
+                </div>
+                
+                <table class="metrics-table">
+                    <tr>
+                        <th>Key Metrics</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td>Current Price</td>
+                        <td>$23.58 (updated)</td>
+                    </tr>
+                    <tr>
+                        <td>Price Gain</td>
+                        <td>+$2.56 (+12.18%)</td>
+                    </tr>
+                    <tr>
+                        <td>Volume</td>
+                        <td>58.6M (High Activity)</td>
+                    </tr>
+                    <tr>
+                        <td>Year Score</td>
+                        <td>1.21 (Strong)</td>
+                    </tr>
+                </table>
+                
+                <div class="recommendation">
+                    <strong>💡 Hot Play:</strong> SOFI is experiencing massive momentum with 77.01% momentum score. High volatility (20.04%) creates excellent day trading opportunities. Strong year-long trajectory with 291.71% gains from lows.
+                </div>
+            </div>
+
+            <div class="stock-card">
+                <div class="stock-header">
+                    <div class="stock-ticker">PLTR</div>
+                    <div>
+                        <div class="stock-price">$157.88</div>
+                        <span class="risk-badge high-risk">High Risk</span>
+                    </div>
+                </div>
+                
+                <div class="political-activity">
+                    <strong>🏛️ Political Activity:</strong> Marjorie Taylor Greene (R-GA) bought $1K-15K at $148.58
+                </div>
+                
+                <div class="reddit-mentions">
+                    <strong>📱 Reddit Sentiment:</strong> "Going after the turd dragon 🐉 | $PLTR short loading..." - Neutral
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="pltrChart"></canvas>
+                </div>
+                
+                <div class="recommendation">
+                    <strong>💡 Analysis:</strong> PLTR shows incredible year-over-year performance with 637.66% gains from lows. High volatility (17.42%) and strong momentum (18.84%) make it attractive for all trading timeframes. Political backing adds confidence.
+                </div>
+            </div>
+
+            <div class="stock-card">
+                <div class="stock-header">
+                    <div class="stock-ticker">NVNI</div>
+                    <div>
+                        <div class="stock-price">$0.69</div>
+                        <span class="risk-badge low-risk">Low Risk</span>
+                    </div>
+                </div>
+                
+                <div class="reddit-mentions">
+                    <strong>📱 Social Buzz:</strong> "🚀 $NVNI up 60% today... and this is JUST the beginning" - Bullish sentiment with Oracle partnership news
+                </div>
+                
+                <table class="metrics-table">
+                    <tr>
+                        <th>Catalyst</th>
+                        <th>Impact</th>
+                    </tr>
+                    <tr>
+                        <td>Oracle Partnership</td>
+                        <td>Officially announced</td>
+                    </tr>
+                    <tr>
+                        <td>Q2 Earnings</td>
+                        <td>August 8th</td>
+                    </tr>
+                    <tr>
+                        <td>Acquisitions</td>
+                        <td>3 more planned</td>
+                    </tr>
+                    <tr>
+                        <td>Volume</td>
+                        <td>156.7M (Explosive)</td>
+                    </tr>
+                </table>
+                
+                <div class="recommendation">
+                    <strong>💡 Breakout Alert:</strong> NVNI showing massive 88.55% momentum with 360.90% gains from lows. Multiple catalysts including Oracle partnership and upcoming earnings make this a compelling medium-term play.
+                </div>
+            </div>
+
+            <div class="stock-card">
+                <div class="stock-header">
+                    <div class="stock-ticker">TNFA</div>
+                    <div>
+                        <div class="stock-price">$0.13</div>
+                        <span class="risk-badge low-risk">Low Risk</span>
+                        <span class="gainer-badge">TOP GAINER +12.08%</span>
+                    </div>
+                </div>
+                
+                <div class="reddit-mentions">
+                    <strong>📱 Reddit Hype:</strong> "Tiny Biotech, Big squeeze potential?" - Mixed sentiment, high short interest (18%)
+                </div>
+                
+                <table class="metrics-table">
+                    <tr>
+                        <th>Squeeze Metrics</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td>Float</td>
+                        <td>~14M (Micro)</td>
+                    </tr>
+                    <tr>
+                        <td>Short Interest</td>
+                        <td>18%</td>
+                    </tr>
+                    <tr>
+                        <td>Market Cap</td>
+                        <td>$1.6M</td>
+                    </tr>
+                    <tr>
+                        <td>Volume</td>
+                        <td>60.4M (High)</td>
+                    </tr>
+                </table>
+                
+                <div class="recommendation">
+                    <strong>💡 Squeeze Play:</strong> TNFA presents a classic short squeeze setup with micro float and 18% short interest. Phase 2B clinical trials in inflammation/sarcopenia could drive explosive moves. High risk, high reward biotech play.
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-card" style="margin: 40px 0;">
+            <h3>🎯 Key Trading Recommendations</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                <div style="background: rgba(72, 187, 120, 0.1); padding: 20px; border-radius: 10px; border-left: 4px solid #48bb78;">
+                    <h4 style="color: #48bb78; margin-bottom: 10px;">🟢 LOW RISK OPPORTUNITIES</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>• <strong>ETH:</strong> Best long-term hold (4.43 score)</li>
+                        <li>• <strong>AVGO:</strong> Strong semiconductor play</li>
+                        <li>• <strong>CVNA:</strong> Recovery momentum</li>
+                        <li>• <strong>META:</strong> Tech stability + growth</li>
+                        <li>• <strong>SPOT:</strong> Streaming dominance</li>
+                    </ul>
+                </div>
+                
+                <div style="background: rgba(245, 101, 101, 0.1); padding: 20px; border-radius: 10px; border-left: 4px solid #f56565;">
+                    <h4 style="color: #f56565; margin-bottom: 10px;">🔴 HIGH RISK / HIGH REWARD</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>• <strong>OPEN:</strong> Extreme volatility play</li>
+                        <li>• <strong>SOFI:</strong> Momentum continuation</li>
+                        <li>• <strong>TNFA:</strong> Biotech squeeze potential</li>
+                        <li>• <strong>NVNI:</strong> Oracle partnership catalyst</li>
+                        <li>• <strong>PLTR:</strong> AI/Defense play</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <h3 style="font-family: 'Orbitron', monospace; margin-bottom: 15px;">⚠️ Investment Disclaimer</h3>
+            <p>This analysis is for informational purposes only and does not constitute financial advice. Always conduct your own research and consider your risk tolerance before making investment decisions. Past performance does not guarantee future results.</p>
+            <p style="margin-top: 15px; opacity: 0.8;">Report generated on July 29, 2025 using real-time market data and AI analysis.</p>
+        </div>
+    </div>
+
+    <script>
+        // PLTR Performance Chart
+        const ctx = document.getElementById('pltrChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Day Trading', 'Month Trading', 'Year Trading'],
+                datasets: [{
+                    label: 'PLTR Trading Scores',
+                    data: [0.80, 1.08, 2.07],
+                    borderColor: 'rgb(102, 126, 234)',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 2.5,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
