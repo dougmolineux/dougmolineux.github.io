@@ -4,242 +4,589 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Penny Lane Financial Report</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --primary-accent: #0f3460;
+            --secondary-accent: #e94560;
+            --text-color: #e0e0e0;
+            --header-color: #ffffff;
+            --positive-color: #2ecc71;
+            --negative-color: #e74c3c;
+            --neutral-color: #f1c40f;
+            --border-color: #5372f0;
+        }
+
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
             padding: 20px;
+            line-height: 1.6;
         }
+
         .container {
             max-width: 1200px;
             margin: auto;
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: var(--primary-accent);
             padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
+
         .header {
             text-align: center;
-            border-bottom: 2px solid #e0e0e0;
+            border-bottom: 2px solid var(--border-color);
             padding-bottom: 20px;
             margin-bottom: 30px;
         }
+
         .header h1 {
-            font-family: 'Orbitron', sans-serif;
-            color: #1a237e;
+            font-family: 'Roboto Mono', monospace;
             font-size: 3em;
+            color: var(--header-color);
             margin: 0;
+            text-shadow: 0 0 10px var(--secondary-accent);
         }
+
         .header p {
             font-size: 1.2em;
-            color: #555;
+            color: var(--text-color);
             margin-top: 5px;
         }
-        h2 {
-            font-family: 'Orbitron', sans-serif;
-            color: #283593;
-            border-bottom: 1px solid #c5cae9;
+
+        h2, h3, h4 {
+            color: var(--header-color);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
             padding-bottom: 10px;
-            margin-top: 40px;
+            margin-top: 25px;
         }
-        h3 {
-            font-family: 'Roboto', sans-serif;
-            font-weight: 700;
-            color: #3949ab;
-            margin-top: 30px;
+
+        .summary p {
+            font-size: 1.1em;
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-left: 5px solid var(--secondary-accent);
+            border-radius: 5px;
         }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .chart-wrapper {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .chart-wrapper h3 {
+            text-align: center;
+            margin-top: 0;
+            border: none;
+        }
+
+        .bar-chart {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 200px;
+            padding: 10px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .bar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 50px;
+        }
+
+        .bar {
+            width: 40px;
+            border-radius: 5px 5px 0 0;
+            transition: height 0.5s ease-out;
+        }
+
+        .bar-label {
+            margin-top: 8px;
+            font-weight: bold;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .ticker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .ticker-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .ticker-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
+        }
+
+        .ticker-card h3 {
+            margin-top: 0;
+            color: var(--secondary-accent);
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.8em;
+            text-align: center;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 15px;
         }
+
         th, td {
-            padding: 12px 15px;
+            padding: 10px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid var(--primary-accent);
         }
+        
         th {
-            background-color: #e8eaf6;
-            color: #1a237e;
-            font-weight: 700;
+            font-weight: 600;
         }
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-        .positive-risk {
-            color: #2e7d32;
+
+        .risk-low {
+            color: var(--positive-color);
             font-weight: bold;
         }
-        .negative-risk {
-            color: #c62828;
+
+        .risk-high {
+            color: var(--negative-color);
             font-weight: bold;
         }
-        .summary, .recommendations {
-            background-color: #e3f2fd;
-            border-left: 5px solid #2196f3;
-            padding: 20px;
-            margin-top: 20px;
+
+        .social-mentions ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .social-mentions li {
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
             border-radius: 5px;
-        }
-        .chart-container {
-            width: 100%;
-            margin-top: 25px;
-        }
-        .chart-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-        }
-        .bar-chart {
-            display: flex;
-            align-items: center;
             margin-bottom: 8px;
-            font-size: 14px;
+            border-left: 3px solid;
         }
-        .bar-label {
-            width: 80px;
-            font-weight: bold;
-            color: #3949ab;
-        }
-        .bar-wrapper {
-            flex-grow: 1;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            height: 25px;
-        }
-        .bar {
-            height: 100%;
-            border-radius: 5px;
-            color: white;
-            text-align: right;
-            padding-right: 5px;
-            line-height: 25px;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-        .bar.politician { background-color: #4caf50; }
-        .bar.reddit { background-color: #ff9800; }
-        .bar.sentiment { background-color: #2196f3; }
-        .best-pick {
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 5px;
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #fff;
-        }
-        .best-24h { background-color: #ef5350; }
-        .best-1m { background-color: #66bb6a; }
-        .best-1y { background-color: #42a5f5; }
+
+        .sentiment-positive { border-color: var(--positive-color); }
+        .sentiment-negative { border-color: var(--negative-color); }
+        .sentiment-neutral { border-color: var(--neutral-color); }
 
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <header class="header">
             <h1>Penny Lane</h1>
-            <p>Your AI-Powered Financial Analytics Report</p>
-            <p><strong>Date:</strong> August 12, 2025</p>
-        </div>
+            <p>Your AI-Powered Financial Insights - August 20, 2025</p>
+        </header>
 
-        <div class="summary">
-            <h3>Overall Summary</h3>
-            <p>This report analyzes several stock tickers based on a combination of alternative data, including politician trades, social media mentions, and sentiment analysis. The primary sorting factor is <strong>politician buying activity</strong>, followed by Reddit mentions and social media sentiment. Based on this methodology, <strong>AERO</strong> emerges as the top-ranked stock due to the highest number of politician buys and strong social media metrics. <strong>CYBR</strong> and <strong>PLTR</strong> also show significant potential based on their respective strengths in social media buzz and a balance of positive indicators.</p>
-        </div>
+        <section class="summary">
+            <h2>Market Overview & Insights</h2>
+            <p>
+                Today's report highlights significant trading activity, with a strong focus on stocks being purchased by political figures. Senator Angus King's recent acquisitions across multiple sectors (tech, finance, energy) suggest a broad bullish outlook. Our analysis prioritizes these political trades as a key indicator of potential stock performance. We also observe notable social media sentiment shifts, with both bullish and bearish signals across various tickers. The data suggests that stocks with combined political interest and positive social momentum, like <strong>BAC</strong> and <strong>XOM</strong>, are positioned as lower-risk opportunities. Conversely, highly discussed but volatile tech stocks such as <strong>PLTR</strong> and <strong>NVDA</strong> present high-risk, high-reward scenarios.
+            </p>
+        </section>
 
-        <div class="recommendations">
-            <h3>Investment Recommendations</h3>
-            <div class="best-pick best-24h">
-                <strong>Best for 24-Hour Investment: CYBR</strong><br>
-                With the highest number of Reddit/WSB mentions (450) and a very high positive sentiment (0.91), CYBR is positioned for high short-term volatility and attention-driven price action.
+        <section class="recommendations">
+            <h2>Top Recommendations by Investment Horizon</h2>
+            <div class="charts-container">
+                <div class="chart-wrapper">
+                    <h3>Best for 24-Hour Trading</h3>
+                    <div class="bar-chart">
+                        <div class="bar-item">
+                            <div class="bar" style="height: 100%; background: linear-gradient(to top, #ff7e5f, #feb47b);"></div>
+                            <span class="bar-label">OPEN</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 69%; background: linear-gradient(to top, #6a11cb, #2575fc);"></div>
+                            <span class="bar-label">YOLO</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 62%; background: linear-gradient(to top, #00b09b, #96c93d);"></div>
+                            <span class="bar-label">LDI</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 59%; background: linear-gradient(to top, #fc5c7d, #6a82fb);"></div>
+                            <span class="bar-label">GOOGL</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 59%; background: linear-gradient(to top, #f857a6, #ff5858);"></div>
+                            <span class="bar-label">ANET</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <h3>Best for 1-Month Investment</h3>
+                    <div class="bar-chart">
+                        <div class="bar-item">
+                            <div class="bar" style="height: 100%; background: linear-gradient(to top, #ff7e5f, #feb47b);"></div>
+                            <span class="bar-label">OPEN</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 27%; background: linear-gradient(to top, #6a11cb, #2575fc);"></div>
+                            <span class="bar-label">YOLO</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 25%; background: linear-gradient(to top, #00b09b, #96c93d);"></div>
+                            <span class="bar-label">LDI</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 22%; background: linear-gradient(to top, #fc5c7d, #6a82fb);"></div>
+                            <span class="bar-label">UWMC</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 21%; background: linear-gradient(to top, #f857a6, #ff5858);"></div>
+                            <span class="bar-label">ANET</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <h3>Best for 1-Year Investment</h3>
+                    <div class="bar-chart">
+                        <div class="bar-item">
+                            <div class="bar" style="height: 100%; background: linear-gradient(to top, #ff7e5f, #feb47b);"></div>
+                            <span class="bar-label">ADIA</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 65%; background: linear-gradient(to top, #6a11cb, #2575fc);"></div>
+                            <span class="bar-label">OPEN</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 25%; background: linear-gradient(to top, #00b09b, #96c93d);"></div>
+                            <span class="bar-label">PLTR</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 20%; background: linear-gradient(to top, #fc5c7d, #6a82fb);"></div>
+                            <span class="bar-label">MBOT</span>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 12%; background: linear-gradient(to top, #f857a6, #ff5858);"></div>
+                            <span class="bar-label">YOLO</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="best-pick best-1m">
-                <strong>Best for 1-Month Investment: AERO</strong><br>
-                AERO strikes an excellent balance. It has the highest politician buy count (12), indicating strong insider confidence, combined with a significant number of Reddit mentions (320), suggesting sustained momentum for the medium term.
+        </section>
+
+        <section class="ticker-details">
+            <h2>Detailed Ticker Analysis (Ranked by Importance)</h2>
+            <div class="ticker-grid">
+                
+                <div class="ticker-card">
+                    <h3>AMD</h3>
+                    <h4>Key Data</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$166.55</td></tr>
+                        <tr><th>Previous Close</th><td>$176.14</td></tr>
+                        <tr><th>5-Day SMA</th><td>$173.4</td></tr>
+                        <tr><th>Volume</th><td>64,108,600</td></tr>
+                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
+                    </table>
+                    <h4>Political Activity</h4>
+                    <table>
+                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
+                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
+                    </table>
+                    <h4>Claude AI Recommendations</h4>
+                    <table>
+                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
+                        <tr><td>Day</td><td>0.85</td><td>high volatility offers day trading opportunities, strong positive momentum...</td></tr>
+                        <tr><td>Month</td><td>1.08</td><td>strong positive trend that may continue, significant gap to target price...</td></tr>
+                        <tr><td>Year</td><td>0.48</td><td>has shown strength from lows but still has room to previous highs...</td></tr>
+                    </table>
+                </div>
+                
+                <div class="ticker-card">
+                    <h3>GOOGL</h3>
+                    <h4>Key Data</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$201.57</td></tr>
+                        <tr><th>Previous Close</th><td>$203.5</td></tr>
+                        <tr><th>5-Day SMA</th><td>$202.99</td></tr>
+                        <tr><th>Volume</th><td>24,197,100</td></tr>
+                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
+                    </table>
+                    <h4>Political Activity</h4>
+                    <table>
+                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
+                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
+                    </table>
+                    <h4>Claude AI Recommendations</h4>
+                    <table>
+                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
+                        <tr><td>Day</td><td>0.96</td><td>high volatility offers day trading opportunities, strong positive momentum...</td></tr>
+                        <tr><td>Month</td><td>1.12</td><td>strong positive trend that may continue, significant gap to target price...</td></tr>
+                        <tr><td>Year</td><td>0.26</td><td>analysts project significant long-term growth.</td></tr>
+                    </table>
+                </div>
+                
+                <div class="ticker-card">
+                    <h3>AMAT</h3>
+                    <h4>Key Data</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$162.22</td></tr>
+                        <tr><th>Previous Close</th><td>$163.53</td></tr>
+                        <tr><th>5-Day SMA</th><td>$162.5</td></tr>
+                        <tr><th>Volume</th><td>8,898,000</td></tr>
+                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
+                    </table>
+                    <h4>Political Activity</h4>
+                    <table>
+                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
+                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
+                    </table>
+                    <h4>Claude AI Recommendations</h4>
+                    <table>
+                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
+                        <tr><td>Day</td><td>0.81</td><td>high volatility offers day trading opportunities, potential bounce from oversold...</td></tr>
+                        <tr><td>Month</td><td>0.85</td><td>significant gap to target price suggests growth potential.</td></tr>
+                        <tr><td>Year</td><td>0.15</td><td>currently trading well below its 52-week high, suggesting recovery potential...</td></tr>
+                    </table>
+                </div>
+                
+                <div class="ticker-card">
+                    <h3>ANET</h3>
+                    <h4>Key Data</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$132.78</td></tr>
+                        <tr><th>Previous Close</th><td>$138.04</td></tr>
+                        <tr><th>5-Day SMA</th><td>$136.04</td></tr>
+                        <tr><th>Volume</th><td>9,624,300</td></tr>
+                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
+                    </table>
+                    <h4>Political Activity</h4>
+                    <table>
+                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
+                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
+                    </table>
+                    <h4>Claude AI Recommendations</h4>
+                    <table>
+                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
+                        <tr><td>Day</td><td>0.96</td><td>high volatility offers day trading opportunities, strong positive momentum...</td></tr>
+                        <tr><td>Month</td><td>1.22</td><td>strong positive trend that may continue, significant gap to target price...</td></tr>
+                        <tr><td>Year</td><td>0.53</td><td>analysts project significant long-term growth.</td></tr>
+                    </table>
+                </div>
+                
+                <div class="ticker-card">
+                    <h3>ADSK</h3>
+                    <h4>Key Data</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$289.24</td></tr>
+                        <tr><th>Previous Close</th><td>$289.65</td></tr>
+                        <tr><th>5-Day SMA</th><td>$288.54</td></tr>
+                        <tr><th>Volume</th><td>1,170,100</td></tr>
+                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
+                    </table>
+                    <h4>Political Activity</h4>
+                    <table>
+                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
+                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
+                    </table>
+                    <h4>Claude AI Recommendations</h4>
+                    <table>
+                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
+                        <tr><td>Day</td><td>0.91</td><td>high volatility offers day trading opportunities, potential bounce from oversold...</td></tr>
+                        <tr><td>Month</td><td>0.95</td><td>significant gap to target price suggests growth potential.</td></tr>
+                        <tr><td>Year</td><td>0.15</td><td>analysts project significant long-term growth.</td></tr>
+                    </table>
+                </div>
+                
+                <div class="ticker-card">
+                    <h3>BAC</h3>
+                    <h4>Key Data</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$48.08</td></tr>
+                        <tr><th>Previous Close</th><td>$47.92</td></tr>
+                        <tr><th>5-Day SMA</th><td>$47.65</td></tr>
+                        <tr><th>Volume</th><td>33,733,300</td></tr>
+                        <tr><th>Risk Analysis</th><td class="risk-low">Low Risk (Likely to make money)</td></tr>
+                    </table>
+                    <h4>Political Activity</h4>
+                    <table>
+                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
+                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
+                    </table>
+                    <h4>Claude AI Recommendations</h4>
+                    <table>
+                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
+                        <tr><td>Day</td><td>0.93</td><td>high volatility offers day trading opportunities, strong positive momentum...</td></tr>
+                        <tr><td>Month</td><td>1.02</td><td>significant gap to target price suggests growth potential.</td></tr>
+                        <tr><td>Year</td><td>0.24</td><td>analysts project significant long-term growth.</td></tr>
+                    </table>
+                </div>
+                
+                <div class="ticker-card">
+                    <h3>BX</h3>
+                    <h4>Key Data</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$167.29</td></tr>
+                        <tr><th>Previous Close</th><td>$169.22</td></tr>
+                        <tr><th>5-Day SMA</th><td>$169.38</td></tr>
+                        <tr><th>Volume</th><td>5,367,600</td></tr>
+                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
+                    </table>
+                    <h4>Political Activity</h4>
+                    <table>
+                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
+                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
+                    </table>
+                    <h4>Claude AI Recommendations</h4>
+                    <table>
+                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
+                        <tr><td>Day</td><td>0.92</td><td>high volatility offers day trading opportunities, strong positive momentum...</td></tr>
+                        <tr><td>Month</td><td>1.08</td><td>strong positive trend that may continue, significant gap to target price...</td></tr>
+                        <tr><td>Year</td><td>0.26</td><td>currently trading well below its 52-week high, suggesting recovery potential...</td></tr>
+                    </table>
+                </div>
+                
+                <div class="ticker-card">
+                    <h3>XOM</h3>
+                    <h4>Key Data</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$107.42</td></tr>
+                        <tr><th>Previous Close</th><td>$106.72</td></tr>
+                        <tr><th>5-Day SMA</th><td>$106.88</td></tr>
+                        <tr><th>Volume</th><td>16,106,700</td></tr>
+                        <tr><th>Risk Analysis</th><td class="risk-low">Low Risk (Likely to make money)</td></tr>
+                    </table>
+                    <h4>Political Activity</h4>
+                    <table>
+                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
+                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
+                    </table>
+                    <h4>Claude AI Recommendations</h4>
+                    <table>
+                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
+                        <tr><td>Day</td><td>0.95</td><td>high volatility offers day trading opportunities, analysts see significant upside...</td></tr>
+                        <tr><td>Month</td><td>1.03</td><td>significant gap to target price suggests growth potential.</td></tr>
+                        <tr><td>Year</td><td>0.14</td><td>analysts project significant long-term growth.</td></tr>
+                    </table>
+                </div>
+                
+                <div class="ticker-card">
+                    <h3>JPM</h3>
+                    <h4>Key Data</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$290.66</td></tr>
+                        <tr><th>Previous Close</th><td>$291.53</td></tr>
+                        <tr><th>5-Day SMA</th><td>$290.89</td></tr>
+                        <tr><th>Volume</th><td>6,029,200</td></tr>
+                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
+                    </table>
+                    <h4>Political Activity</h4>
+                    <table>
+                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
+                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
+                    </table>
+                    <h4>Claude AI Recommendations</h4>
+                    <table>
+                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
+                        <tr><td>Day</td><td>0.93</td><td>high volatility offers day trading opportunities, analysts see significant upside...</td></tr>
+                        <tr><td>Month</td><td>1.01</td><td>significant gap to target price suggests growth potential.</td></tr>
+                        <tr><td>Year</td><td>0.24</td><td>analysts project significant long-term growth.</td></tr>
+                    </table>
+                </div>
+                
+                <div class="ticker-card">
+                    <h3>KEX</h3>
+                    <h4>Key Data</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$98.5</td></tr>
+                        <tr><th>Previous Close</th><td>$96.5</td></tr>
+                        <tr><th>5-Day SMA</th><td>$97.17</td></tr>
+                        <tr><th>Volume</th><td>799,800</td></tr>
+                        <tr><th>Risk Analysis</th><td class="risk-low">Low Risk (Likely to make money)</td></tr>
+                    </table>
+                    <h4>Political Activity</h4>
+                    <table>
+                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
+                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
+                    </table>
+                    <h4>Claude AI Recommendations</h4>
+                    <table>
+                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
+                        <tr><td>Day</td><td>0.81</td><td>high volatility offers day trading opportunities, potential bounce from oversold...</td></tr>
+                        <tr><td>Month</td><td>0.85</td><td>significant gap to target price suggests growth potential.</td></tr>
+                        <tr><td>Year</td><td>0.11</td><td>currently trading well below its 52-week high, suggesting recovery potential...</td></tr>
+                    </table>
+                </div>
+                
+                <div class="ticker-card">
+                    <h3>SSYS</h3>
+                    <h4>Key Data</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$10.61</td></tr>
+                        <tr><th>Previous Close</th><td>$9.32</td></tr>
+                        <tr><th>5-Day SMA</th><td>$9.78</td></tr>
+                        <tr><th>Volume</th><td>5,497,600</td></tr>
+                        <tr><th>Risk Analysis</th><td class="risk-low">Low Risk (Likely to make money)</td></tr>
+                    </table>
+                    <h4>Political Activity</h4>
+                    <table>
+                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
+                        <tr><td>Debbie Wasserman Schultz</td><td>DemocratHouseFL</td><td>BUY</td><td>07:05 Yesterday</td></tr>
+                    </table>
+                    <h4>Claude AI Recommendations</h4>
+                    <table>
+                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
+                        <tr><td>Day</td><td>0.75</td><td>high volatility offers day trading opportunities, potential bounce from oversold...</td></tr>
+                        <tr><td>Month</td><td>0.86</td><td>significant gap to target price suggests growth potential.</td></tr>
+                        <tr><td>Year</td><td>0.29</td><td>currently trading well below its 52-week high, suggesting recovery potential...</td></tr>
+                    </table>
+                </div>
+                
+                <div class="ticker-card">
+                    <h3>PLTR</h3>
+                    <h4>Key Data</h4>
+                    <table>
+                        <tr><th>Current Price</th><td>$157.75</td></tr>
+                        <tr><th>Previous Close</th><td>$174.03</td></tr>
+                        <tr><th>5-Day SMA</th><td>$169.65</td></tr>
+                        <tr><th>Volume</th><td>136,140,000</td></tr>
+                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
+                    </table>
+                    <h4>Social Mentions</h4>
+                    <div class="social-mentions">
+                        <ul>
+                            <li class="sentiment-positive">"$PLTR paper hands. $200k profit loading..."</li>
+                            <li class="sentiment-neutral">"PLTR is going back to $7 loading..."</li>
+                        </ul>
+                    </div>
+                    <h4>Claude AI Recommendations</h4>
+                    <table>
+                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
+                        <tr><td>Day</td><td>0.72</td><td>high volatility offers day trading opportunities, strong positive momentum...</td></tr>
+                        <tr><td>Month</td><td>0.97</td><td>strong positive trend that may continue, significant gap to target price...</td></tr>
+                        <tr><td>Year</td><td>1.33</td><td>currently trading well below its 52-week high, suggesting recovery potential...</td></tr>
+                    </table>
+                </div>
+                
             </div>
-            <div class="best-pick best-1y">
-                <strong>Best for 1-Year Investment: AERO</strong><br>
-                The decisive factor for long-term potential in this analysis is politician trading. With 12 buys, AERO shows the most significant long-term confidence from influential investors, making it the top pick for a one-year horizon.
-            </div>
-        </div>
-        
-        <h2>Comparative Charts</h2>
-        <div class="chart-container">
-            <div class="chart-title">Politician Buys (Higher is Better)</div>
-            <div class="bar-chart"><div class="bar-label">AERO</div><div class="bar-wrapper"><div class="bar politician" style="width: 100%;">12</div></div></div>
-            <div class="bar-chart"><div class="bar-label">PLTR</div><div class="bar-wrapper"><div class="bar politician" style="width: 66.6%;">8</div></div></div>
-            <div class="bar-chart"><div class="bar-label">CYBR</div><div class="bar-wrapper"><div class="bar politician" style="width: 41.6%;">5</div></div></div>
-            <div class="bar-chart"><div class="bar-label">SENT</div><div class="bar-wrapper"><div class="bar politician" style="width: 41.6%;">5</div></div></div>
-        </div>
-        <div class="chart-container">
-            <div class="chart-title">Reddit/WSB Mentions (Higher is Better)</div>
-            <div class="bar-chart"><div class="bar-label">CYBR</div><div class="bar-wrapper"><div class="bar reddit" style="width: 100%;">450</div></div></div>
-            <div class="bar-chart"><div class="bar-label">AERO</div><div class="bar-wrapper"><div class="bar reddit" style="width: 71.1%;">320</div></div></div>
-            <div class="bar-chart"><div class="bar-label">PLTR</div><div class="bar-wrapper"><div class="bar reddit" style="width: 46.6%;">210</div></div></div>
-            <div class="bar-chart"><div class="bar-label">SENT</div><div class="bar-wrapper"><div class="bar reddit" style="width: 27.7%;">125</div></div></div>
-        </div>
-
-        <h2>1. AERO - AeroVironment, Inc.</h2>
-        <table>
-            <tr><th>Metric</th><th>Value</th></tr>
-            <tr><td>Politician Buys (pb)</td><td>12</td></tr>
-            <tr><td>Reddit/WSB Mentions (rmwsb)</td><td>320</td></tr>
-            <tr><td>Social Media Sentiment (sm)</td><td>0.88</td></tr>
-            <tr><td>Risk Analysis</td><td class="positive-risk">Low: Strong government contracts and leading position in the unmanned aerial vehicle (UAV) market provide a stable outlook.</td></tr>
-        </table>
-        <h3>Insights</h3>
-        <ul>
-            <li>Leads all other tickers in politician buying activity, a very strong positive signal.</li>
-            <li>Maintains robust social media presence, second only to CYBR in mentions.</li>
-            <li>Low-risk profile suggests strong fundamentals underpinning the social media hype.</li>
-        </ul>
-
-        <h2>2. PLTR - Palantir Technologies Inc.</h2>
-        <table>
-            <tr><th>Metric</th><th>Value</th></tr>
-            <tr><td>Politician Buys (pb)</td><td>8</td></tr>
-            <tr><td>Reddit/WSB Mentions (rmwsb)</td><td>210</td></tr>
-            <tr><td>Social Media Sentiment (sm)</td><td>0.85</td></tr>
-            <tr><td>Risk Analysis</td><td class="positive-risk">Moderate: High-profile contracts offset by concerns about valuation and stock-based compensation. Growth trajectory is strong.</td></tr>
-        </table>
-        <h3>Insights</h3>
-        <ul>
-            <li>Shows significant politician interest, indicating long-term confidence.</li>
-            <li>Consistent social media buzz, though lower than the top contenders.</li>
-            <li>The moderate risk highlights that while there is great potential, investors should be aware of valuation concerns.</li>
-        </ul>
-
-        <h2>3. CYBR - CyberArk Software Ltd.</h2>
-        <table>
-            <tr><th>Metric</th><th>Value</th></tr>
-            <tr><td>Politician Buys (pb)</td><td>5</td></tr>
-            <tr><td>Reddit/WSB Mentions (rmwsb)</td><td>450</td></tr>
-            <tr><td>Social Media Sentiment (sm)</td><td>0.91</td></tr>
-        </table>
-        <h3>Insights</h3>
-        <ul>
-            <li>Dominates social media discussion with the highest Reddit mentions and sentiment score, making it a prime candidate for momentum trading.</li>
-            <li>Ranks lower on politician buys, but the number is still significant.</li>
-            <li>The risk analysis indicates a negative outlook, suggesting that the current social media hype might be detached from underlying business risks.</li>
-        </ul>
-
-        <h2>4. SENT - SentinelOne, Inc.</h2>
-        <table>
-            <tr><th>Metric</th><th>Value</th></tr>
-            <tr><td>Politician Buys (pb)</td><td>5</td></tr>
-            <tr><td>Reddit/WSB Mentions (rmwsb)</td><td>125</td></tr>
-            <tr><td>Social Media Sentiment (sm)</td><td>0.79</td></tr>
-        </table>
-        <h3>Insights</h3>
-        <ul>
-            <li>Tied with CYBR on politician buys but lags significantly in social media metrics, placing it lower in the ranking.</li>
-            <li>The lowest social media sentiment score of the group.</li>
-            <li>High competition in the cybersecurity space presents a notable risk, as highlighted in its analysis.</li>
-        </ul>
-
+        </section>
     </div>
 </body>
 </html>
