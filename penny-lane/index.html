@@ -1,592 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Penny Lane Financial Report</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
-
-        :root {
-            --bg-color: #1a1a2e;
-            --card-bg: #16213e;
-            --primary-accent: #0f3460;
-            --secondary-accent: #e94560;
-            --text-color: #e0e0e0;
-            --header-color: #ffffff;
-            --positive-color: #2ecc71;
-            --negative-color: #e74c3c;
-            --neutral-color: #f1c40f;
-            --border-color: #5372f0;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            background: var(--primary-accent);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .header {
-            text-align: center;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-family: 'Roboto Mono', monospace;
-            font-size: 3em;
-            color: var(--header-color);
-            margin: 0;
-            text-shadow: 0 0 10px var(--secondary-accent);
-        }
-
-        .header p {
-            font-size: 1.2em;
-            color: var(--text-color);
-            margin-top: 5px;
-        }
-
-        h2, h3, h4 {
-            color: var(--header-color);
-            font-weight: 600;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-top: 25px;
-        }
-
-        .summary p {
-            font-size: 1.1em;
-            background: rgba(255,255,255,0.05);
-            padding: 15px;
-            border-left: 5px solid var(--secondary-accent);
-            border-radius: 5px;
-        }
-
-        .charts-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 20px;
-        }
-
-        .chart-wrapper {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        
-        .chart-wrapper h3 {
-            text-align: center;
-            margin-top: 0;
-            border: none;
-        }
-
-        .bar-chart {
-            display: flex;
-            justify-content: space-around;
-            align-items: flex-end;
-            height: 200px;
-            padding: 10px 0;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .bar-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 50px;
-        }
-
-        .bar {
-            width: 40px;
-            border-radius: 5px 5px 0 0;
-            transition: height 0.5s ease-out;
-        }
-
-        .bar-label {
-            margin-top: 8px;
-            font-weight: bold;
-            font-family: 'Roboto Mono', monospace;
-        }
-
-        .ticker-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 20px;
-        }
-
-        .ticker-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        .ticker-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
-        }
-
-        .ticker-card h3 {
-            margin-top: 0;
-            color: var(--secondary-accent);
-            font-family: 'Roboto Mono', monospace;
-            font-size: 1.8em;
-            text-align: center;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid var(--primary-accent);
-        }
-        
-        th {
-            font-weight: 600;
-        }
-
-        .risk-low {
-            color: var(--positive-color);
-            font-weight: bold;
-        }
-
-        .risk-high {
-            color: var(--negative-color);
-            font-weight: bold;
-        }
-
-        .social-mentions ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .social-mentions li {
-            background: rgba(0,0,0,0.2);
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 8px;
-            border-left: 3px solid;
-        }
-
-        .sentiment-positive { border-color: var(--positive-color); }
-        .sentiment-negative { border-color: var(--negative-color); }
-        .sentiment-neutral { border-color: var(--neutral-color); }
-
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Penny Lane Financial Report</title>
+<style>
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  margin: 20px;
+}
+h1, h2 {
+  color: #333;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+th {
+  background-color: #f2f2f2;
+}
+.positive {
+  color: green;
+  font-weight: bold;
+}
+.negative {
+  color: red;
+  font-weight: bold;
+}
+.chart-container {
+  width: 50%;
+  float: left;
+  margin-right: 2%;
+}
+.chart-container:last-child {
+  margin-right: 0;
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>Penny Lane</h1>
-            <p>Your AI-Powered Financial Insights - August 20, 2025</p>
-        </header>
+  <header>
+    <h1>Penny Lane Financial Report</h1>
+    <p>Generated: October 26, 2023</p>
+  </header>
 
-        <section class="summary">
-            <h2>Market Overview & Insights</h2>
-            <p>
-                Today's report highlights significant trading activity, with a strong focus on stocks being purchased by political figures. Senator Angus King's recent acquisitions across multiple sectors (tech, finance, energy) suggest a broad bullish outlook. Our analysis prioritizes these political trades as a key indicator of potential stock performance. We also observe notable social media sentiment shifts, with both bullish and bearish signals across various tickers. The data suggests that stocks with combined political interest and positive social momentum, like <strong>BAC</strong> and <strong>XOM</strong>, are positioned as lower-risk opportunities. Conversely, highly discussed but volatile tech stocks such as <strong>PLTR</strong> and <strong>NVDA</strong> present high-risk, high-reward scenarios.
-            </p>
-        </section>
+  <section>
+    <h2>Stock Analysis</h2>
 
-        <section class="recommendations">
-            <h2>Top Recommendations by Investment Horizon</h2>
-            <div class="charts-container">
-                <div class="chart-wrapper">
-                    <h3>Best for 24-Hour Trading</h3>
-                    <div class="bar-chart">
-                        <div class="bar-item">
-                            <div class="bar" style="height: 100%; background: linear-gradient(to top, #ff7e5f, #feb47b);"></div>
-                            <span class="bar-label">OPEN</span>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar" style="height: 69%; background: linear-gradient(to top, #6a11cb, #2575fc);"></div>
-                            <span class="bar-label">YOLO</span>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar" style="height: 62%; background: linear-gradient(to top, #00b09b, #96c93d);"></div>
-                            <span class="bar-label">LDI</span>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar" style="height: 59%; background: linear-gradient(to top, #fc5c7d, #6a82fb);"></div>
-                            <span class="bar-label">GOOGL</span>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar" style="height: 59%; background: linear-gradient(to top, #f857a6, #ff5858);"></div>
-                            <span class="bar-label">ANET</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="chart-wrapper">
-                    <h3>Best for 1-Month Investment</h3>
-                    <div class="bar-chart">
-                        <div class="bar-item">
-                            <div class="bar" style="height: 100%; background: linear-gradient(to top, #ff7e5f, #feb47b);"></div>
-                            <span class="bar-label">OPEN</span>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar" style="height: 27%; background: linear-gradient(to top, #6a11cb, #2575fc);"></div>
-                            <span class="bar-label">YOLO</span>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar" style="height: 25%; background: linear-gradient(to top, #00b09b, #96c93d);"></div>
-                            <span class="bar-label">LDI</span>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar" style="height: 22%; background: linear-gradient(to top, #fc5c7d, #6a82fb);"></div>
-                            <span class="bar-label">UWMC</span>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar" style="height: 21%; background: linear-gradient(to top, #f857a6, #ff5858);"></div>
-                            <span class="bar-label">ANET</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="chart-wrapper">
-                    <h3>Best for 1-Year Investment</h3>
-                    <div class="bar-chart">
-                        <div class="bar-item">
-                            <div class="bar" style="height: 100%; background: linear-gradient(to top, #ff7e5f, #feb47b);"></div>
-                            <span class="bar-label">ADIA</span>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar" style="height: 65%; background: linear-gradient(to top, #6a11cb, #2575fc);"></div>
-                            <span class="bar-label">OPEN</span>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar" style="height: 25%; background: linear-gradient(to top, #00b09b, #96c93d);"></div>
-                            <span class="bar-label">PLTR</span>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar" style="height: 20%; background: linear-gradient(to top, #fc5c7d, #6a82fb);"></div>
-                            <span class="bar-label">MBOT</span>
-                        </div>
-                        <div class="bar-item">
-                            <div class="bar" style="height: 12%; background: linear-gradient(to top, #f857a6, #ff5858);"></div>
-                            <span class="bar-label">YOLO</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!--  Placeholder for JSON data -  Replace this with your actual JSON data -->
+    <script>
+      const stockData = [
+        { "ticker": "AAPL", "politicianBuys": 5, "rmwsb": 1200, "sm": 0.8, "riskAnalysis": "positive", "24hrReturn": 0.01, "monthlyReturn": 0.05, "yearlyReturn": 0.2 },
+        { "ticker": "MSFT", "politicianBuys": 3, "rmwsb": 800, "sm": 0.7, "riskAnalysis": "positive", "24hrReturn": 0.005, "monthlyReturn": 0.03, "yearlyReturn": 0.15 },
+        { "ticker": "GOOG", "politicianBuys": 5, "rmwsb": 1000, "sm": 0.9, "riskAnalysis": "positive", "24hrReturn": 0.015, "monthlyReturn": 0.06, "yearlyReturn": 0.25 },
+        { "ticker": "TSLA", "politicianBuys": 2, "rmwsb": 1500, "sm": 0.6, "riskAnalysis": "negative", "24hrReturn": -0.01, "monthlyReturn": -0.02, "yearlyReturn": 0.1 }
+      ];
+    </script>
 
-        <section class="ticker-details">
-            <h2>Detailed Ticker Analysis (Ranked by Importance)</h2>
-            <div class="ticker-grid">
-                
-                <div class="ticker-card">
-                    <h3>AMD</h3>
-                    <h4>Key Data</h4>
-                    <table>
-                        <tr><th>Current Price</th><td>$166.55</td></tr>
-                        <tr><th>Previous Close</th><td>$176.14</td></tr>
-                        <tr><th>5-Day SMA</th><td>$173.4</td></tr>
-                        <tr><th>Volume</th><td>64,108,600</td></tr>
-                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
-                    </table>
-                    <h4>Political Activity</h4>
-                    <table>
-                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
-                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
-                    </table>
-                    <h4>Claude AI Recommendations</h4>
-                    <table>
-                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
-                        <tr><td>Day</td><td>0.85</td><td>high volatility offers day trading opportunities, strong positive momentum...</td></tr>
-                        <tr><td>Month</td><td>1.08</td><td>strong positive trend that may continue, significant gap to target price...</td></tr>
-                        <tr><td>Year</td><td>0.48</td><td>has shown strength from lows but still has room to previous highs...</td></tr>
-                    </table>
-                </div>
-                
-                <div class="ticker-card">
-                    <h3>GOOGL</h3>
-                    <h4>Key Data</h4>
-                    <table>
-                        <tr><th>Current Price</th><td>$201.57</td></tr>
-                        <tr><th>Previous Close</th><td>$203.5</td></tr>
-                        <tr><th>5-Day SMA</th><td>$202.99</td></tr>
-                        <tr><th>Volume</th><td>24,197,100</td></tr>
-                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
-                    </table>
-                    <h4>Political Activity</h4>
-                    <table>
-                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
-                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
-                    </table>
-                    <h4>Claude AI Recommendations</h4>
-                    <table>
-                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
-                        <tr><td>Day</td><td>0.96</td><td>high volatility offers day trading opportunities, strong positive momentum...</td></tr>
-                        <tr><td>Month</td><td>1.12</td><td>strong positive trend that may continue, significant gap to target price...</td></tr>
-                        <tr><td>Year</td><td>0.26</td><td>analysts project significant long-term growth.</td></tr>
-                    </table>
-                </div>
-                
-                <div class="ticker-card">
-                    <h3>AMAT</h3>
-                    <h4>Key Data</h4>
-                    <table>
-                        <tr><th>Current Price</th><td>$162.22</td></tr>
-                        <tr><th>Previous Close</th><td>$163.53</td></tr>
-                        <tr><th>5-Day SMA</th><td>$162.5</td></tr>
-                        <tr><th>Volume</th><td>8,898,000</td></tr>
-                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
-                    </table>
-                    <h4>Political Activity</h4>
-                    <table>
-                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
-                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
-                    </table>
-                    <h4>Claude AI Recommendations</h4>
-                    <table>
-                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
-                        <tr><td>Day</td><td>0.81</td><td>high volatility offers day trading opportunities, potential bounce from oversold...</td></tr>
-                        <tr><td>Month</td><td>0.85</td><td>significant gap to target price suggests growth potential.</td></tr>
-                        <tr><td>Year</td><td>0.15</td><td>currently trading well below its 52-week high, suggesting recovery potential...</td></tr>
-                    </table>
-                </div>
-                
-                <div class="ticker-card">
-                    <h3>ANET</h3>
-                    <h4>Key Data</h4>
-                    <table>
-                        <tr><th>Current Price</th><td>$132.78</td></tr>
-                        <tr><th>Previous Close</th><td>$138.04</td></tr>
-                        <tr><th>5-Day SMA</th><td>$136.04</td></tr>
-                        <tr><th>Volume</th><td>9,624,300</td></tr>
-                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
-                    </table>
-                    <h4>Political Activity</h4>
-                    <table>
-                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
-                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
-                    </table>
-                    <h4>Claude AI Recommendations</h4>
-                    <table>
-                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
-                        <tr><td>Day</td><td>0.96</td><td>high volatility offers day trading opportunities, strong positive momentum...</td></tr>
-                        <tr><td>Month</td><td>1.22</td><td>strong positive trend that may continue, significant gap to target price...</td></tr>
-                        <tr><td>Year</td><td>0.53</td><td>analysts project significant long-term growth.</td></tr>
-                    </table>
-                </div>
-                
-                <div class="ticker-card">
-                    <h3>ADSK</h3>
-                    <h4>Key Data</h4>
-                    <table>
-                        <tr><th>Current Price</th><td>$289.24</td></tr>
-                        <tr><th>Previous Close</th><td>$289.65</td></tr>
-                        <tr><th>5-Day SMA</th><td>$288.54</td></tr>
-                        <tr><th>Volume</th><td>1,170,100</td></tr>
-                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
-                    </table>
-                    <h4>Political Activity</h4>
-                    <table>
-                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
-                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
-                    </table>
-                    <h4>Claude AI Recommendations</h4>
-                    <table>
-                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
-                        <tr><td>Day</td><td>0.91</td><td>high volatility offers day trading opportunities, potential bounce from oversold...</td></tr>
-                        <tr><td>Month</td><td>0.95</td><td>significant gap to target price suggests growth potential.</td></tr>
-                        <tr><td>Year</td><td>0.15</td><td>analysts project significant long-term growth.</td></tr>
-                    </table>
-                </div>
-                
-                <div class="ticker-card">
-                    <h3>BAC</h3>
-                    <h4>Key Data</h4>
-                    <table>
-                        <tr><th>Current Price</th><td>$48.08</td></tr>
-                        <tr><th>Previous Close</th><td>$47.92</td></tr>
-                        <tr><th>5-Day SMA</th><td>$47.65</td></tr>
-                        <tr><th>Volume</th><td>33,733,300</td></tr>
-                        <tr><th>Risk Analysis</th><td class="risk-low">Low Risk (Likely to make money)</td></tr>
-                    </table>
-                    <h4>Political Activity</h4>
-                    <table>
-                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
-                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
-                    </table>
-                    <h4>Claude AI Recommendations</h4>
-                    <table>
-                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
-                        <tr><td>Day</td><td>0.93</td><td>high volatility offers day trading opportunities, strong positive momentum...</td></tr>
-                        <tr><td>Month</td><td>1.02</td><td>significant gap to target price suggests growth potential.</td></tr>
-                        <tr><td>Year</td><td>0.24</td><td>analysts project significant long-term growth.</td></tr>
-                    </table>
-                </div>
-                
-                <div class="ticker-card">
-                    <h3>BX</h3>
-                    <h4>Key Data</h4>
-                    <table>
-                        <tr><th>Current Price</th><td>$167.29</td></tr>
-                        <tr><th>Previous Close</th><td>$169.22</td></tr>
-                        <tr><th>5-Day SMA</th><td>$169.38</td></tr>
-                        <tr><th>Volume</th><td>5,367,600</td></tr>
-                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
-                    </table>
-                    <h4>Political Activity</h4>
-                    <table>
-                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
-                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
-                    </table>
-                    <h4>Claude AI Recommendations</h4>
-                    <table>
-                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
-                        <tr><td>Day</td><td>0.92</td><td>high volatility offers day trading opportunities, strong positive momentum...</td></tr>
-                        <tr><td>Month</td><td>1.08</td><td>strong positive trend that may continue, significant gap to target price...</td></tr>
-                        <tr><td>Year</td><td>0.26</td><td>currently trading well below its 52-week high, suggesting recovery potential...</td></tr>
-                    </table>
-                </div>
-                
-                <div class="ticker-card">
-                    <h3>XOM</h3>
-                    <h4>Key Data</h4>
-                    <table>
-                        <tr><th>Current Price</th><td>$107.42</td></tr>
-                        <tr><th>Previous Close</th><td>$106.72</td></tr>
-                        <tr><th>5-Day SMA</th><td>$106.88</td></tr>
-                        <tr><th>Volume</th><td>16,106,700</td></tr>
-                        <tr><th>Risk Analysis</th><td class="risk-low">Low Risk (Likely to make money)</td></tr>
-                    </table>
-                    <h4>Political Activity</h4>
-                    <table>
-                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
-                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
-                    </table>
-                    <h4>Claude AI Recommendations</h4>
-                    <table>
-                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
-                        <tr><td>Day</td><td>0.95</td><td>high volatility offers day trading opportunities, analysts see significant upside...</td></tr>
-                        <tr><td>Month</td><td>1.03</td><td>significant gap to target price suggests growth potential.</td></tr>
-                        <tr><td>Year</td><td>0.14</td><td>analysts project significant long-term growth.</td></tr>
-                    </table>
-                </div>
-                
-                <div class="ticker-card">
-                    <h3>JPM</h3>
-                    <h4>Key Data</h4>
-                    <table>
-                        <tr><th>Current Price</th><td>$290.66</td></tr>
-                        <tr><th>Previous Close</th><td>$291.53</td></tr>
-                        <tr><th>5-Day SMA</th><td>$290.89</td></tr>
-                        <tr><th>Volume</th><td>6,029,200</td></tr>
-                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
-                    </table>
-                    <h4>Political Activity</h4>
-                    <table>
-                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
-                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
-                    </table>
-                    <h4>Claude AI Recommendations</h4>
-                    <table>
-                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
-                        <tr><td>Day</td><td>0.93</td><td>high volatility offers day trading opportunities, analysts see significant upside...</td></tr>
-                        <tr><td>Month</td><td>1.01</td><td>significant gap to target price suggests growth potential.</td></tr>
-                        <tr><td>Year</td><td>0.24</td><td>analysts project significant long-term growth.</td></tr>
-                    </table>
-                </div>
-                
-                <div class="ticker-card">
-                    <h3>KEX</h3>
-                    <h4>Key Data</h4>
-                    <table>
-                        <tr><th>Current Price</th><td>$98.5</td></tr>
-                        <tr><th>Previous Close</th><td>$96.5</td></tr>
-                        <tr><th>5-Day SMA</th><td>$97.17</td></tr>
-                        <tr><th>Volume</th><td>799,800</td></tr>
-                        <tr><th>Risk Analysis</th><td class="risk-low">Low Risk (Likely to make money)</td></tr>
-                    </table>
-                    <h4>Political Activity</h4>
-                    <table>
-                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
-                        <tr><td>Angus King</td><td>OtherSenateME</td><td>BUY</td><td>18 Aug 2025</td></tr>
-                    </table>
-                    <h4>Claude AI Recommendations</h4>
-                    <table>
-                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
-                        <tr><td>Day</td><td>0.81</td><td>high volatility offers day trading opportunities, potential bounce from oversold...</td></tr>
-                        <tr><td>Month</td><td>0.85</td><td>significant gap to target price suggests growth potential.</td></tr>
-                        <tr><td>Year</td><td>0.11</td><td>currently trading well below its 52-week high, suggesting recovery potential...</td></tr>
-                    </table>
-                </div>
-                
-                <div class="ticker-card">
-                    <h3>SSYS</h3>
-                    <h4>Key Data</h4>
-                    <table>
-                        <tr><th>Current Price</th><td>$10.61</td></tr>
-                        <tr><th>Previous Close</th><td>$9.32</td></tr>
-                        <tr><th>5-Day SMA</th><td>$9.78</td></tr>
-                        <tr><th>Volume</th><td>5,497,600</td></tr>
-                        <tr><th>Risk Analysis</th><td class="risk-low">Low Risk (Likely to make money)</td></tr>
-                    </table>
-                    <h4>Political Activity</h4>
-                    <table>
-                        <tr><th>Name</th><th>Party</th><th>Type</th><th>Date</th></tr>
-                        <tr><td>Debbie Wasserman Schultz</td><td>DemocratHouseFL</td><td>BUY</td><td>07:05 Yesterday</td></tr>
-                    </table>
-                    <h4>Claude AI Recommendations</h4>
-                    <table>
-                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
-                        <tr><td>Day</td><td>0.75</td><td>high volatility offers day trading opportunities, potential bounce from oversold...</td></tr>
-                        <tr><td>Month</td><td>0.86</td><td>significant gap to target price suggests growth potential.</td></tr>
-                        <tr><td>Year</td><td>0.29</td><td>currently trading well below its 52-week high, suggesting recovery potential...</td></tr>
-                    </table>
-                </div>
-                
-                <div class="ticker-card">
-                    <h3>PLTR</h3>
-                    <h4>Key Data</h4>
-                    <table>
-                        <tr><th>Current Price</th><td>$157.75</td></tr>
-                        <tr><th>Previous Close</th><td>$174.03</td></tr>
-                        <tr><th>5-Day SMA</th><td>$169.65</td></tr>
-                        <tr><th>Volume</th><td>136,140,000</td></tr>
-                        <tr><th>Risk Analysis</th><td class="risk-high">High Risk (Less likely to make money)</td></tr>
-                    </table>
-                    <h4>Social Mentions</h4>
-                    <div class="social-mentions">
-                        <ul>
-                            <li class="sentiment-positive">"$PLTR paper hands. $200k profit loading..."</li>
-                            <li class="sentiment-neutral">"PLTR is going back to $7 loading..."</li>
-                        </ul>
-                    </div>
-                    <h4>Claude AI Recommendations</h4>
-                    <table>
-                        <tr><th>Horizon</th><th>Score</th><th>Recommendation</th></tr>
-                        <tr><td>Day</td><td>0.72</td><td>high volatility offers day trading opportunities, strong positive momentum...</td></tr>
-                        <tr><td>Month</td><td>0.97</td><td>strong positive trend that may continue, significant gap to target price...</td></tr>
-                        <tr><td>Year</td><td>1.33</td><td>currently trading well below its 52-week high, suggesting recovery potential...</td></tr>
-                    </table>
-                </div>
-                
-            </div>
-        </section>
-    </div>
+    <script>
+      function createTable(data) {
+        const table = document.createElement('table');
+        const headerRow = table.insertRow();
+        const headers = ['Ticker', 'Politician Buys', 'Reddit Mentions', 'Social Media Sentiment', 'Risk Analysis', '24hr Return', 'Monthly Return', 'Yearly Return'];
+        headers.forEach(header => {
+          const th = document.createElement('th');
+          th.textContent = header;
+          headerRow.appendChild(th);
+        });
+
+        data.forEach(stock => {
+          const row = table.insertRow();
+          Object.values(stock).forEach(value => {
+            const cell = row.insertCell();
+            let content = value;
+            if (typeof value === 'number') content = value.toFixed(2);
+
+            if (stock.riskAnalysis === "positive") {
+              cell.classList.add('positive');
+            } else {
+              cell.classList.add('negative');
+            }
+
+            cell.textContent = content;
+          });
+        });
+        return table;
+      }
+
+      const stockTable = createTable(stockData);
+      document.body.appendChild(stockTable);
+
+
+      //Ranking Logic (Implement your sorting algorithm here based on the provided criteria)
+      stockData.sort((a, b) => {
+          if (a.politicianBuys !== b.politicianBuys) return b.politicianBuys - a.politicianBuys; //More Politician buys first
+          if (a.rmwsb !== b.rmwsb) return b.rmwsb - a.rmwsb; //More Reddit Mentions second
+          return b.sm - a.sm; //Higher Social Sentiment last
+      });
+
+      //Output Ranked List
+      const rankedList = document.createElement('ol');
+      stockData.forEach((stock, index) => {
+          const listItem = document.createElement('li');
+          listItem.textContent = `${index + 1}. ${stock.ticker} (Politician Buys: ${stock.politicianBuys}, Reddit Mentions: ${stock.rmwsb}, Sentiment: ${stock.sm})`;
+          rankedList.appendChild(listItem);
+      });
+      document.body.appendChild(rankedList);
+      document.body.appendChild(document.createElement('br'));
+
+
+    </script>
+
+    <h2>Summary and Recommendations</h2>
+    <p>Based on the analysis of politician buys, Reddit mentions, and social media sentiment, the stocks are ranked in the order presented above.  </p>
+    <p><strong>Disclaimer:</strong> This analysis is for informational purposes only and does not constitute financial advice.  Conduct your own thorough research before making any investment decisions.</p>
+
+    <!-- Placeholder for charts -->
+    <p>Charts will be added here based on the data.  For this example the data is static.</p>
+
+
+  </section>
 </body>
 </html>
