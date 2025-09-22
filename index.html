@@ -1,321 +1,493 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
 
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+    <title>Doug Molineux - Senior Software Engineer</title>
 
-    <title>dougmolineux.github.io</title>
-
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="github-widget/github-widget.css" rel="stylesheet" type="text/css" />
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e3e8ee 100%);
-            color: #222;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #0d1421;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
         }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 20, 33, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #1a2332;
+            z-index: 1000;
+            padding: 0 20px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 20px;
+            color: #00c805;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: #9ca3af;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: #00c805;
+        }
+
+        /* Hero Section */
         .hero {
-            background: linear-gradient(90deg, #5e81ac 0%, #a3be8c 100%);
-            color: #fff;
+            padding: 120px 20px 80px;
             text-align: center;
-            padding: 60px 20px 40px 20px;
-            border-radius: 0 0 40px 40px;
-            box-shadow: 0 8px 32px rgba(94, 129, 172, 0.12);
-            margin-bottom: 30px;
+            max-width: 800px;
+            margin: 0 auto;
         }
+
         .hero h1 {
-            font-family: 'Orbitron', monospace;
-            font-size: 3em;
-            font-weight: 900;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.10);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #9ca3af 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+
         .hero .subtitle {
-            font-size: 1.3em;
-            font-weight: 400;
-            opacity: 0.9;
+            font-size: 20px;
+            color: #00c805;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .hero .description {
+            font-size: 18px;
+            color: #9ca3af;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            margin-bottom: 80px;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, #1a2332 0%, #0f1419 100%);
+            border: 1px solid #2a3441;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00c805, #00ff00);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: #00c805;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #00c805;
             margin-bottom: 8px;
         }
-        .hero .brand {
-            font-size: 1.1em;
-            font-weight: 300;
-            opacity: 0.8;
+
+        .stat-label {
+            color: #9ca3af;
+            font-size: 14px;
+            font-weight: 500;
         }
-        .navbar {
-            margin-bottom: 0;
-            border-radius: 0;
-        }
-        .navbar-nav {
-            float: right !important;
-        }
-        .navbar-header {
-            float: left !important;
-        }
-        @media (max-width: 768px) {
-            .navbar-nav {
-                float: none !important;
-            }
-            .navbar-header {
-                float: none !important;
-            }
-        }
-        .container {
-            max-width: 1100px;
+
+        /* Content Sections */
+        .section {
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 20px 80px;
         }
-        .box {
-            background: transparent;
-            border-radius: 0;
-            box-shadow: none;
-            margin-bottom: 30px;
-            padding: 30px 24px;
-        }
-        .box h2 {
-            font-family: 'Orbitron', monospace;
-            color: #5e81ac;
-            font-size: 1.6em;
-            margin-bottom: 18px;
-        }
-        .box p, .box a {
-            font-size: 1.08em;
-        }
-        .github-widget {
-            margin-top: 10px;
-        }
-        .footer {
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 48px;
             text-align: center;
-            color: #fff;
-            padding: 30px;
-            background: linear-gradient(90deg, #5e81ac 0%, #a3be8c 100%);
-            border-radius: 20px 20px 0 0;
-            margin-top: 40px;
-            font-size: 1.1em;
-            box-shadow: 0 -4px 24px rgba(94, 129, 172, 0.07);
+            color: #ffffff;
         }
-        hr, .tagline-divider {
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-bottom: 64px;
+        }
+
+        .skill-category {
+            background: linear-gradient(145deg, #1a2332 0%, #0f1419 100%);
+            border: 1px solid #2a3441;
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .skill-category:hover {
+            border-color: #00c805;
+            transform: translateY(-2px);
+        }
+
+        .skill-category h3 {
+            color: #00c805;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .skill-category p {
+            color: #d1d5db;
+            line-height: 1.7;
+        }
+
+        /* Projects Section */
+        .project-card {
+            background: linear-gradient(145deg, #1a2332 0%, #0f1419 100%);
+            border: 1px solid #2a3441;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00c805, #00ff00);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
+        }
+
+        .project-card:hover {
+            border-color: #00c805;
+            transform: translateY(-2px);
+        }
+
+        .project-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .project-title {
+            color: #00c805;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-decoration: none;
+            display: inline-block;
+            transition: color 0.2s ease;
+        }
+
+        .project-title:hover {
+            color: #00ff00;
+        }
+
+        .project-description {
+            color: #d1d5db;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(145deg, #1a2332 0%, #0f1419 100%);
+            border-top: 1px solid #2a3441;
+            padding: 48px 20px;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .social-link {
+            color: #9ca3af;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border: 1px solid #2a3441;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .social-link:hover {
+            color: #00c805;
+            border-color: #00c805;
+        }
+
+        .copyright {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            background: #00c805;
             border: none;
-            border-top: 2px solid #a3be8c;
-            margin: 18px 0;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
         }
-        @media (max-width: 900px) {
-            .hero h1 {
-                font-size: 2em;
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
             }
-            .container {
-                padding: 8px;
+
+            .mobile-menu {
+                display: block;
             }
-            .box {
-                padding: 18px 8px;
-            }
-        }
-        @media (max-width: 600px) {
+
             .hero {
-                padding: 30px 5px 18px 5px;
-                border-radius: 0 0 18px 18px;
+                padding: 100px 20px 60px;
             }
-            .hero h1 {
-                font-size: 1.2em;
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
             }
-            .hero .subtitle {
-                font-size: 1em;
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
             }
-            .container {
-                padding: 2px;
+
+            .social-links {
+                flex-wrap: wrap;
+                gap: 16px;
             }
-            .box {
-                padding: 8px 2px;
-                border-radius: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
-            .footer {
-                padding: 12px;
-                border-radius: 10px 10px 0 0;
-                font-size: 0.95em;
-            }
-            hr, .tagline-divider {
-                margin: 10px 0;
+
+            .stat-card,
+            .skill-category,
+            .project-card {
+                padding: 20px;
             }
         }
     </style>
-
 </head>
 
 <body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">doug.molineux</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="https://github.com/dougmolineux">GitHub</a></li>
+                    <li><a href="https://www.linkedin.com/in/doug-molineux-0a237a96">LinkedIn</a></li>
+                    <li><a href="http://stackoverflow.com/users/242934/doug-molineux">Stack Overflow</a></li>
+                    <li><a href="mailto:doug.molineux@gmail.com">Contact</a></li>
+                </ul>
+                <button class="mobile-menu">☰</button>
+            </nav>
+        </div>
+    </header>
 
-    <section class="hero">
+    <!-- Hero Section -->
+    <section class="hero" id="home">
         <h1>Doug Molineux</h1>
         <div class="subtitle">Senior Software Engineer</div>
-        <div class="brand">dougmolineux.github.io</div>
-        
+        <div class="description">
+            Building scalable applications with modern technologies. Passionate about clean code, performance
+            optimization, and open source contributions.
+        </div>
     </section>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-default" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <!-- navbar-brand is hidden on larger screens, but visible when the menu is collapsed -->
-                <a class="navbar-brand" href="index.html">dougmolineux.github.io</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="/index">Home</a>
-                    </li>
-                    <li>
-                        <a href="/blog">Blog</a>
-                    </li>
-                    <li>
-                        <a href="https://github.com/dougmolineux">GitHub</a>
-                    </li>
-                    <li>
-                        <a href="/penny-lane">Penny Lane</a>
-                    </li>
-                    <li>
-                        <a href="https://www.linkedin.com/in/doug-molineux-0a237a96">LinkedIn</a>
-                    </li>
-                    <li>
-                        <a href="http://stackoverflow.com/users/242934/doug-molineux">Stack Overflow</a>
-                    </li>
-                    <li>
-                        <a href="mailto:doug.molineux@gmail.com">Contact</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
+    <!-- Stats Section -->
+    <section class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">10+</div>
+            <div class="stat-label">Years Experience</div>
         </div>
-        <!-- /.container -->
-    </nav>
+        <div class="stat-card">
+            <div class="stat-number">8+</div>
+            <div class="stat-label">Languages</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">12+</div>
+            <div class="stat-label">Databases</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">Open</div>
+            <div class="stat-label">Source Contributor</div>
+        </div>
+    </section>
 
-    <div class="container">
-
-        <div class="row">
-            <div class="box">
-                <div class="col-lg-12 text-center">
-                    <!-- SVG Terminal Window -->
-                    <div style="display:flex; justify-content:center; align-items:center; margin-bottom:24px;">
-                        <svg width="340" height="120" viewBox="0 0 340 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
-                            <rect x="2" y="2" width="336" height="116" rx="14" fill="#222" stroke="#5e81ac" stroke-width="4"/>
-                            <rect x="2" y="2" width="336" height="28" rx="10" fill="#3a4756"/>
-                            <circle cx="22" cy="16" r="5" fill="#f56565"/>
-                            <circle cx="38" cy="16" r="5" fill="#FFD700"/>
-                            <circle cx="54" cy="16" r="5" fill="#48bb78"/>
-                            <rect x="70" y="10" width="60" height="12" rx="6" fill="#667eea" opacity="0.3"/>
-                            <text x="30" y="60" fill="#fff" font-family="'Fira Mono', monospace" font-size="22">$ echo "Hello, world!"</text>
-                            <text x="30" y="90" fill="#FFD700" font-family="'Fira Mono', monospace" font-size="18">Hello, world!</text>
-                        </svg>
-                    </div>
-                    <h2 class="brand-before">
-                        <small>Senior Software Engineer</small>
-                    </h2>
-                    <h1 class="brand-name">doug.molineux</h1>
-                </div>
+    <!-- Skills Section -->
+    <section class="section">
+        <h2 class="section-title">Technical Expertise</h2>
+        <div class="skills-grid">
+            <div class="skill-category">
+                <h3>💻 Languages</h3>
+                <p>
+                    Server-side and client-side JavaScript, Node.js, Angular, React, TypeScript.
+                    Professional experience in PHP, C, Java, and Python. Always exploring new
+                    technologies and frameworks to stay current with industry trends.
+                </p>
+            </div>
+            <div class="skill-category">
+                <h3>🗄️ Databases</h3>
+                <p>
+                    Extensive experience with MongoDB, Elasticsearch, U2 (Universe and Unidata),
+                    Cassandra, MSSQL, PostgreSQL, CouchDB, and Redis. Skilled in database design,
+                    optimization, and scaling for high-performance applications.
+                </p>
+            </div>
+            <div class="skill-category">
+                <h3>🚀 Specialties</h3>
+                <p>
+                    Full-stack development, API design, microservices architecture, cloud computing,
+                    DevOps practices, and performance optimization. Committed to writing clean,
+                    maintainable code and following best practices.
+                </p>
             </div>
         </div>
+    </section>
 
-        <div class="row">
-            <div class="box">
-                <div class="col-lg-12">
-                    <hr>
-                    <h2 class="intro-text text-center">
-                        <strong>Languages</strong>
-                    </h2>
-                    <hr>
-                    <!-- <img class="img-responsive img-border img-left" src="img/intro-pic.jpg" alt=""> -->
-                    <hr class="visible-xs">
-                    <p>
-                        Server-side and client-side Javascript projects, NodeJS, Angular, React, Typescript.
-                        I also have professional experience in many other languages, including PHP, C, Java and Python.
-                        I enjoy being involved in open source projects and I would be open to assist in any if
-                        you think my skillset would be useful, please contact me.
-                    </p>
-                </div>
+    <!-- Projects Section -->
+    <section class="section">
+        <h2 class="section-title">Featured Projects</h2>
+
+        <div class="project-card">
+            <a href="https://github.com/dougmolineux/node-mongo-vs-postgres-jsonb" class="project-title">
+                node-mongo-vs-postgres-jsonb
+            </a>
+            <p class="project-description">
+                Performance comparison tool between PostgreSQL JSONB and MongoDB implementations in Node.js.
+                Comprehensive benchmarking suite to help developers make informed database decisions.
+            </p>
+        </div>
+
+        <div class="project-card">
+            <a href="https://github.com/dougmolineux/node-azure-servicebus-explorer" class="project-title">
+                Azure Service Bus Explorer
+            </a>
+            <p class="project-description">
+                Modern web-based Azure Service Bus management tool built with Node.js and Angular.
+                Provides intuitive interface for monitoring and managing service bus queues and topics.
+            </p>
+        </div>
+
+        <div class="project-card">
+            <a href="https://github.com/dougmolineux/arm-template-generator" class="project-title">
+                ARM Template Generator
+            </a>
+            <p class="project-description">
+                Automated Azure Resource Manager template generation tool. Simplifies cloud infrastructure
+                deployment and ensures consistency across environments.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="https://github.com/dougmolineux" class="social-link">GitHub</a>
+                <a href="https://www.linkedin.com/in/doug-molineux-0a237a96" class="social-link">LinkedIn</a>
+                <a href="http://stackoverflow.com/users/242934/doug-molineux" class="social-link">Stack Overflow</a>
+                <a href="mailto:doug.molineux@gmail.com" class="social-link">Contact</a>
+            </div>
+            <div class="copyright">
+                © 2024 Doug Molineux. All rights reserved.
             </div>
         </div>
-        <div class="row">
-            <div class="box">
-                <div class="col-lg-12">
-                    <hr>
-                    <h2 class="intro-text text-center">
-                        <strong>Databases</strong>
-                    </h2>
-                    <hr>
-                    <p>
-                        MongoDB, Elasticsearch, U2 (Universe and Unidata), Cassandra, MSSQL, PostgreSQL, Couch and Redis.
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="box">
-                <div class="col-lg-12">
-                    <hr>
-                    <h2 class="intro-text text-center">
-                        <strong>Projects</strong>
-                    </h2>
-                    <hr>
-                    <p>
-                        <a href="https://github.com/dougmolineux/node-mongo-vs-postgres-jsonb">
-                            node-mongo-vs-postgres-jsonb
-                        </a>
-                        Measure and compare Node Implementation performance of PostgreSQL JSONB and MongoDB.
-                    </p>
-                    <p>
-                        <a href="https://github.com/dougmolineux/node-azure-servicebus-explorer">
-                            node-azure-servicebus-explorer
-                        </a>
-                        Azure Service Bus Explorer written in Node and Angular.
-                    </p>
-                    <p>
-                        <a href="https://github.com/dougmolineux/arm-template-generator">
-                            arm-template-generator
-                        </a>
-                        Generates ARM (Azure Resource Manager) Templates.
-                    </p>
-                    <hr>
-                    <p>
-                        Other projects:
-                        <div class="github-widget" data-user="dougmolineux"></div>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- /.container -->
-
-    <div class="footer">
-        &copy; Doug Molineux &mdash; All rights reserved
-    </div>
-
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-
-    <!-- Script to Activate the Carousel -->
-    <script>
-    $('.carousel').carousel({
-        interval: 10000 //changes the speed
-    })
-    </script>
-
-    <script src="github-widget/github-widget.min.js"></script>
-
+    </footer>
 </body>
 
 </html>
