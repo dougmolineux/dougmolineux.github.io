@@ -1,1 +1,228 @@
-pluto
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pluto-Charon Binary System 3D Explorer</title>
+    <!-- Load Tailwind CSS for styling the UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Three.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Load OrbitControls for camera interaction -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #0d1117; }
+        canvas { display: block; }
+        .info-box {
+            position: absolute;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.75rem 1.5rem;
+            background-color: rgba(30, 41, 59, 0.85); /* Slate 800 with transparency */
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            color: #e2e8f0; /* Slate 200 */
+            z-index: 10;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid #334155;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="info" class="info-box">
+        <h1 class="text-xl font-bold mb-1">Pluto & Charon Binary System</h1>
+        <p class="text-xs">Use mouse/touch to orbit, zoom, and pan the system.</p>
+        <p class="text-xs text-yellow-400 mt-1">Planets are NOT to scale in color/detail. Orbits are simplified.</p>
+        <button id="about-btn" class="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-150 shadow-md">
+            About This App
+        </button>
+    </div>
+
+    <!-- About Modal -->
+    <div id="about-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-gray-800 p-6 max-w-lg w-full rounded-xl shadow-2xl border border-blue-400/30 text-slate-200">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-white">Application Details</h2>
+                <button id="close-modal-btn" class="text-gray-400 hover:text-white transition duration-150 focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <p class="mb-4 text-sm">
+                This interactive visualization models the Pluto-Charon system, one of the most famous binary systems in the Solar System, where both bodies orbit a common center of mass (the barycenter) located outside Pluto's surface.
+            </p>
+
+            <h3 class="text-lg font-semibold mb-2 text-blue-300">Technology Stack</h3>
+            <ul class="list-disc list-inside space-y-1 text-sm pl-2">
+                <li><strong class="text-white">Three.js (r128):</strong> JavaScript library used for creating and rendering the 3D graphics (scene, planets, stars, lighting).</li>
+                <li><strong class="text-white">OrbitControls:</strong> A Three.js helper used to allow interactive camera control (zoom, rotate, pan) via mouse and touch.</li>
+                <li><strong class="text-white">HTML/JavaScript:</strong> Core structure and logic for animation, rendering loop, and UI control.</li>
+                <li><strong class="text-white">Tailwind CSS:</strong> Utility-first framework for responsive and aesthetic styling of the information panel and modal.</li>
+            </ul>
+
+            <h3 class="text-lg font-semibold mt-4 mb-2 text-blue-300">Simulation Details</h3>
+            <ul class="list-disc list-inside space-y-1 text-sm pl-2">
+                <li><strong class="text-white">Barycenter Orbit:</strong> Pluto and Charon are positioned relative to the barycenter based on their approximate mass ratio (Pluto $\approx 8$ times Charon's mass), ensuring the barycenter is the rotational pivot.</li>
+                <li><strong class="text-white">Tidal Locking:</strong> The simulation correctly shows that both Pluto and Charon are tidally locked, meaning they rotate on their axes at the same rate they orbit each other.</li>
+                <li><strong class="text-white">Scaling:</strong> The sizes of Pluto and Charon are scaled relative to each other (Charon $\approx 51\%$ the radius of Pluto). The orbital distance is scaled for visualization purposes.</li>
+            </ul>
+        </div>
+    </div>
+    <!-- End About Modal -->
+
+    <script>
+        // Global variables for the 3D scene
+        let scene, camera, renderer, controls;
+        let pluto, charon, barycenterPivot;
+        const ORBIT_SPEED = 0.005; // Speed of the orbital rotation
+        const SELF_ROTATION_SPEED = 0.005; // Set equal to ORBIT_SPEED for perfect tidal locking
+
+        // Constants based on simplified, scaled dimensions for visualization
+        const PLUTO_RADIUS = 1.0;
+        const CHARON_RADIUS = 0.51;
+        const TOTAL_DISTANCE = 8.0; // Total distance between centers
+
+        // Barycenter calculation (Pluto Mass ~ 8.4x Charon Mass, using simplified 8:1 ratio for positioning)
+        const PLUTO_RATIO = 1 / 9; // d_P = D * (m_C / (m_P + m_C))
+        const CHARON_RATIO = 8 / 9; // d_C = D * (m_P / (m_P + m_C))
+
+        const PLUTO_ORBIT_DISTANCE = TOTAL_DISTANCE * PLUTO_RATIO;
+        const CHARON_ORBIT_DISTANCE = TOTAL_DISTANCE * CHARON_RATIO;
+
+        function init() {
+            // 1. Scene Setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a20); // Deep space background
+
+            // 2. Camera Setup
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 20;
+
+            // 3. Renderer Setup
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // 4. Orbit Controls (Interaction)
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true; // smooth rotation
+            controls.dampingFactor = 0.05;
+            controls.minDistance = 5;
+            controls.maxDistance = 50;
+            controls.autoRotate = true; // Auto-rotate the camera initially
+            controls.autoRotateSpeed = 0.5;
+
+            // 5. Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 5); // soft white light
+            scene.add(ambientLight);
+
+            const pointLight = new THREE.PointLight(0xffffff, 10, 100);
+            pointLight.position.set(10, 10, 10);
+            scene.add(pointLight);
+
+            const pointLight2 = new THREE.PointLight(0xffffff, 5, 100);
+            pointLight2.position.set(-10, -10, -10);
+            scene.add(pointLight2);
+
+            // 6. Barycenter Pivot (The common center of mass for orbital rotation)
+            barycenterPivot = new THREE.Object3D();
+            scene.add(barycenterPivot);
+
+            // 7. Create Pluto (Larger Body)
+            const plutoGeometry = new THREE.SphereGeometry(PLUTO_RADIUS, 64, 64);
+            // Using a simple reddish/brown material to evoke Pluto's color
+            const plutoMaterial = new THREE.MeshLambertMaterial({ color: 0x8b4513 });
+            pluto = new THREE.Mesh(plutoGeometry, plutoMaterial);
+            pluto.position.x = -PLUTO_ORBIT_DISTANCE;
+            barycenterPivot.add(pluto);
+
+            // 8. Create Charon (Smaller Moon)
+            const charonGeometry = new THREE.SphereGeometry(CHARON_RADIUS, 32, 32);
+            // Using a grey/neutral material for Charon
+            const charonMaterial = new THREE.MeshLambertMaterial({ color: 0xcccccc });
+            charon = new THREE.Mesh(charonGeometry, charonMaterial);
+            charon.position.x = CHARON_ORBIT_DISTANCE;
+            barycenterPivot.add(charon);
+
+            // 9. Stars Background (Simple static background)
+            const starGeometry = new THREE.BufferGeometry();
+            const starVertices = [];
+            for (let i = 0; i < 10000; i++) {
+                const x = (Math.random() - 0.5) * 2000;
+                const y = (Math.random() - 0.5) * 2000;
+                const z = (Math.random() - 0.5) * 2000;
+                starVertices.push(x, y, z);
+            }
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+            const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
+            const stars = new THREE.Points(starGeometry, starMaterial);
+            scene.add(stars);
+
+            // UI Interaction Setup
+            const aboutBtn = document.getElementById('about-btn');
+            const aboutModal = document.getElementById('about-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+
+            const showModal = () => {
+                aboutModal.classList.remove('hidden');
+                controls.enabled = false; // Disable 3D controls when modal is open
+            };
+
+            const hideModal = () => {
+                aboutModal.classList.add('hidden');
+                controls.enabled = true; // Re-enable 3D controls when modal is closed
+            };
+
+            aboutBtn.addEventListener('click', showModal);
+            closeModalBtn.addEventListener('click', hideModal);
+            
+            // Allow clicking outside the modal to close it
+            aboutModal.addEventListener('click', (e) => {
+                if (e.target === aboutModal) {
+                    hideModal();
+                }
+            });
+
+            // Handle window resizing
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 1. Orbital Rotation (Pluto and Charon orbit the barycenter)
+            barycenterPivot.rotation.y += ORBIT_SPEED;
+
+            // 2. Self-Rotation (Tidally locked: same rotation speed as orbit speed)
+            pluto.rotation.y += SELF_ROTATION_SPEED;
+            charon.rotation.y += SELF_ROTATION_SPEED;
+
+            // Update controls (important for damping/smooth movement)
+            controls.update();
+
+            // Render the scene
+            renderer.render(scene, camera);
+        }
+
+        // Initialize and start the animation loop after the window loads
+        window.onload = function() {
+            init();
+            animate();
+        };
+
+    </script>
+</body>
+</html>
+
+
