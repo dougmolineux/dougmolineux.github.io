@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Entanglement Visualizer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- OrbitControls -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #050505; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
+        .interactive-panel { pointer-events: auto; }
+        
+        /* Custom glowing text */
+        .glow-text {
+            text-shadow: 0 0 10px rgba(100, 200, 255, 0.7);
+        }
+        
+        /* Glassmorphism for panels */
+        .glass-panel {
+            background: rgba(10, 20, 40, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 3D Canvas -->
+    <div id="canvas-container"></div>
+
+    <!-- UI Overlay -->
+    <div id="ui-layer" class="flex flex-col justify-between p-4 md:p-8">
+        
+        <!-- Header -->
+        <div class="glass-panel p-4 rounded-xl max-w-2xl interactive-panel transform transition hover:scale-105 duration-300">
+            <h1 class="text-2xl md:text-3xl font-bold text-cyan-400 glow-text mb-2">
+                <i class="fas fa-atom mr-2"></i>Quantum Entanglement
+            </h1>
+            <p id="status-text" class="text-gray-200 text-sm md:text-base leading-relaxed">
+                Particles are currently in <span class="font-bold text-purple-400">Superposition</span>. 
+                Their state (Spin Up/Down) is undefined. They exist in a probability cloud of all possible states simultaneously.
+            </p>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex flex-col items-center mb-8">
+            <div class="glass-panel p-4 rounded-xl flex flex-col md:flex-row gap-4 interactive-panel">
+                
+                <button onclick="app.measure()" id="btn-measure" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-cyan-500/50 transition-all flex items-center justify-center gap-2 min-w-[180px]">
+                    <i class="fas fa-eye"></i> Measure State
+                </button>
+
+                <button onclick="app.separate()" id="btn-separate" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-purple-500/50 transition-all flex items-center justify-center gap-2 min-w-[180px]">
+                    <i class="fas fa-arrows-alt-h"></i> Increase Distance
+                </button>
+
+                <button onclick="app.reset()" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all flex items-center justify-center gap-2 min-w-[140px]">
+                    <i class="fas fa-undo"></i> Reset
+                </button>
+            </div>
+            
+            <div class="mt-4 text-xs text-gray-500 font-mono glass-panel px-3 py-1 rounded">
+                Click & Drag to Rotate Camera | Scroll to Zoom
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class QuantumApp {
+            constructor() {
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.controls = null;
+                
+                // Objects
+                this.particleA = null;
+                this.particleB = null;
+                this.entanglementBeam = null;
+                this.particles = [];
+                
+                // State
+                this.isSuperposition = true;
+                this.distance = 4; // Initial distance from center (total dist 8)
+                this.targetDistance = 4;
+                this.colors = {
+                    neutral: 0xffffff,
+                    up: 0x00ffff,   // Cyan
+                    down: 0xff8800  // Orange
+                };
+                
+                this.time = 0;
+
+                this.init();
+                this.animate();
+            }
+
+            init() {
+                // Scene Setup
+                this.scene = new THREE.Scene();
+                this.scene.fog = new THREE.FogExp2(0x050505, 0.02);
+
+                // Camera
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                this.camera.position.z = 18;
+                this.camera.position.y = 5;
+
+                // Renderer
+                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(window.devicePixelRatio);
+                this.renderer.toneMapping = THREE.ReinhardToneMapping;
+                document.getElementById('canvas-container').appendChild(this.renderer.domElement);
+
+                // Controls
+                this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+                this.controls.enableDamping = true;
+                this.controls.dampingFactor = 0.05;
+
+                // Lights
+                const ambientLight = new THREE.AmbientLight(0x404040, 2);
+                this.scene.add(ambientLight);
+
+                const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+                pointLight.position.set(0, 10, 10);
+                this.scene.add(pointLight);
+
+                // Build Scene Objects
+                this.createStarfield();
+                this.particleA = this.createQuantumParticle(-this.distance);
+                this.particleB = this.createQuantumParticle(this.distance);
+                this.createEntanglementBeam();
+
+                // Listeners
+                window.addEventListener('resize', () => this.onWindowResize(), false);
+            }
+
+            createQuantumParticle(xPos) {
+                const group = new THREE.Group();
+                group.position.x = xPos;
+
+                // 1. Inner Core (The Glow)
+                const coreGeo = new THREE.IcosahedronGeometry(1.5, 4);
+                const coreMat = new THREE.MeshStandardMaterial({
+                    color: 0xffffff,
+                    emissive: 0x222222,
+                    roughness: 0.1,
+                    metalness: 0.9,
+                    transparent: true,
+                    opacity: 0.9
+                });
+                const core = new THREE.Mesh(coreGeo, coreMat);
+                group.add(core);
+
+                // 2. Outer Shell (Wireframe/Field)
+                const shellGeo = new THREE.IcosahedronGeometry(1.8, 2);
+                const shellMat = new THREE.MeshBasicMaterial({
+                    color: 0x44aaff,
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                const shell = new THREE.Mesh(shellGeo, shellMat);
+                group.add(shell);
+
+                // 3. Orbiting Electrons/Energy bits
+                const ringGeo = new THREE.TorusGeometry(2.5, 0.05, 8, 50);
+                const ringMat = new THREE.MeshBasicMaterial({ color: 0x88ccff, transparent: true, opacity: 0.5 });
+                const ring1 = new THREE.Mesh(ringGeo, ringMat);
+                const ring2 = new THREE.Mesh(ringGeo, ringMat);
+                ring1.rotation.x = Math.PI / 2;
+                ring2.rotation.y = Math.PI / 2;
+                
+                group.add(ring1);
+                group.add(ring2);
+
+                // Save references for animation
+                group.userData = {
+                    core: core,
+                    shell: shell,
+                    ring1: ring1,
+                    ring2: ring2,
+                    baseX: xPos
+                };
+
+                this.scene.add(group);
+                return group;
+            }
+
+            createEntanglementBeam() {
+                // Create a cylinder connecting the two
+                const geometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 32, 10, true);
+                const material = new THREE.MeshBasicMaterial({
+                    color: 0x8800ff,
+                    transparent: true,
+                    opacity: 0.4,
+                    side: THREE.DoubleSide,
+                    blending: THREE.AdditiveBlending
+                });
+                this.entanglementBeam = new THREE.Mesh(geometry, material);
+                this.entanglementBeam.rotation.z = Math.PI / 2;
+                this.scene.add(this.entanglementBeam);
+            }
+
+            createStarfield() {
+                const geometry = new THREE.BufferGeometry();
+                const count = 1000;
+                const posArray = new Float32Array(count * 3);
+                
+                for(let i = 0; i < count * 3; i++) {
+                    posArray[i] = (Math.random() - 0.5) * 100;
+                }
+                
+                geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+                const material = new THREE.PointsMaterial({
+                    size: 0.1,
+                    color: 0xffffff,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                const stars = new THREE.Points(geometry, material);
+                this.scene.add(stars);
+            }
+
+            measure() {
+                if (!this.isSuperposition) return;
+
+                this.isSuperposition = false;
+                
+                // Collapse wavefunction Logic
+                // Randomly decide if Particle A is UP (0) or DOWN (1)
+                const result = Math.random() > 0.5;
+
+                // Particle A
+                const colorA = result ? this.colors.up : this.colors.down;
+                // Particle B MUST be the opposite (Anti-correlated)
+                const colorB = result ? this.colors.down : this.colors.up;
+
+                this.setParticleColor(this.particleA, colorA);
+                this.setParticleColor(this.particleB, colorB);
+
+                // Update UI
+                const textA = result ? "Spin UP (Cyan)" : "Spin DOWN (Orange)";
+                const textB = result ? "Spin DOWN (Orange)" : "Spin UP (Cyan)";
+                
+                const statusEl = document.getElementById('status-text');
+                statusEl.innerHTML = `
+                    <span class="text-green-400 font-bold">Wavefunction Collapsed!</span><br>
+                    You measured Particle A: <b>${textA}</b>.<br>
+                    Instantly, Particle B became: <b>${textB}</b>.<br>
+                    <span class="text-xs text-gray-400 italic">"Spooky action at a distance" - Einstein</span>
+                `;
+                
+                // Visual effect: Beam solidifies
+                this.entanglementBeam.material.opacity = 0.1;
+                this.entanglementBeam.material.color.setHex(0xffffff);
+            }
+
+            setParticleColor(group, colorHex) {
+                group.userData.core.material.emissive.setHex(colorHex);
+                group.userData.shell.material.color.setHex(colorHex);
+                // Flash effect
+                const originalScale = group.scale.x;
+                group.scale.setScalar(originalScale * 1.5);
+            }
+
+            reset() {
+                this.isSuperposition = true;
+                this.entanglementBeam.material.opacity = 0.4;
+                this.entanglementBeam.material.color.setHex(0x8800ff);
+                
+                document.getElementById('status-text').innerHTML = `
+                    Particles returned to <span class="font-bold text-purple-400">Superposition</span>. 
+                    Their spin is undefined (fluctuating).
+                `;
+                
+                // Reset positions if separated
+                this.targetDistance = 4;
+            }
+
+            separate() {
+                if (this.targetDistance < 15) {
+                    this.targetDistance += 5;
+                    let msg = "";
+                    if (this.isSuperposition) {
+                        msg = "Particles moved apart. They remain entangled. Measuring one will still instantly affect the other.";
+                    } else {
+                        msg = "Particles moved apart. The correlation holds over distance.";
+                    }
+                    document.getElementById('status-text').innerHTML = msg;
+                }
+            }
+
+            updateSuperpositionColors() {
+                if (!this.isSuperposition) return;
+
+                // Cycle colors rapidly to represent probability flux
+                const hue = (this.time * 0.5) % 1;
+                const color = new THREE.Color().setHSL(hue, 1, 0.5);
+                
+                [this.particleA, this.particleB].forEach(p => {
+                    p.userData.core.material.emissive.copy(color);
+                    p.userData.shell.material.color.copy(color);
+                    p.scale.setScalar(1); // Reset scale from flash
+                });
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                this.time += 0.05;
+
+                // Update Controls
+                this.controls.update();
+
+                // Rotate Particles
+                [this.particleA, this.particleB].forEach(p => {
+                    p.userData.shell.rotation.y -= 0.01;
+                    p.userData.shell.rotation.z += 0.005;
+                    p.userData.ring1.rotation.x += 0.02;
+                    p.userData.ring2.rotation.y += 0.02;
+                    
+                    // Gentle float
+                    p.position.y = Math.sin(this.time * 0.5 + p.position.x) * 0.2;
+                });
+
+                // Smoothly separate particles
+                const currentDist = this.particleA.position.x;
+                const targetX = -this.targetDistance;
+                
+                // Lerp position
+                this.particleA.position.x += (targetX - currentDist) * 0.05;
+                this.particleB.position.x = -this.particleA.position.x;
+
+                // Update Beam logic
+                const dist = this.particleB.position.x - this.particleA.position.x;
+                this.entanglementBeam.scale.y = dist;
+                this.entanglementBeam.position.y = this.particleA.position.y; // Follow vertical float
+
+                // Beam Pulse Effect
+                if (this.isSuperposition) {
+                    const pulse = (Math.sin(this.time * 2) + 1.5) * 0.5; // 0.25 to 1.25
+                    this.entanglementBeam.material.opacity = 0.2 + (Math.sin(this.time * 5) * 0.1);
+                    this.entanglementBeam.scale.set(1 + pulse*0.2, dist, 1 + pulse*0.2);
+                    this.updateSuperpositionColors();
+                } else {
+                    // Reduce scaling effect when collapsed
+                    if (this.particleA.scale.x > 1.01) {
+                        this.particleA.scale.subScalar(0.05);
+                        this.particleB.scale.subScalar(0.05);
+                    }
+                }
+
+                this.renderer.render(this.scene, this.camera);
+            }
+
+            onWindowResize() {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        }
+
+        // Initialize App
+        const app = new QuantumApp();
+    </script>
+</body>
+</html>
