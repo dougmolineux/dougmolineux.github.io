@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GitHub Repo Viewer</title>
+
+<style>
+    body {
+        font-family: system-ui, sans-serif;
+        background: #f7f7f7;
+        padding: 40px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 600px;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 1.6rem;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        margin-bottom: 12px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    input:focus {
+        border-color: #0070f3;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #0070f3;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        margin-bottom: 20px;
+        transition: background 0.2s;
+    }
+
+    button:hover {
+        background: #005ec4;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    li {
+        background: #fafafa;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #eee;
+    }
+
+    a {
+        text-decoration: none;
+        color: #0070f3;
+        font-weight: 600;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .error {
+        color: #c00;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .loading {
+        text-align: center;
+        color: #666;
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>GitHub Repo Viewer</h1>
+
+    <input id="usernameInput" placeholder="Enter GitHub username..." />
+
+    <button onclick="loadRepos()">Load Repos</button>
+
+    <div id="status"></div>
+
+    <ul id="repoList"></ul>
+</div>
+
+<script>
+async function loadRepos() {
+    const username = document.getElementById("usernameInput").value.trim();
+    const status = document.getElementById("status");
+    const list = document.getElementById("repoList");
+
+    list.innerHTML = "";
+    status.innerHTML = "";
+
+    if (!username) {
+        status.innerHTML = '<div class="error">Please enter a username.</div>';
+        return;
+    }
+
+    status.innerHTML = '<div class="loading">Loading...</div>';
+
+    try {
+        const response = await fetch(`https://api.github.com/users/${username}/repos`);
+
+        if (!response.ok) {
+            status.innerHTML = '<div class="error">User not found or API error.</div>';
+            return;
+        }
+
+        const repos = await response.json();
+
+        if (repos.length === 0) {
+            status.innerHTML = '<div class="error">No public repos found.</div>';
+            return;
+        }
+
+        status.innerHTML = "";
+
+        repos.forEach(repo => {
+            const li = document.createElement("li");
+            li.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a>`;
+            list.appendChild(li);
+        });
+
+    } catch (err) {
+        status.innerHTML = '<div class="error">Failed to load repositories.</div>';
+    }
+}
+</script>
+
+</body>
+</html>
