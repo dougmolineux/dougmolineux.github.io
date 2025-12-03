@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Manager 25</title>
+    
+    <!-- 1. Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    
+    <!-- 3. Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        /* Custom Scrollbar for a retro feel */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+        body {
+            background-color: #020617; /* Slate 950 */
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- SETUP ---
+        const { useState, useEffect, useRef } = React;
+
+        // --- ICONS (Inline SVGs to replace Lucide imports) ---
+        const IconWrapper = ({ children }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{children}</svg>
+        );
+
+        const Trophy = () => <IconWrapper><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></IconWrapper>;
+        const Shield = () => <IconWrapper><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></IconWrapper>;
+        const Activity = () => <IconWrapper><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></IconWrapper>;
+        const Users = () => <IconWrapper><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></IconWrapper>;
+        const ChevronRight = () => <IconWrapper><path d="m9 18 6-6-6-6"/></IconWrapper>;
+        const Play = () => <IconWrapper><polygon points="6 3 20 12 6 21 6 3"/></IconWrapper>;
+        const Pause = () => <IconWrapper><rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/></IconWrapper>;
+        const RotateCcw = () => <IconWrapper><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></IconWrapper>;
+        const Menu = () => <IconWrapper><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></IconWrapper>;
+        const X = () => <IconWrapper><path d="M18 6 6 18"/><path d="m6 6 12 12"/></IconWrapper>;
+
+        // --- DATA & CONFIGURATION ---
+
+        const TEAMS_DATA = [
+            { id: 'mci', name: 'Man City', att: 92, mid: 94, def: 88, color: 'text-sky-400' },
+            { id: 'ars', name: 'Arsenal', att: 89, mid: 88, def: 92, color: 'text-red-500' },
+            { id: 'liv', name: 'Liverpool', att: 90, mid: 86, def: 87, color: 'text-red-600' },
+            { id: 'avl', name: 'Aston Villa', att: 84, mid: 83, def: 80, color: 'text-red-800' },
+            { id: 'tot', name: 'Tottenham', att: 86, mid: 82, def: 78, color: 'text-blue-900' },
+            { id: 'che', name: 'Chelsea', att: 83, mid: 84, def: 79, color: 'text-blue-600' },
+            { id: 'new', name: 'Newcastle', att: 82, mid: 81, def: 79, color: 'text-gray-800' },
+            { id: 'mun', name: 'Man Utd', att: 81, mid: 82, def: 78, color: 'text-red-700' },
+            { id: 'whu', name: 'West Ham', att: 79, mid: 78, def: 77, color: 'text-red-900' },
+            { id: 'bha', name: 'Brighton', att: 78, mid: 80, def: 76, color: 'text-blue-400' },
+            { id: 'ful', name: 'Fulham', att: 76, mid: 77, def: 76, color: 'text-gray-900' },
+            { id: 'bou', name: 'Bournemouth', att: 77, mid: 76, def: 75, color: 'text-red-600' },
+            { id: 'cry', name: 'Crystal Palace', att: 76, mid: 75, def: 76, color: 'text-blue-500' },
+            { id: 'wol', name: 'Wolves', att: 74, mid: 75, def: 74, color: 'text-yellow-600' },
+            { id: 'eve', name: 'Everton', att: 73, mid: 74, def: 78, color: 'text-blue-700' },
+            { id: 'bre', name: 'Brentford', att: 75, mid: 74, def: 73, color: 'text-red-500' },
+            { id: 'nfo', name: 'Nottm Forest', att: 74, mid: 73, def: 74, color: 'text-red-600' },
+            { id: 'ips', name: 'Ipswich', att: 71, mid: 72, def: 70, color: 'text-blue-600' },
+            { id: 'lei', name: 'Leicester', att: 72, mid: 72, def: 71, color: 'text-blue-500' },
+            { id: 'sou', name: 'Southampton', att: 71, mid: 71, def: 70, color: 'text-red-600' },
+        ];
+
+        const TACTICS = {
+            ATTACKING: { name: 'All Out Attack', attMod: 1.2, defMod: 0.8, midMod: 1.0, desc: 'High risk, high reward.' },
+            BALANCED:  { name: 'Balanced',       attMod: 1.0, defMod: 1.0, midMod: 1.0, desc: 'Standard approach.' },
+            DEFENSIVE: { name: 'Park the Bus',   attMod: 0.7, defMod: 1.3, midMod: 0.9, desc: 'Focus on clean sheets.' },
+        };
+
+        // --- UTILITIES ---
+
+        const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+        // --- MAIN COMPONENT ---
+
+        function FootballManager() {
+            // State
+            const [gameState, setGameState] = useState('START'); // START, MENU, MATCH, REPORT
+            const [userTeamId, setUserTeamId] = useState(null);
+            const [week, setWeek] = useState(1);
+            const [leagueTable, setLeagueTable] = useState([]);
+            const [fixtures, setFixtures] = useState([]);
+            const [matchLog, setMatchLog] = useState([]);
+            const [matchTime, setMatchTime] = useState(0);
+            const [currentScores, setCurrentScores] = useState({});
+            const [userTactic, setUserTactic] = useState('BALANCED');
+            const [isPlaying, setIsPlaying] = useState(false);
+            const scrollRef = useRef(null);
+
+            // Initialize League
+            useEffect(() => {
+                const initialTable = TEAMS_DATA.map(t => ({
+                    ...t,
+                    played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0, form: []
+                }));
+                setLeagueTable(initialTable);
+                generateWeekFixtures(initialTable);
+            }, []);
+
+            // Auto-scroll match log
+            useEffect(() => {
+                if (scrollRef.current) {
+                    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+                }
+            }, [matchLog]);
+
+            // Match Simulation Loop
+            useEffect(() => {
+                let interval;
+                if (gameState === 'MATCH' && isPlaying && matchTime < 90) {
+                    interval = setInterval(() => {
+                        setMatchTime(prev => {
+                            const newTime = prev + 1;
+                            simulateMinute(newTime);
+                            return newTime;
+                        });
+                    }, 100); // Speed of simulation
+                } else if (matchTime >= 90) {
+                    setIsPlaying(false);
+                }
+                return () => clearInterval(interval);
+            }, [gameState, isPlaying, matchTime]);
+
+            const generateWeekFixtures = (currentTable) => {
+                // Basic random pairing for the week
+                const shuffled = [...currentTable].sort(() => 0.5 - Math.random());
+                const newFixtures = [];
+                for (let i = 0; i < shuffled.length; i += 2) {
+                    newFixtures.push({
+                        home: shuffled[i],
+                        away: shuffled[i + 1],
+                        homeScore: 0,
+                        awayScore: 0,
+                        status: 'PENDING'
+                    });
+                }
+                setFixtures(newFixtures);
+                
+                // Reset match state
+                setMatchTime(0);
+                setMatchLog([]);
+                const initialScores = {};
+                newFixtures.forEach((f, idx) => initialScores[idx] = { h: 0, a: 0 });
+                setCurrentScores(initialScores);
+            };
+
+            const simulateMinute = (minute) => {
+                const userFixtureIndex = fixtures.findIndex(f => f.home.id === userTeamId || f.away.id === userTeamId);
+                
+                // Simulate all matches
+                const newScores = { ...currentScores };
+                const newLog = [...matchLog];
+
+                fixtures.forEach((fixture, index) => {
+                    // Determine stats based on tactics if it's user team
+                    let hAtt = fixture.home.att;
+                    let hDef = fixture.home.def;
+                    let aAtt = fixture.away.att;
+                    let aDef = fixture.away.def;
+
+                    if (fixture.home.id === userTeamId) {
+                        hAtt *= TACTICS[userTactic].attMod;
+                        hDef *= TACTICS[userTactic].defMod;
+                    }
+                    if (fixture.away.id === userTeamId) {
+                        aAtt *= TACTICS[userTactic].attMod;
+                        aDef *= TACTICS[userTactic].defMod;
+                    }
+
+                    // Simulation Logic
+                    const midDiff = (fixture.home.mid - fixture.away.mid) / 2;
+                    const homePossessionChance = 50 + midDiff; 
+                    
+                    if (Math.random() * 100 < 5) { // 5% chance of a "Key Highlight" per minute per game
+                        const isHomeAttacking = Math.random() * 100 < homePossessionChance;
+                        
+                        if (isHomeAttacking) {
+                            // Home Attack
+                            const attackFactor = hAtt + getRandomInt(0, 20);
+                            const defenseFactor = aDef + getRandomInt(0, 20);
+                            
+                            if (attackFactor > defenseFactor + 15) { // GOAL
+                                newScores[index].h += 1;
+                                if (index === userFixtureIndex) {
+                                    newLog.push({ time: minute, text: `GOAL! ${fixture.home.name} score! It's a brilliant finish.`, type: 'goal', team: 'home' });
+                                }
+                            } else if (attackFactor > defenseFactor) { // MISS
+                                if (index === userFixtureIndex) {
+                                    newLog.push({ time: minute, text: `${fixture.home.name} come close, but the shot goes wide.`, type: 'miss', team: 'home' });
+                                }
+                            }
+                        } else {
+                            // Away Attack
+                            const attackFactor = aAtt + getRandomInt(0, 20);
+                            const defenseFactor = hDef + getRandomInt(0, 20);
+
+                            if (attackFactor > defenseFactor + 15) { // GOAL
+                                newScores[index].a += 1;
+                                if (index === userFixtureIndex) {
+                                    newLog.push({ time: minute, text: `GOAL! ${fixture.away.name} take the lead against the run of play!`, type: 'goal', team: 'away' });
+                                }
+                            } else if (attackFactor > defenseFactor) { // MISS
+                                if (index === userFixtureIndex) {
+                                    newLog.push({ time: minute, text: `${fixture.away.name} hit the post! So close.`, type: 'miss', team: 'away' });
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Special commentary
+                if (minute === 45) newLog.push({ time: 45, text: "HALF TIME. The players head to the tunnel.", type: 'info' });
+                if (minute === 90) newLog.push({ time: 90, text: "FULL TIME. The referee blows the final whistle.", type: 'info' });
+
+                setMatchLog(newLog);
+                setCurrentScores(newScores);
+            };
+
+            const finishMatchDay = () => {
+                // Update League Table
+                const newTable = leagueTable.map(team => {
+                    const fixtureIdx = fixtures.findIndex(f => f.home.id === team.id || f.away.id === team.id);
+                    if (fixtureIdx === -1) return team;
+
+                    const score = currentScores[fixtureIdx];
+                    const isHome = fixtures[fixtureIdx].home.id === team.id;
+                    const goalsFor = isHome ? score.h : score.a;
+                    const goalsAgainst = isHome ? score.a : score.h;
+                    
+                    let points = 0;
+                    let w = 0, d = 0, l = 0;
+                    let resultChar = '';
+
+                    if (goalsFor > goalsAgainst) { points = 3; w = 1; resultChar = 'W'; }
+                    else if (goalsFor === goalsAgainst) { points = 1; d = 1; resultChar = 'D'; }
+                    else { l = 1; resultChar = 'L'; }
+
+                    const newForm = [...team.form, resultChar].slice(-5);
+
+                    return {
+                        ...team,
+                        played: team.played + 1,
+                        won: team.won + w,
+                        drawn: team.drawn + d,
+                        lost: team.lost + l,
+                        gf: team.gf + goalsFor,
+                        ga: team.ga + goalsAgainst,
+                        gd: team.gd + (goalsFor - goalsAgainst),
+                        points: team.points + points,
+                        form: newForm
+                    };
+                });
+
+                newTable.sort((a, b) => b.points - a.points || b.gd - a.gd || b.gf - a.gf);
+
+                setLeagueTable(newTable);
+                setWeek(w => w + 1);
+                setGameState('REPORT');
+            };
+
+            const nextWeek = () => {
+                generateWeekFixtures(leagueTable);
+                setGameState('MENU');
+            };
+
+            const getFormColor = (char) => {
+                if (char === 'W') return 'text-green-500 font-bold';
+                if (char === 'D') return 'text-yellow-500 font-bold';
+                return 'text-red-500 font-bold';
+            };
+
+            const UserTeamDisplay = () => {
+                const team = TEAMS_DATA.find(t => t.id === userTeamId);
+                if (!team) return null;
+                return (
+                    <div className="bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center">
+                        <div>
+                            <div className="text-xs text-slate-400 uppercase tracking-widest">Managing</div>
+                            <div className={`text-xl font-black ${team.color}`}>{team.name}</div>
+                        </div>
+                        <div className="text-right">
+                            <div className="text-xs text-slate-400 uppercase tracking-widest">Week</div>
+                            <div className="text-xl font-mono text-white">{week}</div>
+                        </div>
+                    </div>
+                );
+            };
+
+            if (gameState === 'START') {
+                return (
+                    <div className="min-h-screen bg-slate-900 text-slate-100 font-mono flex flex-col items-center justify-center p-4">
+                        <div className="max-w-2xl w-full bg-slate-800 border-2 border-slate-600 p-8 shadow-2xl rounded-sm">
+                            <h1 className="text-4xl md:text-6xl font-black text-center mb-2 tracking-tighter text-yellow-500">
+                                TEXT MANAGER 25
+                            </h1>
+                            <p className="text-center text-slate-400 mb-8 uppercase tracking-widest text-sm">
+                                Premier League Edition • 2024/2025
+                            </p>
+                            
+                            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                                <div className="text-sm text-slate-500 mb-2 uppercase">Select your club</div>
+                                {TEAMS_DATA.map(team => (
+                                    <button
+                                        key={team.id}
+                                        onClick={() => { setUserTeamId(team.id); setGameState('MENU'); }}
+                                        className="w-full flex items-center justify-between p-4 bg-slate-900 hover:bg-slate-700 border border-slate-700 transition-colors group"
+                                    >
+                                        <span className={`font-bold text-lg group-hover:text-white ${team.color}`}>{team.name}</span>
+                                        <div className="flex gap-4 text-xs text-slate-500">
+                                            <span>ATT: <span className="text-slate-300">{team.att}</span></span>
+                                            <span>MID: <span className="text-slate-300">{team.mid}</span></span>
+                                            <span>DEF: <span className="text-slate-300">{team.def}</span></span>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            const Sidebar = () => (
+                <div className="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0">
+                    <div className="p-4 border-b border-slate-800 bg-slate-950">
+                        <h2 className="font-bold text-yellow-500 tracking-tight">TM 25</h2>
+                    </div>
+                    <nav className="flex-1 p-2 space-y-1">
+                        {[
+                            { label: 'Overview', icon: Activity, action: () => setGameState('MENU') },
+                            { label: 'Tactics', icon: Shield, action: () => setGameState('TACTICS') },
+                            { label: 'League Table', icon: Trophy, action: () => setGameState('TABLE') },
+                            { label: 'Fixtures', icon: Users, action: () => setGameState('FIXTURES') },
+                        ].map(item => (
+                            <button
+                                key={item.label}
+                                onClick={item.action}
+                                className="w-full flex items-center space-x-3 px-3 py-2 text-slate-400 hover:bg-slate-800 hover:text-white rounded-md transition-colors text-sm font-medium"
+                            >
+                                <item.icon />
+                                <span>{item.label}</span>
+                            </button>
+                        ))}
+                    </nav>
+                    <div className="p-4 border-t border-slate-800">
+                        <button 
+                             onClick={() => setGameState('START')}
+                             className="text-xs text-red-500 hover:text-red-400 flex items-center gap-2"
+                        >
+                            <RotateCcw /> Resign Game
+                        </button>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="min-h-screen bg-slate-950 text-slate-200 font-mono flex flex-col md:flex-row overflow-hidden">
+                    <Sidebar />
+                    
+                    <div className="flex-1 flex flex-col h-screen overflow-hidden">
+                        <UserTeamDisplay />
+
+                        <main className="flex-1 overflow-y-auto bg-slate-900 p-4 md:p-8 custom-scrollbar">
+                            {/* --- MENU --- */}
+                            {gameState === 'MENU' && (
+                                <div className="space-y-6">
+                                    <div className="flex justify-between items-end border-b-2 border-slate-700 pb-2 mb-6">
+                                        <h2 className="text-2xl font-bold text-white">Manager Office</h2>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="bg-slate-800 border border-slate-700 p-6 rounded-sm shadow-sm">
+                                            <h3 className="text-sm uppercase text-slate-400 mb-4 tracking-widest">Next Match</h3>
+                                            {(() => {
+                                                const nextFixture = fixtures.find(f => f.home.id === userTeamId || f.away.id === userTeamId);
+                                                if (!nextFixture) return <div>No game scheduled.</div>;
+                                                const opponent = nextFixture.home.id === userTeamId ? nextFixture.away : nextFixture.home;
+                                                const isHome = nextFixture.home.id === userTeamId;
+                                                return (
+                                                    <div className="text-center space-y-4">
+                                                        <div className="text-3xl font-black text-white">{isHome ? 'Home' : 'Away'} vs <span className={opponent.color}>{opponent.name}</span></div>
+                                                        <div className="flex justify-center gap-8 text-sm">
+                                                            <div className="text-slate-400">OPP ATT: <span className="text-white">{opponent.att}</span></div>
+                                                            <div className="text-slate-400">OPP DEF: <span className="text-white">{opponent.def}</span></div>
+                                                        </div>
+                                                        <button 
+                                                            onClick={() => { setGameState('MATCH'); setIsPlaying(true); }}
+                                                            className="mt-4 px-8 py-3 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-sm w-full transition-colors"
+                                                        >
+                                                            PLAY MATCH
+                                                        </button>
+                                                    </div>
+                                                );
+                                            })()}
+                                        </div>
+
+                                        <div className="bg-slate-800 border border-slate-700 p-6 rounded-sm shadow-sm">
+                                            <h3 className="text-sm uppercase text-slate-400 mb-4 tracking-widest">Team Status</h3>
+                                            <div className="space-y-2">
+                                                <div className="flex justify-between border-b border-slate-700 pb-2">
+                                                    <span>Current Tactics</span>
+                                                    <span className="text-yellow-400 font-bold">{TACTICS[userTactic].name}</span>
+                                                </div>
+                                                <div className="flex justify-between border-b border-slate-700 pb-2">
+                                                    <span>League Position</span>
+                                                    <span className="text-white font-bold">
+                                                        {leagueTable.findIndex(t => t.id === userTeamId) + 1}
+                                                        <span className="text-slate-500 text-xs font-normal"> / 20</span>
+                                                    </span>
+                                                </div>
+                                                <div className="flex justify-between pt-2">
+                                                    <span>Form</span>
+                                                    <div className="flex gap-1">
+                                                        {leagueTable.find(t => t.id === userTeamId)?.form.map((res, i) => (
+                                                            <span key={i} className={getFormColor(res)}>{res}</span>
+                                                        )) || <span className="text-slate-600">-</span>}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button 
+                                                onClick={() => setGameState('TACTICS')}
+                                                className="mt-6 text-sm text-blue-400 hover:text-blue-300 underline"
+                                            >
+                                                Change Tactics
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* --- TACTICS --- */}
+                            {gameState === 'TACTICS' && (
+                                <div>
+                                    <div className="flex justify-between items-center border-b-2 border-slate-700 pb-2 mb-6">
+                                        <h2 className="text-2xl font-bold text-white">Tactics Board</h2>
+                                        <button onClick={() => setGameState('MENU')} className="text-sm text-slate-400 hover:text-white">Back</button>
+                                    </div>
+                                    
+                                    <div className="grid gap-4">
+                                        {Object.keys(TACTICS).map(key => (
+                                            <button
+                                                key={key}
+                                                onClick={() => setUserTactic(key)}
+                                                className={`p-6 text-left border rounded-sm transition-all ${
+                                                    userTactic === key 
+                                                    ? 'bg-blue-900/30 border-blue-500 ring-1 ring-blue-500' 
+                                                    : 'bg-slate-800 border-slate-700 hover:bg-slate-750'
+                                                }`}
+                                            >
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <span className={`font-bold text-lg ${userTactic === key ? 'text-blue-400' : 'text-slate-200'}`}>
+                                                        {TACTICS[key].name}
+                                                    </span>
+                                                    {userTactic === key && <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded">ACTIVE</span>}
+                                                </div>
+                                                <p className="text-slate-400 text-sm mb-4">{TACTICS[key].desc}</p>
+                                                <div className="flex gap-4 text-xs font-mono">
+                                                    <span className={TACTICS[key].attMod > 1 ? 'text-green-400' : TACTICS[key].attMod < 1 ? 'text-red-400' : 'text-slate-500'}>
+                                                        ATT: {Math.round(TACTICS[key].attMod * 100)}%
+                                                    </span>
+                                                    <span className={TACTICS[key].midMod > 1 ? 'text-green-400' : TACTICS[key].midMod < 1 ? 'text-red-400' : 'text-slate-500'}>
+                                                        MID: {Math.round(TACTICS[key].midMod * 100)}%
+                                                    </span>
+                                                    <span className={TACTICS[key].defMod > 1 ? 'text-green-400' : TACTICS[key].defMod < 1 ? 'text-red-400' : 'text-slate-500'}>
+                                                        DEF: {Math.round(TACTICS[key].defMod * 100)}%
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* --- TABLE --- */}
+                            {gameState === 'TABLE' && (
+                                <div>
+                                    <div className="flex justify-between items-center border-b-2 border-slate-700 pb-2 mb-6">
+                                        <h2 className="text-2xl font-bold text-white">Premier League Table</h2>
+                                        <button onClick={() => setGameState('MENU')} className="text-sm text-slate-400 hover:text-white">Back</button>
+                                    </div>
+                                    <div className="overflow-x-auto bg-slate-800 border border-slate-700 rounded-sm">
+                                        <table className="w-full text-left text-sm">
+                                            <thead className="bg-slate-950 text-slate-400 uppercase text-xs tracking-wider">
+                                                <tr>
+                                                    <th className="p-3 w-12 text-center">Pos</th>
+                                                    <th className="p-3">Club</th>
+                                                    <th className="p-3 w-12 text-center">P</th>
+                                                    <th className="p-3 w-12 text-center">W</th>
+                                                    <th className="p-3 w-12 text-center">D</th>
+                                                    <th className="p-3 w-12 text-center">L</th>
+                                                    <th className="p-3 w-12 text-center">GD</th>
+                                                    <th className="p-3 w-12 text-center font-bold text-white">Pts</th>
+                                                    <th className="p-3 hidden md:table-cell">Form</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-700">
+                                                {leagueTable.map((team, idx) => (
+                                                    <tr key={team.id} className={team.id === userTeamId ? 'bg-blue-900/20' : ''}>
+                                                        <td className={`p-3 text-center font-mono ${idx < 4 ? 'text-green-400 border-l-2 border-green-500' : idx > 16 ? 'text-red-400 border-l-2 border-red-500' : ''}`}>{idx + 1}</td>
+                                                        <td className={`p-3 font-bold ${team.color}`}>{team.name} {team.id === userTeamId && <span className="text-xs text-white ml-2">(YOU)</span>}</td>
+                                                        <td className="p-3 text-center text-slate-400">{team.played}</td>
+                                                        <td className="p-3 text-center text-slate-400">{team.won}</td>
+                                                        <td className="p-3 text-center text-slate-400">{team.drawn}</td>
+                                                        <td className="p-3 text-center text-slate-400">{team.lost}</td>
+                                                        <td className="p-3 text-center text-slate-300">{team.gd > 0 ? `+${team.gd}` : team.gd}</td>
+                                                        <td className="p-3 text-center font-bold text-white">{team.points}</td>
+                                                        <td className="p-3 hidden md:flex gap-1">
+                                                            {team.form.map((r, i) => <span key={i} className={`text-xs ${getFormColor(r)}`}>{r}</span>)}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* --- FIXTURES --- */}
+                            {gameState === 'FIXTURES' && (
+                                <div>
+                                    <div className="flex justify-between items-center border-b-2 border-slate-700 pb-2 mb-6">
+                                        <h2 className="text-2xl font-bold text-white">Week {week} Fixtures</h2>
+                                        <button onClick={() => setGameState('MENU')} className="text-sm text-slate-400 hover:text-white">Back</button>
+                                    </div>
+                                    <div className="grid gap-3">
+                                        {fixtures.map((f, i) => (
+                                            <div key={i} className="flex justify-between items-center p-3 bg-slate-800 border border-slate-700 rounded-sm">
+                                                <div className={`w-1/3 text-right font-bold ${f.home.color}`}>{f.home.name}</div>
+                                                <div className="w-16 text-center bg-slate-900 py-1 rounded text-slate-400 text-xs">VS</div>
+                                                <div className={`w-1/3 text-left font-bold ${f.away.color}`}>{f.away.name}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* --- MATCH ENGINE --- */}
+                            {gameState === 'MATCH' && (
+                                <div className="flex flex-col h-full">
+                                    {/* Scoreboard */}
+                                    <div className="bg-black p-6 mb-4 border-2 border-slate-600 rounded-sm shadow-lg shrink-0">
+                                        {(() => {
+                                            const fIdx = fixtures.findIndex(f => f.home.id === userTeamId || f.away.id === userTeamId);
+                                            const fixture = fixtures[fIdx];
+                                            const scores = currentScores[fIdx];
+                                            return (
+                                                <div className="flex flex-col items-center">
+                                                    <div className="text-yellow-500 font-mono text-xl mb-2 tracking-widest border-b border-yellow-900/50 pb-1 w-full text-center">
+                                                        {matchTime >= 90 ? 'FULL TIME' : matchTime === 45 ? 'HALF TIME' : `${matchTime}'`}
+                                                    </div>
+                                                    <div className="flex w-full justify-between items-center text-3xl md:text-5xl font-black uppercase">
+                                                        <div className={`w-1/3 text-right ${fixture.home.color}`}>{fixture.home.name}</div>
+                                                        <div className="w-1/3 text-center text-white bg-slate-900 py-2 mx-4 rounded-md border border-slate-800">
+                                                            {scores.h} - {scores.a}
+                                                        </div>
+                                                        <div className={`w-1/3 text-left ${fixture.away.color}`}>{fixture.away.name}</div>
+                                                    </div>
+                                                    <div className="mt-4 flex gap-4">
+                                                        <div className={`text-xs px-2 py-1 rounded border ${userTactic === 'ATTACKING' ? 'bg-red-900/50 border-red-500 text-red-400' : 'border-slate-700 text-slate-500'}`}>ATT</div>
+                                                        <div className={`text-xs px-2 py-1 rounded border ${userTactic === 'BALANCED' ? 'bg-blue-900/50 border-blue-500 text-blue-400' : 'border-slate-700 text-slate-500'}`}>BAL</div>
+                                                        <div className={`text-xs px-2 py-1 rounded border ${userTactic === 'DEFENSIVE' ? 'bg-green-900/50 border-green-500 text-green-400' : 'border-slate-700 text-slate-500'}`}>DEF</div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()}
+                                    </div>
+
+                                    {/* Match Feed */}
+                                    <div 
+                                        ref={scrollRef}
+                                        className="flex-1 bg-slate-900 border border-slate-700 p-4 overflow-y-auto font-mono text-sm space-y-2 mb-4 shadow-inner custom-scrollbar"
+                                    >
+                                        {matchLog.length === 0 && <div className="text-slate-600 text-center mt-10 italic">Kick off is moments away...</div>}
+                                        {matchLog.map((log, idx) => (
+                                            <div key={idx} className={`flex gap-3 ${log.type === 'goal' ? 'bg-slate-800 p-2 rounded border-l-4 border-yellow-500' : ''}`}>
+                                                <span className="text-slate-500 w-8 shrink-0">{log.time}'</span>
+                                                <span className={`${log.type === 'goal' ? 'text-white font-bold' : log.type === 'miss' ? 'text-slate-300' : 'text-slate-400'}`}>
+                                                    {log.type === 'goal' && '⚽ '}
+                                                    {log.text}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Controls */}
+                                    <div className="flex gap-4 shrink-0">
+                                        {matchTime < 90 ? (
+                                            <>
+                                                <button 
+                                                    onClick={() => setIsPlaying(!isPlaying)}
+                                                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded border border-slate-600 flex justify-center items-center gap-2"
+                                                >
+                                                    {isPlaying ? <><Pause /> Pause</> : <><Play /> Resume</>}
+                                                </button>
+                                                {/* Live Tactics */}
+                                                <div className="flex gap-2 bg-slate-800 p-1 rounded border border-slate-600">
+                                                    <button onClick={() => setUserTactic('ATTACKING')} className={`px-3 py-1 text-xs font-bold rounded ${userTactic === 'ATTACKING' ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-white'}`}>ATT</button>
+                                                    <button onClick={() => setUserTactic('BALANCED')} className={`px-3 py-1 text-xs font-bold rounded ${userTactic === 'BALANCED' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}>BAL</button>
+                                                    <button onClick={() => setUserTactic('DEFENSIVE')} className={`px-3 py-1 text-xs font-bold rounded ${userTactic === 'DEFENSIVE' ? 'bg-green-600 text-white' : 'text-slate-400 hover:text-white'}`}>DEF</button>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <button 
+                                                onClick={finishMatchDay}
+                                                className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded shadow-lg animate-pulse"
+                                            >
+                                                CONTINUE TO RESULTS
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* --- REPORT --- */}
+                            {gameState === 'REPORT' && (
+                                <div>
+                                    <div className="flex justify-between items-center border-b-2 border-slate-700 pb-2 mb-6">
+                                        <h2 className="text-2xl font-bold text-white">Week {week - 1} Results</h2>
+                                    </div>
+                                    
+                                    <div className="grid gap-3 mb-8">
+                                        {fixtures.map((f, i) => {
+                                            const score = currentScores[i];
+                                            const isUserGame = f.home.id === userTeamId || f.away.id === userTeamId;
+                                            return (
+                                                <div key={i} className={`flex justify-between items-center p-4 border rounded-sm ${isUserGame ? 'bg-slate-800 border-yellow-600/50 shadow-md' : 'bg-slate-900 border-slate-800'}`}>
+                                                    <div className={`w-2/5 text-right font-bold ${f.home.color} ${isUserGame && f.home.id === userTeamId ? 'underline decoration-yellow-500' : ''}`}>{f.home.name}</div>
+                                                    <div className="w-1/5 text-center text-white bg-slate-950 py-1 rounded font-mono font-bold mx-2">
+                                                        {score.h} - {score.a}
+                                                    </div>
+                                                    <div className={`w-2/5 text-left font-bold ${f.away.color} ${isUserGame && f.away.id === userTeamId ? 'underline decoration-yellow-500' : ''}`}>{f.away.name}</div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    <button 
+                                        onClick={nextWeek}
+                                        className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded shadow-lg flex items-center justify-center gap-2 text-lg"
+                                    >
+                                        Advance to Week {week} <ChevronRight />
+                                    </button>
+                                </div>
+                            )}
+
+                        </main>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<FootballManager />);
+    </script>
+</body>
+</html>
