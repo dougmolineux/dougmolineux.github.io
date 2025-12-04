@@ -39,10 +39,19 @@
 
   <div id="footer">Third-person chase camera • Low-poly islands</div>
 
-  <!-- three.js from CDN -->
-  <script src="https://unpkg.com/three@0.154.0/build/three.min.js"></script>
-  <script src="https://unpkg.com/three@0.154.0/examples/js/loaders/FBXLoader.js"></script>
-  <script>
+  <!-- map the bare specifier 'three' to the full module URL so example loaders can import it -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.154.0/build/three.module.js"
+    }
+  }
+  </script>
+
+  <!-- three.js ES modules from CDN -->
+  <script type="module">
+  import * as THREE from 'https://unpkg.com/three@0.154.0/build/three.module.js';
+  import { FBXLoader } from 'https://unpkg.com/three@0.154.0/examples/jsm/loaders/FBXLoader.js';
   // --- Config ---
   const WORLD_W = 4000;
   const WORLD_H = 4000;
@@ -163,19 +172,29 @@
   }
 
   function createPlane() {
-    // Load the SpitfireLowPoly.fbx model
-    const loader = new THREE.FBXLoader();
+    // Load the SpitfireLowPoly.fbx model using the module FBXLoader
+    const loader = new FBXLoader();
     const container = new THREE.Group();
-    
+
+    // load asynchronously; model file is placed next to this HTML
     loader.load('SpitfireLowPoly.fbx', function(fbx) {
-      fbx.scale.set(1, 1, 1); // adjust scale if needed
+      // tweak scale/rotation if the model's orientation/size differs
+      fbx.scale.set(1, 1, 1);
       fbx.traverse(function(child) {
         if (child.isMesh) {
           child.castShadow = true;
           child.receiveShadow = true;
+          // prefer standard material if original uses non-PBR materials
+          if (child.material && Array.isArray(child.material)) {
+            child.material.forEach(m => { if (m && m.isMaterial) { m.needsUpdate = true; } });
+          } else if (child.material) {
+            child.material.needsUpdate = true;
+          }
         }
       });
       container.add(fbx);
+    }, undefined, function(err){
+      console.warn('FBX load error:', err);
     });
 
     return { mesh: container };
