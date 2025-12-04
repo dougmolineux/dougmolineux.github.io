@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Spitfire — 3D Mini Flight Simulator (three.js)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    html,body { height:100%; margin:0; background:linear-gradient(#87CEEB,#0467a2); font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    #container { width:100%; height:100vh; overflow:hidden; position:relative; }
+    #hud {
+      position:absolute; left:12px; top:12px; color:#fff; background:rgba(0,0,0,0.25); padding:10px 12px; border-radius:8px;
+      backdrop-filter: blur(4px);
+    }
+    #controls {
+      position:absolute; right:12px; top:12px; color:#fff; background:rgba(0,0,0,0.2); padding:10px 12px; border-radius:8px;
+      text-align:right;
+    }
+    button { margin-left:8px; padding:6px 10px; border-radius:6px; background:rgba(255,255,255,0.08); color:#fff; border:none; cursor:pointer; }
+    a.link { color:#aee7ff; text-decoration:underline; font-size:13px; }
+    canvas { display:block; }
+    #footer { position:absolute; left:12px; bottom:12px; color:#fff; opacity:0.9; font-size:13px; }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+
+  <div id="hud">
+    <div><strong>Spitfire — Mini 3D Flight Sim</strong></div>
+    <div id="speed">Speed: 0 m/s</div>
+    <div id="alt">Altitude: 0 m</div>
+    <div id="throttle">Throttle: 20%</div>
+  </div>
+
+  <div id="controls">
+    Mouse move: steer • Left-click: throttle • Wheel: throttle trim<br/>
+    <button id="pauseBtn">Pause</button>
+    <button id="resetBtn">Reset</button>
+  </div>
+
+  <div id="footer">Third-person chase camera • Low-poly islands</div>
+
+  <!-- three.js from CDN -->
+  <script src="https://unpkg.com/three@0.154.0/build/three.min.js"></script>
+  <script>
+  // --- Config ---
+  const WORLD_W = 4000;
+  const WORLD_H = 4000;
+  const NUM_ISLANDS = 18;
+  const ISLAND_MIN = 80;
+  const ISLAND_MAX = 350;
+
+  // --- Globals ---
+  let scene, camera, renderer, clock;
+  let plane, planeGroup;
+  let islands = [];
+  let paused = false;
+  let lastTime = 0;
+
+  // Input state
+  const input = {
+    mx: 0, my: 0, // mouse position normalized (-1..1) relative to canvas center
+    down: false,
+    throttleTrim: 0, // wheel adjustments
+  };
+
+  init();
+  animate();
+
+  function init() {
+    const container = document.getElementById('container');
+
+    // Scene
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x87CEEB, 0.0006);
+
+    // Camera: will be used as chase camera (we won't add controls)
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 20000);
+    camera.position.set(0, 50, -200);
+
+    // Renderer
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio || 1);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    container.appendChild(renderer.domElement);
+
+    // Light
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x7fb3ff, 0.8);
+    hemi.position.set(0,200,0);
+    scene.add(hemi);
+    const sun = new THREE.DirectionalLight(0xfff1d6, 0.8);
+    sun.position.set(-400,800,200);
+    sun.castShadow = true;
+    sun.shadow.camera.left = -1000; sun.shadow.camera.right = 1000;
+    sun.shadow.camera.top = 1000; sun.shadow.camera.bottom = -1000;
+    sun.shadow.mapSize.set(2048,2048);
+    scene.add(sun);
+
+    // Ocean (big plane with subtle waves using vertex displacement in vertex shader would be fancy,
+    // but we'll keep it simple: textured blue shader-like look)
+    const oceanGeo = new THREE.PlaneGeometry(WORLD_W, WORLD_H, 16,16);
+    const oceanMat = new THREE.MeshLambertMaterial({ color: 0x1e9cf3 });
+    const ocean = new THREE.Mesh(oceanGeo, oceanMat);
+    ocean.rotation.x = -Math.PI/2;
+    ocean.receiveShadow = true;
+    scene.add(ocean);
+
+    // Generate islands
+    for (let i=0;i<NUM_ISLANDS;i++) {
+      const isl = makeIsland();
+      scene.add(isl.mesh);
+      islands.push(isl);
+    }
+
+    // Simple grid / distant horizon markers (for motion feeling)
+    const grid = new THREE.GridHelper(2000, 40, 0x000000, 0x0b4f6e);
+    grid.position.y = 1;
+    grid.material.opacity = 0.08;
+    grid.material.transparent = true;
+    scene.add(grid);
+
+    // Create the plane (low-poly stylized spitfire)
+    planeGroup = new THREE.Group();
+    plane = createPlane();
+    planeGroup.add(plane.mesh);
+    planeGroup.position.set(0, 200, 0); // start above center
+    plane.state = {
+      pos: new THREE.Vector3(0, 200, 0),
+      vel: new THREE.Vector3(120, 0, 0), // start with forward speed
+      quat: new THREE.Quaternion(),
+      throttle: 0.2, // 0..1
+      throttleTarget: 0.2,
+      mass: 1200, // arbitrary
+      liftCoeff: 0.0009, // tuned
+      dragCoeff: 0.00045,
+      yawRate: 0,
+      pitchRate: 0,
+      rollRate: 0,
+    };
+    scene.add(planeGroup);
+
+    // Camera offset behind and above the plane in local plane space
+    plane.cameraOffset = new THREE.Vector3(0, 35, -120);
+
+    // HUD elements
+    window.speedEl = document.getElementById('speed');
+    window.altEl = document.getElementById('alt');
+    window.throttleEl = document.getElementById('throttle');
+
+    // Events
+    window.addEventListener('resize', onResize);
+    renderer.domElement.addEventListener('mousemove', onMouseMove);
+    renderer.domElement.addEventListener('mousedown', () => input.down = true);
+    window.addEventListener('mouseup', () => input.down = false);
+    renderer.domElement.addEventListener('wheel', onWheel, {passive:true});
+
+    document.getElementById('pauseBtn').addEventListener('click', () => { paused = !paused; document.getElementById('pauseBtn').innerText = paused ? 'Resume' : 'Pause'; });
+    document.getElementById('resetBtn').addEventListener('click', resetPlane);
+
+    clock = new THREE.Clock();
+    lastTime = performance.now();
+  }
+
+  function createPlane() {
+    // Low-poly stylized Spitfire-ish model using simple geometry and materials
+    const g = new THREE.Group();
+
+    // fuselage — elongated box with tapered front
+    const fusMat = new THREE.MeshStandardMaterial({ color: 0x2b2b2b, metalness: 0.2, roughness: 0.6 });
+    const body = new THREE.CylinderGeometry(6, 6, 60, 8);
+    const bodyMesh = new THREE.Mesh(body, fusMat);
+    bodyMesh.rotation.z = Math.PI/2;
+    bodyMesh.castShadow = true;
+    g.add(bodyMesh);
+
+    // nose (prop hub, just aesthetic)
+    const noseGeo = new THREE.ConeGeometry(6, 8, 8);
+    const nose = new THREE.Mesh(noseGeo, new THREE.MeshStandardMaterial({ color:0x444444 }));
+    nose.position.x = 34;
+    nose.rotation.z = Math.PI/2;
+    nose.castShadow = true;
+    g.add(nose);
+
+    // cockpit (glass)
+    const glass = new THREE.Mesh(new THREE.SphereGeometry(5, 8, 6), new THREE.MeshStandardMaterial({ color:0x88c0ff, transparent:true, opacity:0.9, roughness:0.1 }));
+    glass.position.set(6, 4, 0);
+    glass.scale.set(1.0, 0.7, 0.7);
+    g.add(glass);
+
+    // wings — simple flattened boxes
+    const wingMat = new THREE.MeshStandardMaterial({ color: 0x203a2e, roughness:0.6 });
+    const wing = new THREE.BoxGeometry(120, 2.5, 18);
+    const wingMesh = new THREE.Mesh(wing, wingMat);
+    wingMesh.position.set( -6, 0, 0 );
+    wingMesh.castShadow = true;
+    g.add(wingMesh);
+
+    // tailplane
+    const tailHor = new THREE.BoxGeometry(36, 2, 10);
+    const tailMesh = new THREE.Mesh(tailHor, wingMat);
+    tailMesh.position.set(-34, 8, 0);
+    tailMesh.castShadow = true;
+    g.add(tailMesh);
+
+    const tailVert = new THREE.BoxGeometry(6, 10, 10);
+    const tvert = new THREE.Mesh(tailVert, wingMat);
+    tvert.position.set(-40, 14, 0);
+    tvert.castShadow = true;
+    g.add(tvert);
+
+    // roundel on wings
+    const circle = new THREE.CircleGeometry(6, 16);
+    const matWhite = new THREE.MeshBasicMaterial({color:0xffffff});
+    const matRed = new THREE.MeshBasicMaterial({color:0xcf1b2b});
+    const roundel1 = new THREE.Mesh(circle, matWhite);
+    roundel1.rotation.x = -Math.PI/2;
+    roundel1.position.set(-6, 1.6, -10);
+    g.add(roundel1);
+    const roundel2 = new THREE.Mesh(new THREE.CircleGeometry(3.5, 16), matRed);
+    roundel2.rotation.x = -Math.PI/2;
+    roundel2.position.set(-6, 1.7, -10.05);
+    g.add(roundel2);
+
+    // shadow-caster group
+    g.castShadow = true;
+    g.receiveShadow = true;
+
+    // make mesh container
+    const container = new THREE.Group();
+    container.add(g);
+
+    // add a visible forward axis arrow (optional)
+    // const dirHelper = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(0,0,0), 30, 0xff0000);
+    // container.add(dirHelper);
+
+    return { mesh: container };
+  }
+
+  function makeIsland() {
+    // low-poly island: elliptical base + sand + trees (simple cones)
+    const r = ISLAND_MIN + Math.random() * (ISLAND_MAX - ISLAND_MIN);
+    const x = (Math.random() - 0.5) * (WORLD_W - 400);
+    const z = (Math.random() - 0.5) * (WORLD_H - 400);
+    const y = 0;
+
+    // island base
+    const shape = new THREE.CylinderGeometry(r, r * 0.9, 18 + Math.random()*40, 12);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x2e6b3a });
+    const mesh = new THREE.Mesh(shape, mat);
+    mesh.position.set(x, y + 8, z);
+    mesh.rotation.y = Math.random() * Math.PI;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+
+    // sandy beach (thin disc)
+    const sand = new THREE.Mesh(new THREE.CircleGeometry(r*0.55, 16), new THREE.MeshStandardMaterial({ color:0xe6d3a3 }));
+    sand.rotation.x = -Math.PI/2;
+    sand.position.set(x, y + 9.2, z);
+    sand.receiveShadow = true;
+
+    // few trees
+    const trees = new THREE.Group();
+    const treeCount = 6 + Math.floor(Math.random()*10);
+    for (let t=0;t<treeCount;t++) {
+      const tx = x + (Math.random()*r*0.8 - r*0.4);
+      const tz = z + (Math.random()*r*0.8 - r*0.4);
+      const th = 6 + Math.random()*14;
+      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.6,0.6,th,6), new THREE.MeshStandardMaterial({color:0x704214}));
+      trunk.position.set(tx, y + 9 + th/2, tz);
+      trunk.castShadow = true;
+      const foliage = new THREE.Mesh(new THREE.ConeGeometry(th*0.7, th*1.1, 8), new THREE.MeshStandardMaterial({color:0x185117}));
+      foliage.position.set(tx, y + 9 + th + (th*0.1), tz);
+      foliage.castShadow = true;
+      trees.add(trunk);
+      trees.add(foliage);
+    }
+
+    const group = new THREE.Group();
+    group.add(mesh);
+    group.add(sand);
+    group.add(trees);
+
+    return { mesh: group, r, x, z };
+  }
+
+  function onResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  function onMouseMove(e) {
+    const rect = renderer.domElement.getBoundingClientRect();
+    const cx = rect.width/2;
+    const cy = rect.height/2;
+    // normalize to -1..1
+    input.mx = (e.clientX - rect.left - cx) / cx;
+    input.my = (e.clientY - rect.top - cy) / cy;
+    // clamp
+    input.mx = Math.max(-1, Math.min(1, input.mx));
+    input.my = Math.max(-1, Math.min(1, input.my));
+  }
+
+  function onWheel(e) {
+    // adjust throttle trim
+    input.throttleTrim += -e.deltaY * 0.00045;
+    input.throttleTrim = Math.max(-0.5, Math.min(0.5, input.throttleTrim));
+  }
+
+  function resetPlane() {
+    planeGroup.position.set(0, 200, 0);
+    plane.state.pos.set(0,200,0);
+    plane.state.vel.set(120,0,0);
+    plane.state.throttle = 0.2;
+    plane.state.throttleTarget = 0.2;
+    planeGroup.rotation.set(0,0,0);
+    planeGroup.quaternion.identity();
+  }
+
+  // --- Flight physics (simple, tuned for fun rather than realism) ---
+  function updatePhysics(dt) {
+    const s = plane.state;
+
+    // Controls: mouse steering influences pitch & roll & yaw
+    // mx -> roll (left/right), my -> pitch (nose up/down)
+    const inputRoll = input.mx * -0.9; // roll target in radians
+    const inputPitch = input.my * 0.6; // pitch target (positive = nose down because screen Y inverted)
+    // invert pitch so pushing mouse up pitches nose down intuitively:
+    const pitchTarget = -inputPitch;
+    const rollTarget = inputRoll;
+
+    // gradual throttle approach: hold mouse down to increase throttle; otherwise trim + base
+    const throttleBase = 0.08; // idle
+    if (input.down) {
+      s.throttleTarget = Math.min(1.0, s.throttleTarget + 0.8 * dt);
+    } else {
+      s.throttleTarget = Math.max(throttleBase, s.throttleTarget - 0.5 * dt);
+    }
+    // trim applied
+    s.throttleTarget = Math.max(0, Math.min(1, s.throttleTarget + input.throttleTrim));
+    // smooth interpolation
+    s.throttle += (s.throttleTarget - s.throttle) * Math.min(1, 4 * dt);
+
+    // simple forward thrust in plane's local +X direction
+    const thrustForce = 6000 * s.throttle; // tuned constant
+    // compute forward axis
+    const forward = new THREE.Vector3(1,0,0);
+    forward.applyQuaternion(planeGroup.quaternion);
+
+    const thrust = forward.clone().multiplyScalar(thrustForce / s.mass); // acceleration
+
+    // Gravity
+    const gravity = new THREE.Vector3(0, -9.81, 0);
+
+    // Aerodynamic lift ~ liftCoeff * speed^2 * wing_area * angle of attack
+    const speed = s.vel.length();
+    // estimate angle of attack: difference between plane forward vector and velocity direction
+    let aoa = 0;
+    if (speed > 1e-3) {
+      const velDir = s.vel.clone().normalize();
+      // forward direction
+      const fwd = forward.clone().normalize();
+      aoa = Math.asin( clamp( velDir.clone().cross(fwd).length(), -1, 1 ) ); // rough scalar
+      // sign: positive when nose up relative to velocity
+      const cross = new THREE.Vector3().crossVectors(velDir, fwd);
+      if (cross.y > 0) aoa = -aoa; // adjust sign depending on orientation
+    }
+    // compute lift upward (world up)
+    const liftMag = s.liftCoeff * speed * speed * Math.max(0, 1 - Math.abs(aoa)*6);
+    const lift = new THREE.Vector3(0, liftMag, 0);
+
+    // Drag opposite to velocity
+    const dragMag = s.dragCoeff * speed * speed;
+    const drag = s.vel.clone().multiplyScalar(-dragMag / Math.max(1, speed));
+
+    // apply control torques to change orientation gradually toward targets
+    // compute current Euler angles from quaternion (in plane local order)
+    const euler = new THREE.Euler().setFromQuaternion(planeGroup.quaternion, 'YXZ');
+    // we will apply small angular velocity changes toward target pitch & roll (local axes)
+    const currentPitch = euler.x;
+    const currentYaw = euler.y;
+    const currentRoll = euler.z;
+
+    // compute deltas (remembering desired roll & pitch are relative)
+    const rollDelta = rollTarget - currentRoll;
+    const pitchDelta = pitchTarget - currentPitch;
+
+    // angular acceleration rates (tuned)
+    const rollAccel = rollDelta * 2.8 - s.rollRate * 0.6;
+    const pitchAccel = pitchDelta * 2.1 - s.pitchRate * 0.6;
+    const yawAccel = (input.mx * 0.25 - s.yawRate * 0.2);
+
+    // integrate angular rates
+    s.rollRate += rollAccel * dt;
+    s.pitchRate += pitchAccel * dt;
+    s.yawRate += yawAccel * dt;
+
+    // apply small damping
+    s.rollRate *= (1 - Math.min(0.9, 0.6 * dt));
+    s.pitchRate *= (1 - Math.min(0.9, 0.6 * dt));
+    s.yawRate *= (1 - Math.min(0.9, 0.6 * dt));
+
+    // update quaternion by angular rates (local axes)
+    const ang = new THREE.Vector3(s.pitchRate * dt, s.yawRate * dt, s.rollRate * dt);
+    const qx = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), ang.x);
+    const qy = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), ang.y);
+    const qz = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), ang.z);
+    // apply order: yaw*y then pitch*x then roll*z (approx)
+    planeGroup.quaternion.multiply(qy).multiply(qx).multiply(qz);
+    planeGroup.quaternion.normalize();
+
+    // Sum accelerations (thrust + gravity + lift + drag) -> dv
+    const accel = new THREE.Vector3();
+    accel.add(thrust);
+    accel.add(gravity);
+    accel.add(lift);
+    accel.add(drag);
+
+    // integrate velocity and position
+    s.vel.addScaledVector(accel, dt);
+    // simple ground collision to keep above sea-level
+    const nextPos = s.pos.clone().addScaledVector(s.vel, dt);
+
+    // if we're below sea level (y <= 12), push up and damp velocity
+    if (nextPos.y <= 12) {
+      nextPos.y = 12;
+      s.vel.y = Math.max(0, s.vel.y * -0.2); // bounce/damp
+      // reduce speed on "water hit"
+      s.vel.multiplyScalar(0.96);
+    }
+
+    // wrap world horizontally so the plane can fly forever
+    if (nextPos.x < -WORLD_W/2) nextPos.x += WORLD_W;
+    if (nextPos.x > WORLD_W/2) nextPos.x -= WORLD_W;
+    if (nextPos.z < -WORLD_H/2) nextPos.z += WORLD_H;
+    if (nextPos.z > WORLD_H/2) nextPos.z -= WORLD_H;
+
+    // commit pos
+    s.pos.copy(nextPos);
+
+    // update plane group position and tangent orientation
+    planeGroup.position.copy(s.pos);
+
+    // To keep plane visually aligned with movement we blend its forward facing with velocity direction
+    // Compute desired forward direction: mostly plane's current forward transformed by quaternion
+    const currentForward = new THREE.Vector3(1,0,0).applyQuaternion(planeGroup.quaternion).normalize();
+    // Desired forward from velocity (if speed > small)
+    if (s.vel.length() > 8) {
+      const velDir = s.vel.clone().normalize();
+      // blend orientation a bit so nose aligns with velocity gradually (prevents instant flips)
+      const blend = Math.min(1, dt * 0.6 + 0.02);
+      const newForward = currentForward.clone().lerp(velDir, blend).normalize();
+      // compute new quaternion that looks along newForward, with some world-up constraint
+      const up = new THREE.Vector3(0,1,0);
+      const newQuat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(1,0,0), newForward);
+      // preserve roll somewhat: re-apply roll component about forward axis
+      planeGroup.quaternion.slerp(newQuat, 0.08);
+    }
+
+    // small visual tilt based on rollRate/pitchRate (already applied to quaternion)
+    // compute world speed scalar for HUD
+    const speedMps = s.vel.length();
+
+    // update HUD
+    window.speedEl.innerText = 'Speed: ' + Math.round(speedMps) + ' m/s';
+    window.altEl.innerText = 'Altitude: ' + Math.round(s.pos.y) + ' m';
+    window.throttleEl.innerText = 'Throttle: ' + Math.round(s.throttle * 100) + '%';
+  }
+
+  // chase camera: smoothly follow plane from behind
+  function updateCamera(dt) {
+    // desired camera world position = plane position + plane.localToWorld(cameraOffset)
+    const worldOffset = plane.cameraOffset.clone().applyQuaternion(planeGroup.quaternion);
+    const desiredPos = planeGroup.position.clone().add(worldOffset);
+    // small vertical bias to keep camera slightly higher if plane pitches up
+    desiredPos.y += Math.max(0, -planeGroup.rotation.x) * 20;
+
+    // lerp camera position
+    camera.position.lerp(desiredPos, Math.min(1, 2.3 * dt));
+
+    // look at a point ahead of plane
+    const ahead = new THREE.Vector3(120, 6, 0).applyQuaternion(planeGroup.quaternion).add(planeGroup.position);
+    camera.lookAt(ahead);
+  }
+
+  function animate(t) {
+    requestAnimationFrame(animate);
+
+    if (paused) {
+      renderer.render(scene, camera);
+      return;
+    }
+    const now = performance.now();
+    let dt = (now - lastTime) / 1000;
+    lastTime = now;
+    if (dt > 0.05) dt = 0.05;
+
+    // if mouse isn't moved, gradually recenter input for gentle stability
+    input.mx *= 0.98;
+    input.my *= 0.98;
+
+    updatePhysics(dt);
+    updateCamera(dt);
+
+    // optional: slowly rotate distant islands or animate waves for life (not necessary)
+    renderer.render(scene, camera);
+  }
+
+  // Utility
+  function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+
+  // done
+  </script>
+</body>
+</html>
