@@ -19,6 +19,7 @@
     a.link { color:#aee7ff; text-decoration:underline; font-size:13px; }
     canvas { display:block; }
     #footer { position:absolute; left:12px; bottom:12px; color:#fff; opacity:0.9; font-size:13px; }
+    #buildBadge { position:absolute; left:12px; bottom:36px; color:#063; background:rgba(255,255,255,0.9); padding:6px 8px; border-radius:6px; font-size:12px; color:#333; box-shadow:0 2px 6px rgba(0,0,0,0.2); }
   </style>
 </head>
 <body>
@@ -38,6 +39,7 @@
   </div>
 
   <div id="footer">Third-person chase camera • Low-poly islands</div>
+  <div id="buildBadge">Build: 1</div>
 
   <!-- map the bare specifier 'three' to the full module URL so example loaders can import it -->
   <script type="importmap">
@@ -53,6 +55,8 @@
   import * as THREE from 'https://unpkg.com/three@0.154.0/build/three.module.js';
   import { FBXLoader } from 'https://unpkg.com/three@0.154.0/examples/jsm/loaders/FBXLoader.js';
   // --- Config ---
+  // increment this BUILD_NUMBER whenever you (or I) edit this file to indicate a new build
+  const BUILD_NUMBER = 1;
   // make the world much larger so the ocean appears endless
   const WORLD_W = 20000;
   const WORLD_H = 20000;
@@ -161,14 +165,17 @@
     scene.add(planeGroup);
 
     // Camera offset behind and above the plane in local plane space
-    // Place camera directly behind and slightly above the plane (~70 ft total ~= 21.34 m)
-    // Use positive X so the camera sits behind the plane given the model orientation above.
-    plane.cameraOffset = new THREE.Vector3(21.34, 8, 0);
+    // Place camera directly behind and slightly above the plane (~50 ft ~= 15.24 m)
+    // Use negative X so the camera sits behind the plane when forward is +X
+    plane.cameraOffset = new THREE.Vector3(-15.24, 8, 0);
 
     // HUD elements
     window.speedEl = document.getElementById('speed');
     window.altEl = document.getElementById('alt');
     window.throttleEl = document.getElementById('throttle');
+    // build badge
+    const buildEl = document.getElementById('buildBadge');
+    if (buildEl) buildEl.innerText = 'Build: ' + BUILD_NUMBER;
 
     // Events
     window.addEventListener('resize', onResize);
@@ -194,9 +201,8 @@
       // tweak scale/rotation if the model's orientation/size differs
       fbx.scale.set(1, 1, 1);
       // rotate model so its nose points along the simulator's +X forward direction
-      // Some FBX exports use different axes; apply a Y flip and also flip X if needed
+      // Some FBX exports use different axes; apply a 180° Y flip to face +X
       fbx.rotation.y += Math.PI;
-      fbx.rotation.x += Math.PI;
       fbx.traverse(function(child) {
         if (child.isMesh) {
           child.castShadow = true;
@@ -233,10 +239,10 @@
     mesh.castShadow = true;
     mesh.receiveShadow = true;
 
-    // sandy beach (thin disc)
-    const sand = new THREE.Mesh(new THREE.CircleGeometry(r*0.55, 16), new THREE.MeshStandardMaterial({ color:0xe6d3a3 }));
+    // sandy beach (ring around the island edge) - keep green center from island base
+    const sand = new THREE.Mesh(new THREE.RingGeometry(r*0.45, r*0.55, 32), new THREE.MeshStandardMaterial({ color:0xf6d86f, side: THREE.DoubleSide }));
     sand.rotation.x = -Math.PI/2;
-    sand.position.set(x, y + 9.2, z);
+    sand.position.set(x, y + 9.21, z);
     sand.receiveShadow = true;
 
     // few trees
