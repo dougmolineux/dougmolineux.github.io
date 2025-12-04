@@ -41,6 +41,7 @@
 
   <!-- three.js from CDN -->
   <script src="https://unpkg.com/three@0.154.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.154.0/examples/js/loaders/FBXLoader.js"></script>
   <script>
   // --- Config ---
   const WORLD_W = 4000;
@@ -162,76 +163,20 @@
   }
 
   function createPlane() {
-    // Low-poly stylized Spitfire-ish model using simple geometry and materials
-    const g = new THREE.Group();
-
-    // fuselage — elongated box with tapered front
-    const fusMat = new THREE.MeshStandardMaterial({ color: 0x2b2b2b, metalness: 0.2, roughness: 0.6 });
-    const body = new THREE.CylinderGeometry(6, 6, 60, 8);
-    const bodyMesh = new THREE.Mesh(body, fusMat);
-    bodyMesh.rotation.z = Math.PI/2;
-    bodyMesh.castShadow = true;
-    g.add(bodyMesh);
-
-    // nose (prop hub, just aesthetic)
-    const noseGeo = new THREE.ConeGeometry(6, 8, 8);
-    const nose = new THREE.Mesh(noseGeo, new THREE.MeshStandardMaterial({ color:0x444444 }));
-    nose.position.x = 34;
-    nose.rotation.z = Math.PI/2;
-    nose.castShadow = true;
-    g.add(nose);
-
-    // cockpit (glass)
-    const glass = new THREE.Mesh(new THREE.SphereGeometry(5, 8, 6), new THREE.MeshStandardMaterial({ color:0x88c0ff, transparent:true, opacity:0.9, roughness:0.1 }));
-    glass.position.set(6, 4, 0);
-    glass.scale.set(1.0, 0.7, 0.7);
-    g.add(glass);
-
-    // wings — simple flattened boxes
-    const wingMat = new THREE.MeshStandardMaterial({ color: 0x203a2e, roughness:0.6 });
-    const wing = new THREE.BoxGeometry(120, 2.5, 18);
-    const wingMesh = new THREE.Mesh(wing, wingMat);
-    wingMesh.position.set( -6, 0, 0 );
-    wingMesh.castShadow = true;
-    g.add(wingMesh);
-
-    // tailplane
-    const tailHor = new THREE.BoxGeometry(36, 2, 10);
-    const tailMesh = new THREE.Mesh(tailHor, wingMat);
-    tailMesh.position.set(-34, 8, 0);
-    tailMesh.castShadow = true;
-    g.add(tailMesh);
-
-    const tailVert = new THREE.BoxGeometry(6, 10, 10);
-    const tvert = new THREE.Mesh(tailVert, wingMat);
-    tvert.position.set(-40, 14, 0);
-    tvert.castShadow = true;
-    g.add(tvert);
-
-    // roundel on wings
-    const circle = new THREE.CircleGeometry(6, 16);
-    const matWhite = new THREE.MeshBasicMaterial({color:0xffffff});
-    const matRed = new THREE.MeshBasicMaterial({color:0xcf1b2b});
-    const roundel1 = new THREE.Mesh(circle, matWhite);
-    roundel1.rotation.x = -Math.PI/2;
-    roundel1.position.set(-6, 1.6, -10);
-    g.add(roundel1);
-    const roundel2 = new THREE.Mesh(new THREE.CircleGeometry(3.5, 16), matRed);
-    roundel2.rotation.x = -Math.PI/2;
-    roundel2.position.set(-6, 1.7, -10.05);
-    g.add(roundel2);
-
-    // shadow-caster group
-    g.castShadow = true;
-    g.receiveShadow = true;
-
-    // make mesh container
+    // Load the SpitfireLowPoly.fbx model
+    const loader = new THREE.FBXLoader();
     const container = new THREE.Group();
-    container.add(g);
-
-    // add a visible forward axis arrow (optional)
-    // const dirHelper = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(0,0,0), 30, 0xff0000);
-    // container.add(dirHelper);
+    
+    loader.load('SpitfireLowPoly.fbx', function(fbx) {
+      fbx.scale.set(1, 1, 1); // adjust scale if needed
+      fbx.traverse(function(child) {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+      container.add(fbx);
+    });
 
     return { mesh: container };
   }
