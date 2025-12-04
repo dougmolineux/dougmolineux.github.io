@@ -53,8 +53,9 @@
   import * as THREE from 'https://unpkg.com/three@0.154.0/build/three.module.js';
   import { FBXLoader } from 'https://unpkg.com/three@0.154.0/examples/jsm/loaders/FBXLoader.js';
   // --- Config ---
-  const WORLD_W = 4000;
-  const WORLD_H = 4000;
+  // make the world much larger so the ocean appears endless
+  const WORLD_W = 20000;
+  const WORLD_H = 20000;
   const NUM_ISLANDS = 18;
   const ISLAND_MIN = 80;
   const ISLAND_MAX = 350;
@@ -84,7 +85,7 @@
     scene.fog = new THREE.FogExp2(0x87CEEB, 0.0006);
 
     // Camera: will be used as chase camera (we won't add controls)
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 20000);
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 50000);
     camera.position.set(0, 50, -200);
 
     // Renderer
@@ -108,12 +109,22 @@
 
     // Ocean (big plane with subtle waves using vertex displacement in vertex shader would be fancy,
     // but we'll keep it simple: textured blue shader-like look)
-    const oceanGeo = new THREE.PlaneGeometry(WORLD_W, WORLD_H, 16,16);
+    const oceanGeo = new THREE.PlaneGeometry(WORLD_W, WORLD_H, 64,64);
     const oceanMat = new THREE.MeshLambertMaterial({ color: 0x1e9cf3 });
     const ocean = new THREE.Mesh(oceanGeo, oceanMat);
     ocean.rotation.x = -Math.PI/2;
     ocean.receiveShadow = true;
     scene.add(ocean);
+
+    // give the renderer a sky-blue clear color so edges don't show as black
+    renderer.setClearColor(0x87CEEB, 1);
+
+    // simple sky sphere (large, inside-out) to provide a soft gradient-ish backdrop
+    const skyGeo = new THREE.SphereGeometry(40000, 32, 32);
+    const skyMat = new THREE.MeshBasicMaterial({ color: 0x87CEEB, side: THREE.BackSide });
+    const sky = new THREE.Mesh(skyGeo, skyMat);
+    sky.position.set(0, 0, 0);
+    scene.add(sky);
 
     // Generate islands
     for (let i=0;i<NUM_ISLANDS;i++) {
@@ -123,7 +134,7 @@
     }
 
     // Simple grid / distant horizon markers (for motion feeling)
-    const grid = new THREE.GridHelper(2000, 40, 0x000000, 0x0b4f6e);
+    const grid = new THREE.GridHelper(10000, 80, 0x000000, 0x0b4f6e);
     grid.position.y = 1;
     grid.material.opacity = 0.08;
     grid.material.transparent = true;
@@ -150,7 +161,8 @@
     scene.add(planeGroup);
 
     // Camera offset behind and above the plane in local plane space
-    plane.cameraOffset = new THREE.Vector3(0, 35, -120);
+    // Place camera directly behind and slightly above the plane (approx 20 ft ~ 6.1 m behind)
+    plane.cameraOffset = new THREE.Vector3(-6.1, 8, 0);
 
     // HUD elements
     window.speedEl = document.getElementById('speed');
