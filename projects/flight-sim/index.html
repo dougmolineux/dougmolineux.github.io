@@ -57,7 +57,7 @@
   import { FBXLoader } from 'https://unpkg.com/three@0.154.0/examples/jsm/loaders/FBXLoader.js';
   // --- Config ---
   // increment this BUILD_NUMBER whenever you (or I) edit this file to indicate a new build
-  const BUILD_NUMBER = 3;
+  const BUILD_NUMBER = 4;
   // camera controls: distance (meters) behind the plane and camera height
   // start at 200m and allow up to 400m
   let cameraDistance = 200.0;
@@ -246,6 +246,8 @@
         }
       });
       container.add(fbx);
+      // rotate the whole container 180° so the model's nose faces away from the camera
+      container.rotation.y += Math.PI;
     }, undefined, function(err){
       console.warn('FBX load error:', err);
     });
