@@ -161,8 +161,9 @@
     scene.add(planeGroup);
 
     // Camera offset behind and above the plane in local plane space
-    // Place camera directly behind and slightly above the plane (approx 20 ft ~ 6.1 m behind)
-    plane.cameraOffset = new THREE.Vector3(-6.1, 8, 0);
+    // Place camera directly behind and slightly above the plane (~20 ft + additional 50 ft back => ~70 ft total)
+    // 20 ft ≈ 6.1 m, add 50 ft ≈ 15.24 m -> total ≈ 21.34 m
+    plane.cameraOffset = new THREE.Vector3(-21.34, 8, 0);
 
     // HUD elements
     window.speedEl = document.getElementById('speed');
@@ -192,6 +193,8 @@
     loader.load('SpitfireLowPoly.fbx', function(fbx) {
       // tweak scale/rotation if the model's orientation/size differs
       fbx.scale.set(1, 1, 1);
+      // rotate model 180deg so it faces the simulator's forward (+X) direction
+      fbx.rotation.y += Math.PI;
       fbx.traverse(function(child) {
         if (child.isMesh) {
           child.castShadow = true;
