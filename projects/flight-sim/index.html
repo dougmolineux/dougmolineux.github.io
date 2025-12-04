@@ -57,14 +57,15 @@
   import { FBXLoader } from 'https://unpkg.com/three@0.154.0/examples/jsm/loaders/FBXLoader.js';
   // --- Config ---
   // increment this BUILD_NUMBER whenever you (or I) edit this file to indicate a new build
-  const BUILD_NUMBER = 2;
+  const BUILD_NUMBER = 3;
   // camera controls: distance (meters) behind the plane and camera height
-  let cameraDistance = 15.24; // ~50 ft
+  // start at 200m and allow up to 400m
+  let cameraDistance = 200.0;
   const cameraHeight = 8;
   // make the world much larger so the ocean appears endless
   const WORLD_W = 20000;
   const WORLD_H = 20000;
-  const NUM_ISLANDS = 18;
+  const NUM_ISLANDS = 26;
   const ISLAND_MIN = 80;
   const ISLAND_MAX = 350;
 
@@ -104,16 +105,19 @@
     container.appendChild(renderer.domElement);
 
     // Light
-    const hemi = new THREE.HemisphereLight(0xffffff, 0x7fb3ff, 0.8);
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x7fb3ff, 1.2);
     hemi.position.set(0,200,0);
     scene.add(hemi);
-    const sun = new THREE.DirectionalLight(0xfff1d6, 0.8);
+    const sun = new THREE.DirectionalLight(0xfff1d6, 1.0);
     sun.position.set(-400,800,200);
     sun.castShadow = true;
     sun.shadow.camera.left = -1000; sun.shadow.camera.right = 1000;
     sun.shadow.camera.top = 1000; sun.shadow.camera.bottom = -1000;
     sun.shadow.mapSize.set(2048,2048);
     scene.add(sun);
+    // small ambient to brighten dark materials
+    const amb = new THREE.AmbientLight(0xffffff, 0.35);
+    scene.add(amb);
 
     // Ocean (big plane with subtle waves using vertex displacement in vertex shader would be fancy,
     // but we'll keep it simple: textured blue shader-like look)
@@ -211,15 +215,33 @@
       // rotate model so its nose points along the simulator's +X forward direction
       // Some FBX exports use different axes; apply a 180° Y flip to face +X
       fbx.rotation.y += Math.PI;
+      // traverse meshes: ensure shadows enabled and gently lighten dark materials
       fbx.traverse(function(child) {
         if (child.isMesh) {
           child.castShadow = true;
           child.receiveShadow = true;
-          // prefer standard material if original uses non-PBR materials
-          if (child.material && Array.isArray(child.material)) {
-            child.material.forEach(m => { if (m && m.isMaterial) { m.needsUpdate = true; } });
-          } else if (child.material) {
-            child.material.needsUpdate = true;
+          // If material exists, nudge its color toward a lighter tone and adjust roughness
+          const applyLighten = (mat) => {
+            try {
+              if (mat.color) {
+                // lerp the material color slightly toward a lighter gray
+                mat.color.lerp(new THREE.Color(0xcccccc), 0.28);
+              }
+              if ('roughness' in mat && typeof mat.roughness === 'number') {
+                mat.roughness = Math.max(0.18, mat.roughness * 0.8);
+              }
+              if ('metalness' in mat && typeof mat.metalness === 'number') {
+                mat.metalness = Math.min(0.35, mat.metalness * 1.05);
+              }
+              mat.needsUpdate = true;
+            } catch (e) {
+              // ignore materials we cannot modify
+            }
+          };
+
+          if (child.material) {
+            if (Array.isArray(child.material)) child.material.forEach(applyLighten);
+            else applyLighten(child.material);
           }
         }
       });
@@ -235,10 +257,10 @@
   function onKeyDown(e) {
     // z -> move camera back (increase distance), x -> move camera forward (decrease distance)
     if (e.key === 'z' || e.key === 'Z') {
-      cameraDistance = Math.min(200, cameraDistance + 2); // clamp max
+      cameraDistance = Math.min(400, cameraDistance + 5); // clamp max 400m
       plane.cameraOffset.set(-cameraDistance, cameraHeight, 0);
     } else if (e.key === 'x' || e.key === 'X') {
-      cameraDistance = Math.max(2, cameraDistance - 2); // clamp min
+      cameraDistance = Math.max(2, cameraDistance - 5); // clamp min
       plane.cameraOffset.set(-cameraDistance, cameraHeight, 0);
     }
     if (window.camInfoEl) window.camInfoEl.innerText = `Z: back • X: forward • Distance: ${cameraDistance.toFixed(2)} m`;
