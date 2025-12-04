@@ -161,9 +161,9 @@
     scene.add(planeGroup);
 
     // Camera offset behind and above the plane in local plane space
-    // Place camera directly behind and slightly above the plane (~20 ft + additional 50 ft back => ~70 ft total)
-    // 20 ft ≈ 6.1 m, add 50 ft ≈ 15.24 m -> total ≈ 21.34 m
-    plane.cameraOffset = new THREE.Vector3(-21.34, 8, 0);
+    // Place camera directly behind and slightly above the plane (~70 ft total ~= 21.34 m)
+    // Use positive X so the camera sits behind the plane given the model orientation above.
+    plane.cameraOffset = new THREE.Vector3(21.34, 8, 0);
 
     // HUD elements
     window.speedEl = document.getElementById('speed');
@@ -193,8 +193,10 @@
     loader.load('SpitfireLowPoly.fbx', function(fbx) {
       // tweak scale/rotation if the model's orientation/size differs
       fbx.scale.set(1, 1, 1);
-      // rotate model 180deg so it faces the simulator's forward (+X) direction
+      // rotate model so its nose points along the simulator's +X forward direction
+      // Some FBX exports use different axes; apply a Y flip and also flip X if needed
       fbx.rotation.y += Math.PI;
+      fbx.rotation.x += Math.PI;
       fbx.traverse(function(child) {
         if (child.isMesh) {
           child.castShadow = true;
@@ -458,7 +460,7 @@
     camera.position.lerp(desiredPos, Math.min(1, 2.3 * dt));
 
     // look at a point ahead of plane
-    const ahead = new THREE.Vector3(120, 6, 0).applyQuaternion(planeGroup.quaternion).add(planeGroup.position);
+    const ahead = new THREE.Vector3(120, 2, 0).applyQuaternion(planeGroup.quaternion).add(planeGroup.position);
     camera.lookAt(ahead);
   }
 
