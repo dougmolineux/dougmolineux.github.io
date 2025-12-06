@@ -224,37 +224,38 @@
 <li><strong>Generation:</strong> The retrieved context blocks are injected into the system prompt sent to the LLM. The prompt effectively becomes: <em>"Using only the following context data: [retrieved chunks], answer the user query: [user query]."</em></li>
 </ol>
 <p>This forces the LLM to act as a reasoning engine over provided facts, rather than relying on its possibly outdated internal parametric memory.</p>
-<p>&#x3C;svg width="700" height="400" viewBox="0 0 700 400" xmlns="<a href="http://www.w3.org/2000/svg">http://www.w3.org/2000/svg</a>">
-&#x3C;rect width="700" height="400" fill="#f0f4f8" rx="10" ry="10"/>
-&#x3C;text x="350" y="30" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">Retrieval-Augmented Generation (RAG) Flow&#x3C;/text></p>
-<p>&#x3C;rect x="20" y="150" width="100" height="60" fill="#ffecb3" stroke="#ffc107" rx="5" ry="5"/>
-&#x3C;text x="70" y="185" font-family="Arial" font-size="14" text-anchor="middle">User Query&#x3C;/text>
-&#x3C;line x1="120" y1="180" x2="160" y2="180" stroke="#333" stroke-width="2" marker-end="url(#arrowhead-r)"/></p>
-<p>&#x3C;rect x="160" y="130" width="140" height="100" fill="#d1ecf1" stroke="#17a2b8" rx="5" ry="5"/>
-&#x3C;text x="230" y="175" font-family="Arial" font-size="14" text-anchor="middle">Application Layer&#x3C;/text>
-&#x3C;text x="230" y="195" font-family="Arial" font-size="12" text-anchor="middle">(e.g., Node.js)&#x3C;/text></p>
-<p>&#x3C;line x1="300" y1="160" x2="350" y2="110" stroke="#333" stroke-width="2" marker-end="url(#arrowhead-r)"/> &#x3C;line x1="300" y1="200" x2="530" y2="200" stroke="#333" stroke-width="2" marker-end="url(#arrowhead-r)"/> &#x3C;rect x="350" y="70" width="160" height="80" fill="#c3e6cb" stroke="#28a745" rx="5" ry="5"/>
-&#x3C;text x="430" y="105" font-family="Arial" font-size="14" text-anchor="middle">Vector Database&#x3C;/text>
-&#x3C;text x="430" y="125" font-family="Arial" font-size="12" text-anchor="middle">(e.g., OpenSearch)&#x3C;/text>
-&#x3C;text x="430" y="140" font-size="10" fill="#666" text-anchor="middle">Semantic Search&#x3C;/text></p>
-<p>&#x3C;line x1="430" y1="150" x2="430" y2="180" stroke="#333" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrowhead-d)"/>
-&#x3C;text x="480" y="170" font-size="12">Retrieved Context&#x3C;/text></p>
-<p>&#x3C;rect x="530" y="130" width="140" height="100" fill="#e2e3e5" stroke="#6c757d" rx="5" ry="5"/>
-&#x3C;text x="600" y="175" font-family="Arial" font-size="14" text-anchor="middle">LLM Service&#x3C;/text>
-&#x3C;text x="600" y="195" font-family="Arial" font-size="12" text-anchor="middle">(Inference)&#x3C;/text></p>
-<p>&#x3C;line x1="600" y1="230" x2="600" y2="300" stroke="#333" stroke-width="2" marker-end="url(#arrowhead-d)"/>
-&#x3C;rect x="530" y="300" width="140" height="60" fill="#ffecb3" stroke="#ffc107" rx="5" ry="5"/>
-&#x3C;text x="600" y="335" font-family="Arial" font-size="14" text-anchor="middle">Grounded Answer&#x3C;/text></p>
-<pre><code>&#x3C;defs>
-&#x3C;marker id="arrowhead-r" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-  &#x3C;polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
-&#x3C;/marker>
-&#x3C;marker id="arrowhead-d" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-  &#x3C;polygon points="0 0, 10 3.5, 0 7" fill="#333" transform="rotate(90 5 3.5)"/>
-&#x3C;/marker>
-</code></pre>
-<p>&#x3C;/defs>
-&#x3C;/svg></p>
+<svg width="700" height="400" viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+<rect width="700" height="400" fill="#f0f4f8" rx="10" ry="10"/>
+<text x="350" y="30" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">Retrieval-Augmented Generation (RAG) Flow</text>
+<rect x="20" y="150" width="100" height="60" fill="#ffecb3" stroke="#ffc107" rx="5" ry="5"/>
+<text x="70" y="185" font-family="Arial" font-size="14" text-anchor="middle">User Query</text>
+<line x1="120" y1="180" x2="160" y2="180" stroke="#333" stroke-width="2" marker-end="url(#arrowhead-r)"/>
+<rect x="160" y="130" width="140" height="100" fill="#d1ecf1" stroke="#17a2b8" rx="5" ry="5"/>
+<text x="230" y="175" font-family="Arial" font-size="14" text-anchor="middle">Application Layer</text>
+<text x="230" y="195" font-family="Arial" font-size="12" text-anchor="middle">(e.g., Node.js)</text>
+<line x1="300" y1="160" x2="350" y2="110" stroke="#333" stroke-width="2" marker-end="url(#arrowhead-r)"/> 
+<line x1="300" y1="200" x2="530" y2="200" stroke="#333" stroke-width="2" marker-end="url(#arrowhead-r)"/> 
+<rect x="350" y="70" width="160" height="80" fill="#c3e6cb" stroke="#28a745" rx="5" ry="5"/>
+<text x="430" y="105" font-family="Arial" font-size="14" text-anchor="middle">Vector Database</text>
+<text x="430" y="125" font-family="Arial" font-size="12" text-anchor="middle">(e.g., OpenSearch)</text>
+<text x="430" y="140" font-size="10" fill="#666" text-anchor="middle">Semantic Search</text>
+<line x1="430" y1="150" x2="430" y2="180" stroke="#333" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrowhead-d)"/>
+<text x="480" y="170" font-size="12">Retrieved Context</text>
+<rect x="530" y="130" width="140" height="100" fill="#e2e3e5" stroke="#6c757d" rx="5" ry="5"/>
+<text x="600" y="175" font-family="Arial" font-size="14" text-anchor="middle">LLM Service</text>
+<text x="600" y="195" font-family="Arial" font-size="12" text-anchor="middle">(Inference)</text>
+<line x1="600" y1="230" x2="600" y2="300" stroke="#333" stroke-width="2" marker-end="url(#arrowhead-d)"/>
+<rect x="530" y="300" width="140" height="60" fill="#ffecb3" stroke="#ffc107" rx="5" ry="5"/>
+<text x="600" y="335" font-family="Arial" font-size="14" text-anchor="middle">Grounded Answer</text>
+<defs>
+<marker id="arrowhead-r" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+  <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+</marker>
+<marker id="arrowhead-d" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+  <polygon points="0 0, 10 3.5, 0 7" fill="#333" transform="rotate(90 5 3.5)"/>
+</marker>
+</defs>
+</svg>
 <h2>5. Emerging Architectures and Philosophical Implications</h2>
 <h3>Beyond the Transformer</h3>
 <p>While dominant, Transformers have a weakness: the computational cost of attention scales quadratically with the sequence length (doubling the input length quadruples the compute needed).</p>
