@@ -92,103 +92,67 @@
 <p>Once tokenized, these integers must be converted into a format suitable for mathematical operations within a neural net. We use <strong>embeddings</strong> — dense vectors in a high-dimensional continuous space (often ranging from 768 to several thousand dimensions).</p>
 <p>During the training phase, the model learns to map tokens to these vector spaces based on the context in which they appear. The crucial outcome is that tokens with similar semantic meanings end up geometrically close to each other in this vector space. The concept of "King - Man + Woman ≈ Queen" is a classic example of vector arithmetic holding semantic properties within this space.</p>
 <p>Below is a visualization of this transformation process:</p>
-<svg width="850" height="320" viewBox="0 0 850 320" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#546e7a"/>
-        </marker>
-        <marker id="smallArrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
-            <polygon points="0 0, 6 2, 0 4" fill="#546e7a"/>
-        </marker>
-    </defs>
-<pre><code>&#x3C;!-- Background -->
-&#x3C;rect width="850" height="320" fill="#f8f9fa" rx="12" ry="12"/>
+<svg width="800" height="350" viewBox="0 0 800 350" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="350" fill="#f8f9fa" rx="10" ry="10"/>
+<p><text x="200" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">1. Token to Vector</text>
+<text x="600" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">2. Semantic Vector Space (2D Projection)</text></p>
+  <line x1="400" y1="50" x2="400" y2="320" stroke="#dee2e6" stroke-width="2" stroke-dasharray="5,5"/>
+  <g transform="translate(50, 60)">
+    <text x="0" y="30" font-family="monospace" font-size="16" fill="#333">"King"</text>
+    <path d="M 70 25 L 110 25" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="120" y="10" width="160" height="30" fill="#e9ecef" stroke="#ced4da" rx="4"/>
+    <text x="130" y="30" font-family="monospace" font-size="12" fill="#555">[ 0.92, -0.45, 0.11 ... ]</text>
+<pre><code>&#x3C;text x="0" y="90" font-family="monospace" font-size="16" fill="#333">"Man"&#x3C;/text>
+&#x3C;path d="M 70 85 L 110 85" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+&#x3C;rect x="120" y="70" width="160" height="30" fill="#e9ecef" stroke="#ced4da" rx="4"/>
+&#x3C;text x="130" y="90" font-family="monospace" font-size="12" fill="#555">[ 0.15, 0.88, -0.21 ... ]&#x3C;/text>
 
-&#x3C;!-- Headers -->
-&#x3C;rect x="20" y="20" width="170" height="45" fill="#fff" rx="8" ry="8" stroke="#dee2e6" stroke-width="1.5"/>
-&#x3C;text x="105" y="48" font-family="Arial, sans-serif" font-size="16" font-weight="600" text-anchor="middle" fill="#2c3e50">📥 Raw Input&#x3C;/text>
+&#x3C;text x="0" y="150" font-family="monospace" font-size="16" fill="#333">"Woman"&#x3C;/text>
+&#x3C;path d="M 70 145 L 110 145" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+&#x3C;rect x="120" y="130" width="160" height="30" fill="#e9ecef" stroke="#ced4da" rx="4"/>
+&#x3C;text x="130" y="150" font-family="monospace" font-size="12" fill="#555">[ 0.85, 0.12, 0.99 ... ]&#x3C;/text>
 
-&#x3C;rect x="240" y="20" width="210" height="45" fill="#fff" rx="8" ry="8" stroke="#dee2e6" stroke-width="1.5"/>
-&#x3C;text x="345" y="48" font-family="Arial, sans-serif" font-size="16" font-weight="600" text-anchor="middle" fill="#2c3e50">🔠 Tokenization&#x3C;/text>
+&#x3C;text x="0" y="210" font-family="monospace" font-size="16" fill="#333">"Queen"&#x3C;/text>
+&#x3C;path d="M 70 205 L 110 205" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+&#x3C;rect x="120" y="190" width="160" height="30" fill="#e9ecef" stroke="#ced4da" rx="4"/>
+&#x3C;text x="130" y="210" font-family="monospace" font-size="12" fill="#555">[ 0.99, -0.32, 0.05 ... ]&#x3C;/text>
 
-&#x3C;rect x="510" y="20" width="320" height="45" fill="#fff" rx="8" ry="8" stroke="#dee2e6" stroke-width="1.5"/>
-&#x3C;text x="670" y="48" font-family="Arial, sans-serif" font-size="16" font-weight="600" text-anchor="middle" fill="#2c3e50">🧠 Embedding Space&#x3C;/text>
-
-&#x3C;!-- Step 1: Raw Input -->
-&#x3C;rect x="40" y="90" width="130" height="70" fill="#e3f2fd" rx="8" ry="8" stroke="#2196f3" stroke-width="2"/>
-&#x3C;text x="105" y="125" font-family="monospace" font-size="15" text-anchor="middle" fill="#1565c0" font-weight="500">"deploying AI."&#x3C;/text>
-&#x3C;text x="105" y="145" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#546e7a">Text sequence&#x3C;/text>
-
-&#x3C;!-- Arrow 1 -->
-&#x3C;line x1="170" y1="125" x2="230" y2="125" stroke="#2196f3" stroke-width="3" marker-end="url(#arrowhead)"/>
-&#x3C;text x="200" y="120" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#546e7a">Step 1&#x3C;/text>
-
-&#x3C;!-- Step 2: Tokenization -->
-&#x3C;rect x="240" y="90" width="190" height="120" fill="#f3e5f5" rx="8" ry="8" stroke="#9c27b0" stroke-width="2"/>
-
-&#x3C;!-- Tokens -->
-&#x3C;rect x="260" y="110" width="40" height="30" fill="#ba68c8" rx="4" ry="4"/>
-&#x3C;text x="280" y="130" font-family="monospace" font-size="12" text-anchor="middle" fill="white" font-weight="500">deploy&#x3C;/text>
-
-&#x3C;rect x="310" y="110" width="30" height="30" fill="#ab47bc" rx="4" ry="4"/>
-&#x3C;text x="325" y="130" font-family="monospace" font-size="12" text-anchor="middle" fill="white" font-weight="500">ing&#x3C;/text>
-
-&#x3C;rect x="350" y="110" width="35" height="30" fill="#9c27b0" rx="4" ry="4"/>
-&#x3C;text x="367" y="130" font-family="monospace" font-size="12" text-anchor="middle" fill="white" font-weight="500">AI&#x3C;/text>
-
-&#x3C;rect x="395" y="110" width="25" height="30" fill="#8e24aa" rx="4" ry="4"/>
-&#x3C;text x="407" y="130" font-family="monospace" font-size="12" text-anchor="middle" fill="white" font-weight="500">.&#x3C;/text>
-
-&#x3C;line x1="260" y1="150" x2="420" y2="150" stroke="#ce93d8" stroke-width="1" stroke-dasharray="3,2"/>
-
-&#x3C;!-- Token IDs -->
-&#x3C;text x="280" y="177" font-family="monospace" font-size="11" text-anchor="middle" fill="#7b1fa2" font-weight="600">8452&#x3C;/text>
-&#x3C;text x="325" y="177" font-family="monospace" font-size="11" text-anchor="middle" fill="#7b1fa2" font-weight="600">278&#x3C;/text>
-&#x3C;text x="367" y="177" font-family="monospace" font-size="11" text-anchor="middle" fill="#7b1fa2" font-weight="600">19350&#x3C;/text>
-&#x3C;text x="407" y="177" font-family="monospace" font-size="11" text-anchor="middle" fill="#7b1fa2" font-weight="600">13&#x3C;/text>
-
-&#x3C;text x="335" y="195" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#7b1fa2" font-weight="500">Token IDs&#x3C;/text>
-
-&#x3C;!-- Arrow 2 -->
-&#x3C;line x1="430" y1="125" x2="490" y2="125" stroke="#9c27b0" stroke-width="3" marker-end="url(#arrowhead)"/>
-&#x3C;text x="460" y="120" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#546e7a">Step 2&#x3C;/text>
-
-&#x3C;!-- Step 3: Embedding Space -->
-&#x3C;rect x="500" y="90" width="300" height="150" fill="#f1f8e9" rx="8" ry="8" stroke="#7cb342" stroke-width="2"/>
-
-&#x3C;!-- Coordinate System -->
-&#x3C;line x1="560" y1="210" x2="730" y2="210" stroke="#81c784" stroke-width="2"/>
-&#x3C;text x="745" y="210" font-family="Arial, sans-serif" font-size="12" fill="#2e7d32">X₁&#x3C;/text>
-
-&#x3C;line x1="560" y1="210" x2="560" y2="100" stroke="#81c784" stroke-width="2"/>
-&#x3C;text x="560" y="90" font-family="Arial, sans-serif" font-size="12" fill="#2e7d32">X₂&#x3C;/text>
-
-&#x3C;!-- Points -->
-&#x3C;circle cx="640" cy="140" r="8" fill="#e53935" stroke="#b71c1c" stroke-width="2"/>
-&#x3C;text x="690" y="115" font-family="Arial, sans-serif" font-size="11" font-weight="600" fill="#c62828">"deploy"&#x3C;/text>
-
-&#x3C;circle cx="600" cy="170" r="8" fill="#1e88e5" stroke="#0d47a1" stroke-width="2"/>
-&#x3C;text x="670" y="145" font-family="Arial, sans-serif" font-size="11" font-weight="600" fill="#1565c0">"AI"&#x3C;/text>
-
-&#x3C;circle cx="670" cy="185" r="6" fill="#8e24aa" stroke="#4a148c" stroke-width="1.5"/>
-&#x3C;circle cx="620" cy="155" r="5" fill="#ff9800" stroke="#e65100" stroke-width="1.5"/>
-
-&#x3C;text x="650" y="230" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#5a9216" font-weight="600">1024-Dimensional Space&#x3C;/text>
-
-&#x3C;!-- Legend -->
-&#x3C;rect x="50" y="260" width="750" height="45" fill="white" rx="6" ry="6" stroke="#e0e0e0" stroke-width="1.5"/>
-
-&#x3C;circle cx="80" cy="282" r="6" fill="#2196f3"/>
-&#x3C;text x="95" y="285" font-family="Arial, sans-serif" font-size="12" fill="#424242">Text Input&#x3C;/text>
-
-&#x3C;circle cx="200" cy="282" r="6" fill="#9c27b0"/>
-&#x3C;text x="215" y="285" font-family="Arial, sans-serif" font-size="12" fill="#424242">Tokenization&#x3C;/text>
-
-&#x3C;circle cx="340" cy="282" r="6" fill="#7cb342"/>
-&#x3C;text x="355" y="285" font-family="Arial, sans-serif" font-size="12" fill="#424242">Embedding&#x3C;/text>
-
-&#x3C;text x="750" y="285" font-family="Arial, sans-serif" font-size="11" fill="#757575" font-style="italic">LLM Pipeline&#x3C;/text>
+&#x3C;text x="0" y="260" font-family="Arial, sans-serif" font-size="12" fill="#666" font-style="italic">* Real vectors have 768+ dimensions&#x3C;/text>
 </code></pre>
+  </g>
+  <g transform="translate(450, 60)">
+    <line x1="20" y1="250" x2="330" y2="250" stroke="#adb5bd" stroke-width="2"/> <line x1="20" y1="250" x2="20" y2="20" stroke="#adb5bd" stroke-width="2"/>  <text x="300" y="270" font-size="12" fill="#6c757d">Gender Dimension</text>
+    <text x="10" y="15" font-size="12" fill="#6c757d" writing-mode="tb">Royalty Dimension</text>
+<pre><code>&#x3C;path d="M 20 200 L 330 200" stroke="#e9ecef" stroke-width="1"/>
+&#x3C;path d="M 20 100 L 330 100" stroke="#e9ecef" stroke-width="1"/>
+
+&#x3C;circle cx="80" cy="200" r="6" fill="#007bff"/>
+&#x3C;text x="70" y="225" font-family="Arial" font-size="14" fill="#333">Man&#x3C;/text>
+
+&#x3C;circle cx="80" cy="100" r="6" fill="#dc3545"/>
+&#x3C;text x="70" y="90" font-family="Arial" font-size="14" fill="#333">King&#x3C;/text>
+
+&#x3C;circle cx="250" cy="200" r="6" fill="#007bff"/>
+&#x3C;text x="240" y="225" font-family="Arial" font-size="14" fill="#333">Woman&#x3C;/text>
+
+&#x3C;circle cx="250" cy="100" r="6" fill="#dc3545"/>
+&#x3C;text x="240" y="90" font-family="Arial" font-size="14" fill="#333">Queen&#x3C;/text>
+
+&#x3C;line x1="80" y1="200" x2="80" y2="110" stroke="#28a745" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow-green)"/>
+
+&#x3C;line x1="250" y1="200" x2="250" y2="110" stroke="#28a745" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow-green)"/>
+
+&#x3C;text x="100" y="155" font-family="monospace" font-size="12" fill="#28a745" font-weight="bold">Adding "Royalty"&#x3C;/text>
+</code></pre>
+  </g>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#28a745"/>
+    </marker>
+  </defs>
 </svg>
 <h2>2. The Core Engine: The Transformer Architecture</h2>
 <p>Prior to 2017, sequential data was primarily handled by Recurrent Neural Networks (RNNs) and Long Short-Term Memory (LSTM) networks. These architectures processed data sequentially, token by token, which limited parallelization and made it difficult for the model to retain context over long sequences (the "vanishing gradient" problem).</p>
