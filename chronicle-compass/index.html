@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chronical Compass — Explore History</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --panel: #121520;
+      --text: #e6e8ee;
+      --muted: #9aa1b2;
+      --accent: #6cf2c2;
+      --accent-2: #6ca8ff;
+      --border: rgba(255,255,255,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(108,242,194,0.15), transparent 40%),
+        radial-gradient(800px 400px at 90% 10%, rgba(108,168,255,0.12), transparent 40%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    header {
+      padding: 2rem 2rem 6rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5rem;
+    }
+
+    .logo {
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #000;
+      font-weight: 600;
+      margin-left: 0.5rem;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1.3rem;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #000;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(108,242,194,0.25);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 40px rgba(108,242,194,0.35);
+    }
+
+    .phone {
+      background: linear-gradient(180deg, #1a1f2f, #0d1020);
+      border-radius: 28px;
+      padding: 1.2rem;
+      box-shadow:
+        inset 0 0 0 1px var(--border),
+        0 30px 80px rgba(0,0,0,0.6);
+    }
+
+    .screen {
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0)),
+        #0e1220;
+      padding: 1.5rem;
+      height: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .screen .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem;
+    }
+
+    section {
+      max-width: 1200px;
+      margin: auto;
+      padding: 6rem 2rem;
+    }
+
+    .section-title {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-sub {
+      color: var(--muted);
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature {
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.8rem;
+    }
+
+    .feature h3 {
+      margin-bottom: 0.6rem;
+    }
+
+    .feature p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 4rem 0;
+    }
+
+    footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <nav>
+    <div class="logo">
+      Chronical Compass
+      <span class="badge">iOS</span>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <h1>Explore the past.<br/>Earn your place in it.</h1>
+      <p>
+        Chronical Compass turns real-world historical sites into an interactive journey.
+        Visit landmarks, capture photos, earn points, and unlock achievements as you explore history around you.
+      </p>
+      <a class="cta" href="#">
+        Coming Soon on the App Store →
+      </a>
+    </div>
+
+    <div class="phone">
+      <div class="screen">
+        <div class="card">
+          📍 <strong>Colosseum</strong><br/>
+          <small>Rome, Italy</small>
+        </div>
+        <div class="card">
+          🏆 Achievement Unlocked<br/>
+          <strong>Empire Explorer</strong>
+        </div>
+        <div class="card">
+          📸 Photo Added to Timeline
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <h2 class="section-title">A living historical map</h2>
+  <p class="section-sub">
+    Chronical Compass blends location, history, and photography into a single experience — encouraging exploration, curiosity, and discovery.
+  </p>
+
+  <div class="features">
+    <div class="feature">
+      <h3>📍 Visit Historical Sites</h3>
+      <p>Discover nearby landmarks and globally significant locations through an interactive map.</p>
+    </div>
+
+    <div class="feature">
+      <h3>📸 Capture the Moment</h3>
+      <p>Add photos to each historical location and build your personal visual timeline.</p>
+    </div>
+
+    <div class="feature">
+      <h3>🏆 Earn Achievements</h3>
+      <p>Unlock badges, milestones, and rare achievements for exploration and discovery.</p>
+    </div>
+
+    <div class="feature">
+      <h3>🧭 Track Your Journey</h3>
+      <p>See where you’ve been, what eras you’ve explored, and what’s next on your compass.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h2 class="section-title">Designed for iOS</h2>
+  <p class="section-sub">
+    Built with a native iOS experience in mind — smooth animations, elegant visuals, and a focus on exploration without distraction.
+  </p>
+</section>
+
+<footer>
+  © 2026 Chronical Compass • Explore history, one place at a time
+</footer>
+
+</body>
+</html>
