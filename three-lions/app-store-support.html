@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Three Lions Support</title>
+  <meta name="description" content="Support information, gameplay help, and troubleshooting for Three Lions.">
+  <meta name="theme-color" content="#0b2d53">
+  <style>
+    :root {
+      --navy: #0b2d53;
+      --blue: #1f6fdd;
+      --sky: #7cc7ff;
+      --pitch: #0d5d3a;
+      --pitch-dark: #083f29;
+      --gold: #f4c542;
+      --cream: #f4f8fc;
+      --ink: #0e1824;
+      --panel: rgba(255, 255, 255, 0.12);
+      --panel-strong: rgba(255, 255, 255, 0.18);
+      --border: rgba(255, 255, 255, 0.18);
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+      --radius: 24px;
+      --max-width: 1140px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+      color: var(--cream);
+      background:
+        radial-gradient(circle at top left, rgba(124, 199, 255, 0.22), transparent 32%),
+        radial-gradient(circle at 82% 12%, rgba(244, 197, 66, 0.18), transparent 24%),
+        linear-gradient(135deg, #071728 0%, #0b2d53 36%, #0d5d3a 100%);
+      min-height: 100vh;
+      line-height: 1.55;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background:
+        repeating-linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.035) 0,
+          rgba(255, 255, 255, 0.035) 58px,
+          transparent 58px,
+          transparent 116px
+        );
+      opacity: 0.7;
+    }
+
+    body::after {
+      background:
+        radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.18) 0 2px, transparent 2px),
+        radial-gradient(circle at 70% 28%, rgba(255, 255, 255, 0.14) 0 2px, transparent 2px),
+        radial-gradient(circle at 55% 82%, rgba(255, 255, 255, 0.12) 0 2px, transparent 2px);
+      background-size: 280px 280px;
+      opacity: 0.45;
+      animation: drift 24s linear infinite;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(calc(100% - 32px), var(--max-width));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 34px;
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 8px);
+      background: linear-gradient(145deg, rgba(7, 23, 40, 0.74), rgba(14, 93, 58, 0.54));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      right: -80px;
+      top: -90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(244, 197, 66, 0.38), transparent 68%);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 0 6px rgba(244, 197, 66, 0.16);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.05;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-size: clamp(2.7rem, 6vw, 5rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-copy {
+      max-width: 680px;
+      margin-top: 16px;
+      font-size: 1.07rem;
+      color: rgba(244, 248, 252, 0.9);
+    }
+
+    .hero-actions,
+    .link-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--cream);
+      text-decoration: none;
+      font-weight: 800;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .button.primary {
+      background: linear-gradient(135deg, var(--gold), #ffdf7a);
+      color: var(--ink);
+      border-color: transparent;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .grid.two-up {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card,
+    .faq details,
+    .support-banner {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .card {
+      padding: 24px;
+    }
+
+    .card h2,
+    .card h3 {
+      font-size: 1.35rem;
+      margin-bottom: 10px;
+    }
+
+    .card p,
+    .card li,
+    .faq p,
+    .support-banner p {
+      color: rgba(244, 248, 252, 0.88);
+    }
+
+    ul {
+      margin: 14px 0 0;
+      padding-left: 20px;
+    }
+
+    li + li {
+      margin-top: 9px;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.85rem;
+      line-height: 1;
+      color: var(--gold);
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.92rem;
+      color: rgba(244, 248, 252, 0.74);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .faq {
+      margin-top: 28px;
+    }
+
+    .faq h2 {
+      margin-bottom: 16px;
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+    }
+
+    .faq-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .faq details {
+      padding: 18px 22px;
+    }
+
+    .faq summary {
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 1.03rem;
+      list-style: none;
+    }
+
+    .faq summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq summary::after {
+      content: "+";
+      float: right;
+      font-size: 1.35rem;
+      line-height: 1;
+      color: var(--gold);
+    }
+
+    .faq details[open] summary::after {
+      content: "-";
+    }
+
+    .faq p {
+      margin: 14px 0 0;
+    }
+
+    .support-banner {
+      margin-top: 28px;
+      padding: 26px;
+      background: linear-gradient(140deg, rgba(31, 111, 221, 0.28), rgba(244, 197, 66, 0.16));
+    }
+
+    .support-banner h2 {
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      margin-bottom: 10px;
+    }
+
+    footer {
+      margin-top: 28px;
+      padding: 0 4px;
+      color: rgba(244, 248, 252, 0.68);
+      font-size: 0.92rem;
+    }
+
+    @keyframes drift {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(80px);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .grid.two-up,
+      .stat-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(calc(100% - 20px), var(--max-width));
+        padding-top: 16px;
+        padding-bottom: 28px;
+      }
+
+      .hero,
+      .card,
+      .faq details,
+      .support-banner {
+        padding: 20px;
+      }
+
+      .grid.two-up,
+      .stat-row {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        max-width: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      body::after,
+      .button {
+        animation: none;
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="eyebrow">App Store Support</div>
+      <h1>Three Lions support and match-day help.</h1>
+      <p class="hero-copy">
+        Three Lions is a fast, AI-driven soccer game where you manage England with live tactical prompts.
+        This page covers the core rules, common questions, device notes, and the best place to report a bug
+        or ask for help.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="https://github.com/dougmolineux/three-lions/issues">Open Support Issues</a>
+        <a class="button" href="https://github.com/dougmolineux/three-lions">View Project</a>
+      </div>
+      <div class="stat-row">
+        <div class="stat">
+          <strong>3</strong>
+          <span>Knockout matches</span>
+        </div>
+        <div class="stat">
+          <strong>4v4</strong>
+          <span>Arcade soccer action</span>
+        </div>
+        <div class="stat">
+          <strong>2</strong>
+          <span>AI control modes</span>
+        </div>
+        <div class="stat">
+          <strong>Saved</strong>
+          <span>Goal-difference leaderboard</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid two-up" aria-label="Support overview">
+      <article class="card">
+        <h2>How the tournament works</h2>
+        <p>
+          You guide England through a three-match cup run. Beat Ghana in Round 1, Germany in the semifinal,
+          and Argentina in the final to win the World Cup.
+        </p>
+        <div class="pill-row" aria-label="Tournament rounds">
+          <span class="pill">Round 1: Ghana</span>
+          <span class="pill">Semifinal: Germany</span>
+          <span class="pill">Final: Argentina</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>How instructions work</h2>
+        <p>
+          During the match you can shout tactical prompts that influence England's movement, spacing,
+          pressure, and shooting behavior.
+        </p>
+        <div class="pill-row" aria-label="Prompt examples">
+          <span class="pill">spread out</span>
+          <span class="pill">everyone defend</span>
+          <span class="pill">attack quickly</span>
+          <span class="pill">let #9 shoot</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>AI modes</h2>
+        <p>
+          The game includes Original Mode and a short-horizon on-device Foundation batch mode. If the
+          Foundation option is not supported on a device, Three Lions automatically falls back to Original Mode.
+        </p>
+        <ul>
+          <li>Original Mode uses built-in tactical logic and prompt parsing.</li>
+          <li>Foundation batch mode plans short movement sequences on supported devices.</li>
+          <li>Gameplay continues even if the advanced mode is unavailable.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Progress and celebration</h2>
+        <p>
+          Your manager name and championship goal-difference results are stored on-device. Winning the final
+          unlocks a full celebration screen and adds your run to the persistent leaderboard.
+        </p>
+        <ul>
+          <li>Leaderboard entries track goal difference across the full cup run.</li>
+          <li>Repeat wins build a longer history for the same manager name.</li>
+          <li>You can restart the whole tournament from Settings.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="grid two-up" aria-label="Troubleshooting and compatibility">
+      <article class="card">
+        <h3>Troubleshooting</h3>
+        <ul>
+          <li>If the match appears frozen, close the instruction sheet or settings sheet. Gameplay pauses while those panels are open.</li>
+          <li>If advanced AI mode is missing, your device likely does not support the on-device Foundation feature used by the app.</li>
+          <li>If you want a tactical reset, use halftime to submit a fresh instruction before the second half begins.</li>
+          <li>If you want to start over from the beginning, use Restart Entire Game in Settings.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Compatibility notes</h3>
+        <ul>
+          <li>Three Lions is an iOS app built for quick portrait play sessions.</li>
+          <li>The project is currently configured for iOS 26.0 and later.</li>
+          <li>The advanced Foundation batch mode only appears on supported devices.</li>
+          <li>Match logic and AI behaviors are designed to run on-device.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="faq" aria-label="Frequently asked questions">
+      <h2>Frequently asked questions</h2>
+      <div class="faq-stack">
+        <details>
+          <summary>How do I win the World Cup in Three Lions?</summary>
+          <p>
+            Win three consecutive knockout matches as England: Ghana first, Germany second, and Argentina in the final.
+            If England loses, the tournament resets back to Ghana.
+          </p>
+        </details>
+        <details>
+          <summary>What kind of instructions can I give the team?</summary>
+          <p>
+            England responds to short tactical prompts such as spreading out, defending deep, pressing, attacking,
+            or favoring a specific shirt number like #9.
+          </p>
+        </details>
+        <details>
+          <summary>Why does the game pause when I open a menu?</summary>
+          <p>
+            The live match pauses whenever the instruction editor or settings screen is open so you can make changes
+            without losing game time.
+          </p>
+        </details>
+        <details>
+          <summary>Why do I not see the Foundation AI option?</summary>
+          <p>
+            That mode only appears on devices that support the on-device Foundation capabilities required by the app.
+            Unsupported devices continue using Original Mode automatically.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <section class="support-banner">
+      <h2>Need direct help or want to report a bug?</h2>
+      <p>
+        The fastest support channel for Three Lions is the GitHub issue tracker. Use it for bug reports,
+        device-specific questions, gameplay feedback, and feature requests.
+      </p>
+      <div class="link-row">
+        <a class="button primary" href="https://github.com/dougmolineux/three-lions/issues">GitHub Issues</a>
+        <a class="button" href="https://github.com/dougmolineux/three-lions#readme">Project Readme</a>
+      </div>
+    </section>
+
+    <footer>
+      <p>Last updated April 17, 2026. This support page is intended for the App Store support URL field.</p>
+    </footer>
+  </main>
+</body>
+</html>

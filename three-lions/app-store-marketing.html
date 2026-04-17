@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Three Lions - App Store Marketing</title>
+  <meta name="description" content="Three Lions is a fast, AI-driven soccer game where you coach England with live prompts and chase the World Cup.">
+  <meta name="theme-color" content="#071728">
+  <style>
+    :root {
+      --night: #071728;
+      --navy: #0a2b50;
+      --cobalt: #2d79f3;
+      --sky: #9cd6ff;
+      --pitch: #0f6b43;
+      --pitch-deep: #0a4a30;
+      --gold: #ffcf55;
+      --cream: #f9fbff;
+      --ink: #101825;
+      --glass: rgba(255, 255, 255, 0.1);
+      --glass-strong: rgba(255, 255, 255, 0.16);
+      --border: rgba(255, 255, 255, 0.16);
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+      --radius: 26px;
+      --max-width: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+      color: var(--cream);
+      background:
+        radial-gradient(circle at 14% 14%, rgba(156, 214, 255, 0.18), transparent 28%),
+        radial-gradient(circle at 80% 12%, rgba(255, 207, 85, 0.18), transparent 22%),
+        radial-gradient(circle at 78% 76%, rgba(45, 121, 243, 0.16), transparent 25%),
+        linear-gradient(140deg, #06111f 0%, #071728 28%, #0b2d53 60%, #0d5d3a 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background:
+        linear-gradient(90deg, transparent 0 8%, rgba(255, 255, 255, 0.04) 8% 8.4%, transparent 8.4% 16.6%, rgba(255, 255, 255, 0.04) 16.6% 17%, transparent 17% 100%);
+      opacity: 0.4;
+      transform: skewY(-7deg) translateY(-8vh);
+    }
+
+    body::after {
+      background:
+        radial-gradient(circle at 22% 25%, rgba(255, 255, 255, 0.18) 0 2px, transparent 2px),
+        radial-gradient(circle at 62% 20%, rgba(255, 255, 255, 0.12) 0 2px, transparent 2px),
+        radial-gradient(circle at 84% 62%, rgba(255, 255, 255, 0.16) 0 2px, transparent 2px);
+      background-size: 260px 260px;
+      opacity: 0.42;
+      animation: shimmer 28s linear infinite;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(calc(100% - 32px), var(--max-width));
+      margin: 0 auto;
+      padding: 24px 0 54px;
+    }
+
+    .hero {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      align-items: stretch;
+      padding: 30px;
+      border: 1px solid var(--border);
+      border-radius: 34px;
+      background: linear-gradient(145deg, rgba(6, 17, 31, 0.78), rgba(11, 45, 83, 0.56));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -140px;
+      bottom: -150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 207, 85, 0.24), transparent 70%);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 0 7px rgba(255, 207, 85, 0.14);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 10ch;
+      font-size: clamp(3rem, 7vw, 5.6rem);
+      line-height: 0.94;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+    }
+
+    .hero-copy {
+      max-width: 640px;
+      margin-top: 16px;
+      font-size: 1.08rem;
+      line-height: 1.65;
+      color: rgba(249, 251, 255, 0.9);
+    }
+
+    .action-row,
+    .chip-row,
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .action-row {
+      margin-top: 26px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 0 20px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--cream);
+      text-decoration: none;
+      font-weight: 800;
+      transition: transform 170ms ease, background 170ms ease, border-color 170ms ease;
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .button.primary {
+      color: var(--ink);
+      background: linear-gradient(135deg, var(--gold), #ffe391);
+      border-color: transparent;
+    }
+
+    .chip-row {
+      margin-top: 24px;
+    }
+
+    .chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      font-weight: 800;
+      font-size: 0.92rem;
+    }
+
+    .visual {
+      position: relative;
+      min-height: 420px;
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background:
+        linear-gradient(180deg, rgba(16, 36, 59, 0.55), rgba(4, 17, 28, 0.18)),
+        repeating-linear-gradient(
+          180deg,
+          rgba(33, 138, 80, 0.95) 0,
+          rgba(33, 138, 80, 0.95) 58px,
+          rgba(19, 111, 67, 0.95) 58px,
+          rgba(19, 111, 67, 0.95) 116px
+        );
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+
+    .visual::before {
+      content: "";
+      position: absolute;
+      inset: 28px;
+      border: 3px solid rgba(255, 255, 255, 0.8);
+      border-radius: 22px;
+    }
+
+    .visual::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 28px;
+      bottom: 28px;
+      width: 3px;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .center-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 108px;
+      height: 108px;
+      transform: translate(-50%, -50%);
+      border: 3px solid rgba(255, 255, 255, 0.82);
+      border-radius: 50%;
+    }
+
+    .player,
+    .ball,
+    .prompt-bubble,
+    .score-ribbon {
+      position: absolute;
+    }
+
+    .player {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      font-size: 0.86rem;
+      font-weight: 900;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
+      animation: bob 3s ease-in-out infinite;
+    }
+
+    .player.england {
+      background: radial-gradient(circle at 35% 30%, #ffffff 0%, #eef3ff 60%, #d6e4ff 100%);
+      color: #121212;
+    }
+
+    .player.opponent {
+      background: radial-gradient(circle at 35% 30%, #ffd86c 0%, #f3b321 65%, #d08d0d 100%);
+      color: #111;
+    }
+
+    .player.p1 { top: 76px; left: 52%; }
+    .player.p2 { top: 134px; left: 67%; animation-delay: 0.5s; }
+    .player.p3 { top: 258px; left: 34%; animation-delay: 0.9s; }
+    .player.p4 { top: 320px; left: 56%; animation-delay: 0.2s; }
+    .player.p5 { top: 88px; left: 17%; animation-delay: 0.4s; }
+    .player.p6 { top: 158px; left: 24%; animation-delay: 0.8s; }
+    .player.p7 { top: 270px; left: 70%; animation-delay: 0.3s; }
+    .player.p8 { top: 334px; left: 22%; animation-delay: 1s; }
+
+    .ball {
+      top: 188px;
+      left: 46%;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #e6eef6 70%, #9fb3c8 100%);
+      box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.08);
+      animation: pulse 2.6s ease-in-out infinite;
+    }
+
+    .score-ribbon {
+      top: 22px;
+      left: 22px;
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 16px;
+      border-radius: 18px;
+      background: rgba(7, 23, 40, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+    }
+
+    .score-ribbon strong {
+      color: var(--gold);
+      font-size: 1.1rem;
+    }
+
+    .prompt-bubble {
+      max-width: 190px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+      font-size: 0.92rem;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .prompt-bubble.one {
+      top: 64px;
+      right: 26px;
+    }
+
+    .prompt-bubble.two {
+      bottom: 24px;
+      right: 22px;
+    }
+
+    .section {
+      margin-top: 22px;
+      padding: 26px;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .section h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    .section-intro {
+      max-width: 720px;
+      margin-top: 14px;
+      color: rgba(249, 251, 255, 0.84);
+      line-height: 1.65;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .stat {
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 2rem;
+      line-height: 1;
+      color: var(--gold);
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 10px;
+      color: rgba(249, 251, 255, 0.76);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.84rem;
+    }
+
+    .feature-grid,
+    .tournament-grid {
+      display: grid;
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .feature-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .feature,
+    .round-card,
+    .callout {
+      padding: 22px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .feature h3,
+    .round-card h3,
+    .callout h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+
+    .feature p,
+    .round-card p,
+    .callout p,
+    .footer-note {
+      color: rgba(249, 251, 255, 0.84);
+      line-height: 1.62;
+    }
+
+    .tournament-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .round-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .round-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -20px -26px auto;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 207, 85, 0.18), transparent 70%);
+    }
+
+    .round-label {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .footer-links {
+      margin-top: 18px;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      font-size: 0.94rem;
+    }
+
+    @keyframes bob {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    @keyframes pulse {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.18);
+      }
+    }
+
+    @keyframes shimmer {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(90px);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .feature-grid,
+      .tournament-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(calc(100% - 20px), var(--max-width));
+        padding-top: 14px;
+        padding-bottom: 30px;
+      }
+
+      .hero,
+      .section {
+        padding: 20px;
+      }
+
+      h1 {
+        max-width: none;
+      }
+
+      .visual {
+        min-height: 360px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .prompt-bubble {
+        max-width: 150px;
+        font-size: 0.84rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      body::after,
+      .player,
+      .ball,
+      .button {
+        animation: none;
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Marketing Page</div>
+        <h1>Coach England. Shout instructions. Chase the cup.</h1>
+        <p class="hero-copy">
+          Three Lions turns an arcade-style soccer match into a live tactical playground. Guide England through a
+          three-match World Cup run, fire off quick coaching prompts mid-game, make your halftime adjustments,
+          and try to bring football home.
+        </p>
+        <div class="action-row">
+          <a class="button primary" href="./app-store-support.html">View Support Page</a>
+          <a class="button" href="https://github.com/dougmolineux/three-lions">View Project</a>
+        </div>
+        <div class="chip-row" aria-label="Prompt examples">
+          <span class="chip">spread out</span>
+          <span class="chip">press high</span>
+          <span class="chip">everyone defend</span>
+          <span class="chip">let #9 shoot</span>
+        </div>
+      </div>
+
+      <div class="visual" aria-hidden="true">
+        <div class="score-ribbon"><span>England vs Argentina</span> <strong>2-1</strong></div>
+        <div class="center-circle"></div>
+
+        <div class="player england p1">9</div>
+        <div class="player england p2">7</div>
+        <div class="player england p3">5</div>
+        <div class="player england p4">2</div>
+        <div class="player opponent p5">9</div>
+        <div class="player opponent p6">7</div>
+        <div class="player opponent p7">5</div>
+        <div class="player opponent p8">2</div>
+        <div class="ball"></div>
+
+        <div class="prompt-bubble one">Shout: spread out and counter fast</div>
+        <div class="prompt-bubble two">Halftime tweak: everyone defend, then let #9 break</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Built for fast matches and louder decisions.</h2>
+      <p class="section-intro">
+        This is not a passive management sim. Three Lions lets you interfere with the match in real time,
+        shaping how England moves, presses, and attacks with short natural-language instructions while the game unfolds.
+      </p>
+      <div class="stats">
+        <div class="stat">
+          <strong>3</strong>
+          <span>Win-or-reset knockout rounds</span>
+        </div>
+        <div class="stat">
+          <strong>4v4</strong>
+          <span>Tight, readable arcade soccer</span>
+        </div>
+        <div class="stat">
+          <strong>2</strong>
+          <span>AI play styles on supported devices</span>
+        </div>
+        <div class="stat">
+          <strong>Saved</strong>
+          <span>Persistent goal-difference bragging rights</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Why Three Lions feels different</h2>
+      <div class="feature-grid">
+        <article class="feature">
+          <h3>Live tactical prompts</h3>
+          <p>
+            Tell England to spread out, sit deeper, press, attack, or route the ball toward a specific shirt number.
+            The team changes shape and behavior based on what you say.
+          </p>
+        </article>
+        <article class="feature">
+          <h3>Halftime matters</h3>
+          <p>
+            The match resets for the second half and gives you another moment to adjust your approach before the game restarts.
+          </p>
+        </article>
+        <article class="feature">
+          <h3>Distinct opponents</h3>
+          <p>
+            Ghana, Germany, and Argentina give the tournament a clear ladder, escalating pressure, and a satisfying final-step payoff.
+          </p>
+        </article>
+        <article class="feature">
+          <h3>Win and leave a mark</h3>
+          <p>
+            Lifting the cup triggers a full celebration sequence and records your run in a persistent goal-difference leaderboard.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Three matches. One clean route to glory.</h2>
+      <p class="section-intro">
+        Every run is simple to understand and hard to finish. Lose at any stage and you are back at the start.
+        Win all three and the celebration is yours.
+      </p>
+      <div class="tournament-grid">
+        <article class="round-card">
+          <span class="round-label">Round 1</span>
+          <h3>England vs Ghana</h3>
+          <p>Start the run with urgency. Set the tone early, settle into your prompt style, and keep the pressure on.</p>
+        </article>
+        <article class="round-card">
+          <span class="round-label">Semifinal</span>
+          <h3>England vs Germany</h3>
+          <p>The middle hurdle is where tactical tweaks matter most. Halftime changes can swing the whole tournament.</p>
+        </article>
+        <article class="round-card">
+          <span class="round-label">Final</span>
+          <h3>England vs Argentina</h3>
+          <p>Survive the last match and Three Lions erupts into a trophy lift, confetti, and a permanent leaderboard entry.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="callout">
+        <h3>On-device AI, arcade energy</h3>
+        <p>
+          Three Lions includes an original tactical simulation mode and a short-horizon on-device planning mode on
+          supported hardware. Either way, the result is the same: quick decisions, visible reactions, and a match that
+          feels like it is listening when you intervene.
+        </p>
+      </div>
+      <p class="footer-note">
+        This page is intended for the App Store marketing URL field and pairs with the support page for store submission.
+      </p>
+      <div class="footer-links">
+        <a class="button primary" href="./app-store-support.html">Support Information</a>
+        <a class="button" href="https://github.com/dougmolineux/three-lions/issues">Report Feedback</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
