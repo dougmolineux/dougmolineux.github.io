@@ -19,6 +19,14 @@
             <p class="text-gray-600">Remove transparency from App Store screenshots to avoid "Alpha Channel" errors.</p>
         </header>
 
+        <!-- Options -->
+        <div class="mb-6 flex justify-center items-center">
+            <label class="flex items-center space-x-3 cursor-pointer">
+                <input type="checkbox" id="resizeCheckbox" class="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                <span class="text-gray-700 font-medium">Resize to App Store size of 1242 × 2688px</span>
+            </label>
+        </div>
+
         <!-- Upload Area -->
         <div 
             id="dropZone"
@@ -137,15 +145,25 @@
                 reader.onload = (e) => {
                     const img = new Image();
                     img.onload = () => {
-                        procCanvas.width = img.width;
-                        procCanvas.height = img.height;
+                        const resizeCheckbox = document.getElementById('resizeCheckbox');
+                        
+                        let targetWidth = img.width;
+                        let targetHeight = img.height;
+
+                        if (resizeCheckbox && resizeCheckbox.checked) {
+                            targetWidth = 1242;
+                            targetHeight = 2688;
+                        }
+
+                        procCanvas.width = targetWidth;
+                        procCanvas.height = targetHeight;
 
                         // Fill white background to ensure no transparency
                         ctx.fillStyle = '#FFFFFF';
                         ctx.fillRect(0, 0, procCanvas.width, procCanvas.height);
 
                         // Draw image (blends alpha into white because context alpha is false)
-                        ctx.drawImage(img, 0, 0);
+                        ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
 
                         // Convert to Blob instead of DataURL to bypass CSP restrictions
                         procCanvas.toBlob((blob) => {
