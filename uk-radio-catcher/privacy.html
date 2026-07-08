@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — UK Radio Catcher for iOS & CarPlay</title>
+  <meta name="description" content="Official Privacy Policy for UK Radio Catcher on iOS and Apple CarPlay. Learn how we protect your privacy with zero account registration and on-device storage." />
+  <meta name="theme-color" content="#0a0c10" />
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      /* Color Palette - Default Light Mode (Apple iOS System Style) */
+      --bg-base: #f5f5f7;
+      --bg-surface: #ffffff;
+      --bg-glass: rgba(255, 255, 255, 0.8);
+      --bg-glass-hover: rgba(255, 255, 255, 0.95);
+      --border-color: rgba(0, 0, 0, 0.08);
+      --border-highlight: rgba(0, 0, 0, 0.18);
+      
+      --text-primary: #1d1d1f;
+      --text-secondary: #515154;
+      --text-muted: #86868b;
+      
+      --accent-gradient: linear-gradient(135deg, #fa2d48 0%, #9227f5 50%, #2f80ed 100%);
+      --accent-primary: #fa2d48;
+      --accent-glow: rgba(250, 45, 72, 0.2);
+      --carplay-blue: #007aff;
+      
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --max-width: 960px;
+      
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.06);
+      --shadow-glow: 0 0 30px rgba(146, 39, 245, 0.08);
+      --callout-bg: rgba(0, 122, 255, 0.06);
+      --callout-border: rgba(0, 122, 255, 0.2);
+    }
+
+    /* Dark Mode Override (Apple Music / iOS Midnight) */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-base: #0a0c10;
+        --bg-surface: #121620;
+        --bg-glass: rgba(255, 255, 255, 0.05);
+        --bg-glass-hover: rgba(255, 255, 255, 0.09);
+        --border-color: rgba(255, 255, 255, 0.1);
+        --border-highlight: rgba(255, 255, 255, 0.22);
+        
+        --text-primary: #f0f3f9;
+        --text-secondary: #9ea8ba;
+        --text-muted: #647087;
+        
+        --accent-glow: rgba(250, 45, 72, 0.35);
+        --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 30px 60px rgba(0, 0, 0, 0.5);
+        --shadow-glow: 0 0 40px rgba(146, 39, 245, 0.2);
+        --callout-bg: rgba(0, 122, 255, 0.12);
+        --callout-border: rgba(0, 122, 255, 0.3);
+      }
+    }
+
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Ambient Background Glows */
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      top: -10%;
+      left: 15%;
+      width: 50vw;
+      height: 50vw;
+      max-width: 600px;
+      max-height: 600px;
+      background: radial-gradient(circle, rgba(250, 45, 72, 0.12) 0%, rgba(146, 39, 245, 0.08) 100%);
+      animation: pulseGlow 12s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      bottom: 10%;
+      right: 10%;
+      width: 45vw;
+      height: 45vw;
+      max-width: 500px;
+      max-height: 500px;
+      background: radial-gradient(circle, rgba(47, 128, 237, 0.1) 0%, rgba(0, 122, 255, 0.04) 100%);
+      animation: pulseGlow 15s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes pulseGlow {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.8; }
+      100% { transform: scale(1.15) translate(-30px, 20px); opacity: 1; }
+    }
+
+    /* Layout Container */
+    .container {
+      width: min(calc(100% - 40px), var(--max-width));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header / Nav */
+    .top-nav {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 40px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(var(--bg-base), 0.8);
+    }
+
+    .nav-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .app-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--accent-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px var(--accent-glow);
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .app-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: #ffffff;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-back {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-back:hover {
+      color: var(--text-primary);
+      border-color: var(--border-highlight);
+      background: var(--bg-glass-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 20px 0 48px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .policy-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(0, 122, 255, 0.12);
+      border: 1px solid rgba(0, 122, 255, 0.25);
+      color: var(--carplay-blue);
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .hero p {
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 auto;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .effective-date {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-glass);
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Nutrition Label / Privacy Highlights Grid */
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 56px;
+    }
+
+    .highlight-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .highlight-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--border-highlight);
+    }
+
+    .highlight-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+
+    .highlight-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .highlight-card p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Policy Content Sections */
+    .policy-content {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      margin-bottom: 80px;
+    }
+
+    .policy-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 36px 40px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.25s ease;
+    }
+
+    .policy-section:hover {
+      border-color: var(--border-highlight);
+    }
+
+    .section-header-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 16px;
+    }
+
+    .section-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--accent-gradient);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    .policy-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .policy-section p {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      line-height: 1.75;
+      margin-bottom: 16px;
+    }
+
+    .policy-section p:last-child {
+      margin-bottom: 0;
+    }
+
+    .policy-section ul {
+      margin: 16px 0 20px 24px;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      line-height: 1.75;
+    }
+
+    .policy-section li {
+      margin-bottom: 10px;
+      padding-left: 6px;
+    }
+
+    .policy-section li::marker {
+      color: var(--accent-primary);
+    }
+
+    .policy-section strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* Callout Box */
+    .callout {
+      background: var(--callout-bg);
+      border-left: 4px solid var(--carplay-blue);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 18px 24px;
+      margin: 20px 0;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .callout-icon {
+      color: var(--carplay-blue);
+      font-size: 1.3rem;
+      line-height: 1;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .callout-text {
+      font-size: 0.98rem;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .callout-text p {
+      color: var(--text-primary);
+      font-size: 0.98rem;
+      margin-bottom: 0;
+    }
+
+    /* Contact Box inside Section 7 */
+    .contact-box {
+      margin-top: 24px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .contact-box-info h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .contact-box-info p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .btn-email {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      background: var(--accent-gradient);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      box-shadow: 0 8px 20px var(--accent-glow);
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .btn-email:hover {
+      transform: scale(1.03);
+      box-shadow: 0 12px 28px rgba(250, 45, 72, 0.45);
+      filter: brightness(1.1);
+    }
+
+    .btn-email svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-color);
+      padding: 40px 0;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .top-nav {
+        padding: 16px 0;
+      }
+
+      .policy-section {
+        padding: 24px 20px;
+      }
+
+      .section-header-row {
+        gap: 12px;
+      }
+
+      .policy-section h2 {
+        font-size: 1.3rem;
+      }
+
+      .contact-box {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px 16px;
+      }
+
+      .btn-email {
+        width: 100%;
+      }
+
+      .footer-content {
+        flex-direction: column-reverse;
+        text-align: center;
+        justify-content: center;
+      }
+
+      .footer-links {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header / Navigation -->
+  <header class="top-nav">
+    <div class="container nav-content">
+      <a href="index.html" class="brand" aria-label="UK Radio Catcher Support Home">
+        <div class="app-icon">
+          <!-- Radio Wave / Antenna SVG Icon -->
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+          </svg>
+        </div>
+        <span>UK Radio Catcher</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="index.html" class="btn-back">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span>Support Home</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Hero Section -->
+    <section class="hero" id="hero-section">
+      <div class="policy-badge" role="status">
+        <span>Apple App Store Compliance</span>
+      </div>
+      <h1>Privacy Policy</h1>
+      <p>We believe your radio listening habits are your own business. Here is our transparent, user-first pledge on how information is handled.</p>
+      <div class="effective-date">
+        Effective Date: <strong>July 2026</strong>
+      </div>
+    </section>
+
+    <!-- Privacy at a Glance (Apple Nutrition Label style highlights) -->
+    <section class="highlights-grid" aria-label="Privacy Highlights">
+      <div class="highlight-card">
+        <div class="highlight-icon" aria-hidden="true">🛡️</div>
+        <h3>No Account Needed</h3>
+        <p>Zero user registration, sign-ups, or login credentials required to stream live radio.</p>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-icon" aria-hidden="true">📱</div>
+        <h3>Local Device Data</h3>
+        <p>Your favorite stations, recent plays, and sleep timers are stored strictly on your device or personal iCloud.</p>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-icon" aria-hidden="true">📻</div>
+        <h3>Direct Streaming</h3>
+        <p>Audio connects directly from your device to third-party broadcaster servers without intermediary eavesdropping.</p>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-icon" aria-hidden="true">🚫</div>
+        <h3>Zero Ad Tracking</h3>
+        <p>We do not collect, monetize, or sell personal data to ad networks or data brokers.</p>
+      </div>
+    </section>
+
+    <!-- Policy Sections -->
+    <div class="policy-content">
+      <!-- Section 1: Introduction -->
+      <section class="policy-section" id="section-1" aria-labelledby="heading-1">
+        <div class="section-header-row">
+          <span class="section-num">01</span>
+          <h2 id="heading-1">Introduction</h2>
+        </div>
+        <p>
+          Welcome to <strong>UK Radio Catcher</strong> ("we", "our", or "us"). We respect your privacy and are deeply committed to protecting it. We built UK Radio Catcher with a privacy-first architecture designed to let you enjoy live British radio broadcasts across your Apple devices with minimal data footprint.
+        </p>
+        <p>
+          This Privacy Policy explains how information is handled when you download, install, and use our iOS and Apple CarPlay application. By using UK Radio Catcher, you agree to the minimal, transparent data practices described in this policy.
+        </p>
+      </section>
+
+      <!-- Section 2: Information We Collect -->
+      <section class="policy-section" id="section-2" aria-labelledby="heading-2">
+        <div class="section-header-row">
+          <span class="section-num">02</span>
+          <h2 id="heading-2">Information We Collect</h2>
+        </div>
+        <p>
+          Our application is engineered to function autonomously without requiring you to surrender your personal identity or private information.
+        </p>
+        
+        <p><strong>Personal Data:</strong></p>
+        <p>
+          We explicitly state that we do <strong>NOT</strong> require user registration, account creation, or login credentials. Furthermore, we do not collect, transmit, or store sensitive personal data of any kind, including:
+        </p>
+        <ul>
+          <li>Names, usernames, or physical addresses</li>
+          <li>Email addresses or phone numbers</li>
+          <li>Precise GPS location or real-time spatial tracking</li>
+          <li>Payment information or credit card details</li>
+        </ul>
+
+        <p><strong>Local Device Data:</strong></p>
+        <p>
+          To provide a personalized streaming experience, UK Radio Catcher saves your custom app preferences locally on your hardware. This includes:
+        </p>
+        <ul>
+          <li>Saved <strong>Favorite stations</strong> and custom ordering</li>
+          <li><strong>Recently played stations</strong> history</li>
+          <li><strong>Sleep timer</strong> configurations and playback preferences</li>
+        </ul>
+        
+        <div class="callout">
+          <div class="callout-icon" aria-hidden="true">🔒</div>
+          <div class="callout-text">
+            <p><strong>iCloud Sync & Local Storage Note:</strong> All user preferences remain strictly on your local device storage and/or sync securely across your own Apple devices via Apple's encrypted <strong>iCloud Sync</strong> service (if enabled in your iOS settings). This data is completely inaccessible to us or any third party.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Third-Party Radio Streams & Network Connectivity -->
+      <section class="policy-section" id="section-3" aria-labelledby="heading-3">
+        <div class="section-header-row">
+          <span class="section-num">03</span>
+          <h2 id="heading-3">Third-Party Radio Streams & Network Connectivity</h2>
+        </div>
+        <p>
+          UK Radio Catcher acts as a dedicated streaming client. To deliver live radio broadcasts to your headphones, speakers, or car audio system, the app connects directly over the internet to third-party streaming servers and broadcast networks (such as BBC, commercial UK broadcasters, and independent radio servers).
+        </p>
+        <p>
+          When you initiate an audio stream, standard network protocols require your device to establish a direct connection with the broadcaster's server. During this technical exchange, the following standard network telemetry is transmitted directly to the third-party broadcaster:
+        </p>
+        <ul>
+          <li><strong>IP Address:</strong> Required by streaming servers to route audio data packets back to your device and verify regional broadcast licensing.</li>
+          <li><strong>Device User-Agent:</strong> Standard technical identifier (e.g., audio player type and iOS version) used by broadcast servers to optimize audio codec delivery (such as AAC or MP3 streams).</li>
+        </ul>
+        <p>
+          These data transmissions occur directly between your iOS/CarPlay device and the respective radio station provider. We do not proxy, intercept, or record these audio streams. Your interaction with third-party radio broadcasts is subject to the respective privacy policies and terms of service of each individual broadcaster.
+        </p>
+      </section>
+
+      <!-- Section 4: Analytics and Crash Reporting -->
+      <section class="policy-section" id="section-4" aria-labelledby="heading-4">
+        <div class="section-header-row">
+          <span class="section-num">04</span>
+          <h2 id="heading-4">Analytics and Crash Reporting (Apple Services)</h2>
+        </div>
+        <p>
+          We do not embed third-party tracking SDKs, advertising networks, or cross-app surveillance tools in UK Radio Catcher.
+        </p>
+        <p>
+          We may receive anonymized, aggregated diagnostic and crash reports provided exclusively through Apple's standard App Store developer tools. This telemetry is only shared with us if you have explicitly opted into sharing diagnostics with app developers in your device's iOS system settings (<em>Settings &gt; Privacy &amp; Security &gt; Analytics &amp; Improvements</em>).
+        </p>
+        <p>
+          These Apple-provided reports contain stripped, non-identifiable technical data—such as stack traces, memory usage at the time of a crash, iOS OS version, and device model—and are used <strong>solely to improve app stability, fix bugs, and optimize playback performance</strong> across iOS and Apple CarPlay.
+        </p>
+      </section>
+
+      <!-- Section 5: Children's Privacy -->
+      <section class="policy-section" id="section-5" aria-labelledby="heading-5">
+        <div class="section-header-row">
+          <span class="section-num">05</span>
+          <h2 id="heading-5">Children's Privacy</h2>
+        </div>
+        <p>
+          UK Radio Catcher is a general audience application and is safe for users of all ages. We do not knowingly collect, solicit, or maintain personal information from children under the age of 13 (or the applicable age of digital consent in your jurisdiction).
+        </p>
+        <p>
+          Because our app requires zero registration and collects no personal data, no personal information regarding children is ever captured or stored by us. If a parent or guardian believes that a child has somehow provided us with personal information, please contact us immediately so we can take appropriate remedial action.
+        </p>
+      </section>
+
+      <!-- Section 6: Changes to This Privacy Policy -->
+      <section class="policy-section" id="section-6" aria-labelledby="heading-6">
+        <div class="section-header-row">
+          <span class="section-num">06</span>
+          <h2 id="heading-6">Changes to This Privacy Policy</h2>
+        </div>
+        <p>
+          We may update or revise this Privacy Policy occasionally to reflect app feature enhancements, legal requirements, or Apple App Store guideline modifications.
+        </p>
+        <p>
+          When changes are made, we will post the updated policy on this page and revise the <strong>"Effective Date"</strong> at the top of the document. We encourage you to review this page periodically. Your continued use of UK Radio Catcher following the posting of any changes constitutes your acknowledgment and acceptance of the updated terms.
+        </p>
+      </section>
+
+      <!-- Section 7: Contact Us -->
+      <section class="policy-section" id="section-7" aria-labelledby="heading-7">
+        <div class="section-header-row">
+          <span class="section-num">07</span>
+          <h2 id="heading-7">Contact Us</h2>
+        </div>
+        <p>
+          If you have any questions, concerns, or feedback regarding this Privacy Policy or how UK Radio Catcher handles data, please do not hesitate to reach out to us.
+        </p>
+
+        <div class="contact-box">
+          <div class="contact-box-info">
+            <h3>Privacy &amp; Legal Inquiries</h3>
+            <p>We aim to respond to all privacy-related inquiries within 24–48 business hours.</p>
+          </div>
+
+          <!-- 
+            ====================================================================
+            [IMPORTANT CUSTOMIZATION] UPDATE YOUR CONTACT EMAIL BELOW:
+            Replace 'privacy@ukradiocatcher.example.com' with your actual official privacy or support email address.
+            ====================================================================
+          -->
+          <a href="mailto:privacy@ukradiocatcher.example.com?subject=UK%20Radio%20Catcher%20Privacy%20Inquiry" class="btn-email" id="contact-privacy-btn">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            <span>Email Privacy Team</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-content">
+      <div class="copyright">
+        © 2026 UK Radio Catcher. All rights reserved.
+      </div>
+      
+      <div class="footer-links">
+        <!-- 
+          ====================================================================
+          [IMPORTANT CUSTOMIZATION] FOOTER LINKS:
+          Replace '#' with your Terms of Service URL if applicable.
+          ====================================================================
+        -->
+        <a href="privacy.html" id="privacy-link" aria-current="page">Privacy Policy</a>
+        <a href="#" id="terms-link">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

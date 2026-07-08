@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UK Radio Catcher — Official App Store Support & Help Center</title>
+  <meta name="description" content="Official support center for UK Radio Catcher on iOS and Apple CarPlay. Get help with background audio, CarPlay setup, live radio streaming, and troubleshooting." />
+  <meta name="theme-color" content="#0d1117" />
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      /* Color Palette - Premium iOS Midnight & Apple Music Glow */
+      --bg-base: #0a0c10;
+      --bg-surface: #121620;
+      --bg-glass: rgba(255, 255, 255, 0.05);
+      --bg-glass-hover: rgba(255, 255, 255, 0.09);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --border-highlight: rgba(255, 255, 255, 0.2);
+      
+      --text-primary: #f0f3f9;
+      --text-secondary: #9ea8ba;
+      --text-muted: #647087;
+      
+      --accent-gradient: linear-gradient(135deg, #fa2d48 0%, #9227f5 50%, #2f80ed 100%);
+      --accent-primary: #fa2d48;
+      --accent-glow: rgba(250, 45, 72, 0.35);
+      --carplay-blue: #007aff;
+      
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --max-width: 1000px;
+      
+      --shadow-lg: 0 30px 60px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 40px rgba(146, 39, 245, 0.2);
+    }
+
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Background Glows */
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      top: -10%;
+      left: 15%;
+      width: 50vw;
+      height: 50vw;
+      max-width: 600px;
+      max-height: 600px;
+      background: radial-gradient(circle, rgba(250, 45, 72, 0.15) 0%, rgba(146, 39, 245, 0.1) 100%);
+      animation: pulseGlow 12s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      bottom: 10%;
+      right: 10%;
+      width: 45vw;
+      height: 45vw;
+      max-width: 500px;
+      max-height: 500px;
+      background: radial-gradient(circle, rgba(47, 128, 237, 0.12) 0%, rgba(0, 122, 255, 0.05) 100%);
+      animation: pulseGlow 15s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes pulseGlow {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.8; }
+      100% { transform: scale(1.15) translate(-30px, 20px); opacity: 1; }
+    }
+
+    /* Layout Container */
+    .container {
+      width: min(calc(100% - 40px), var(--max-width));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header / Nav */
+    .top-nav {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 48px;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .app-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--accent-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px var(--accent-glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: #ffffff;
+    }
+
+    .badges {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    .badge.carplay {
+      background: rgba(0, 122, 255, 0.15);
+      border-color: rgba(0, 122, 255, 0.3);
+      color: #66b2ff;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 40px 0 60px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .live-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(250, 45, 72, 0.12);
+      border: 1px solid rgba(250, 45, 72, 0.3);
+      color: #ff6b81;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #fa2d48;
+      box-shadow: 0 0 8px #fa2d48;
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 3.8rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 auto;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    /* Quick Contact / Help Box */
+    .contact-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      margin-bottom: 64px;
+      backdrop-filter: blur(24px);
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 32px;
+      align-items: center;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .contact-card:hover {
+      border-color: var(--border-highlight);
+      transform: translateY(-2px);
+    }
+
+    .contact-info h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .contact-info p {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      max-width: 520px;
+    }
+
+    .contact-meta {
+      display: flex;
+      gap: 20px;
+      margin-top: 16px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-support {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 32px;
+      border-radius: 999px;
+      background: var(--accent-gradient);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 1.05rem;
+      text-decoration: none;
+      box-shadow: 0 10px 25px var(--accent-glow);
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .btn-support:hover {
+      transform: scale(1.03);
+      box-shadow: 0 15px 35px rgba(250, 45, 72, 0.5);
+      filter: brightness(1.1);
+    }
+
+    .btn-support svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      margin-bottom: 80px;
+    }
+
+    .section-header {
+      margin-bottom: 32px;
+    }
+
+    .section-header h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+
+    .section-header p {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    .faq-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .faq-item {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      transition: all 0.25s ease;
+      overflow: hidden;
+    }
+
+    .faq-item:hover {
+      background: var(--bg-glass-hover);
+      border-color: var(--border-highlight);
+    }
+
+    .faq-item[open] {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    summary {
+      padding: 24px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      user-select: none;
+    }
+
+    /* Remove default accordion triangle in Safari/Chrome */
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .faq-icon::after {
+      content: '+';
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1;
+    }
+
+    .faq-item[open] .faq-icon {
+      transform: rotate(45deg);
+      background: var(--accent-primary);
+    }
+
+    .faq-item[open] .faq-icon::after {
+      color: #ffffff;
+    }
+
+    .faq-answer {
+      padding: 0 24px 24px 24px;
+      color: var(--text-secondary);
+      font-size: 1.02rem;
+      line-height: 1.7;
+      border-top: 1px solid transparent;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .faq-answer strong {
+      color: var(--text-primary);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-color);
+      padding: 40px 0;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .contact-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 30px 20px;
+        gap: 24px;
+      }
+
+      .contact-info p {
+        margin: 0 auto;
+      }
+
+      .contact-meta {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn-support {
+        width: 100%;
+      }
+
+      .footer-content {
+        flex-direction: column-reverse;
+        text-align: center;
+        justify-content: center;
+      }
+
+      .footer-links {
+        justify-content: center;
+      }
+
+      summary {
+        font-size: 1.05rem;
+        padding: 20px;
+      }
+
+      .faq-answer {
+        padding: 0 20px 20px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header / Navigation -->
+  <header class="top-nav">
+    <div class="container nav-content">
+      <a href="#" class="brand" aria-label="UK Radio Catcher Support Home">
+        <div class="app-icon">
+          <!-- Radio Wave / Antenna SVG Icon -->
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+          </svg>
+        </div>
+        <span>UK Radio Catcher</span>
+      </a>
+      <div class="badges">
+        <span class="badge">iOS 16+</span>
+        <span class="badge carplay">CarPlay Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Hero Section -->
+    <section class="hero" id="hero-section">
+      <div class="live-indicator" role="status">
+        <span class="live-dot"></span>
+        <span>Official App Store Support</span>
+      </div>
+      <h1>UK Radio Catcher Support</h1>
+      <p>We're here to help you get the best UK radio streaming experience on iOS and CarPlay.</p>
+    </section>
+
+    <!-- Quick Contact / Help Box -->
+    <section class="contact-card" id="contact-section" aria-labelledby="contact-heading">
+      <div class="contact-info">
+        <h2 id="contact-heading">Need Direct Assistance?</h2>
+        <p>Have a question about a specific broadcast, station requests, or experiencing technical hiccups? Our support team is ready to assist you.</p>
+        <div class="contact-meta">
+          <span class="meta-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <time>Avg. Response: &lt; 24 Hours</time>
+          </span>
+          <span class="meta-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>Dedicated iOS Support</span>
+          </span>
+        </div>
+      </div>
+
+      <div>
+        <!-- 
+          ====================================================================
+          Support Email Address
+          ====================================================================
+        -->
+        <a href="mailto:doug.molineux@gmail.com?subject=UK%20Radio%20Catcher%20Support%20Request" class="btn-support" id="contact-support-btn">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg>
+          <span>Email Support Team</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Frequently Asked Questions (FAQ) Section -->
+    <section class="faq-section" id="faq-section" aria-labelledby="faq-heading">
+      <div class="section-header">
+        <h2 id="faq-heading">Frequently Asked Questions</h2>
+        <p>Quick answers to common questions about background audio, CarPlay, and station streaming.</p>
+      </div>
+
+      <div class="faq-grid" role="list">
+        <!-- FAQ Item 1 -->
+        <details class="faq-item" id="faq-1" role="listitem">
+          <summary>
+            <span>Why does audio stop playing when I lock my screen or switch apps?</span>
+            <span class="faq-icon" aria-hidden="true"></span>
+          </summary>
+          <div class="faq-answer">
+            <p>Ensure <strong>Background App Refresh</strong> is enabled for UK Radio Catcher in your iPhone Settings, and check that your battery saver settings aren't pausing background network usage.</p>
+          </div>
+        </details>
+
+        <!-- FAQ Item 2 -->
+        <details class="faq-item" id="faq-2" role="listitem">
+          <summary>
+            <span>How do I use UK Radio Catcher with Apple CarPlay?</span>
+            <span class="faq-icon" aria-hidden="true"></span>
+          </summary>
+          <div class="faq-answer">
+            <p>Connect your iPhone to your CarPlay-compatible vehicle via USB or wirelessly. UK Radio Catcher will appear on your CarPlay dashboard automatically.</p>
+          </div>
+        </details>
+
+        <!-- FAQ Item 3 -->
+        <details class="faq-item" id="faq-3" role="listitem">
+          <summary>
+            <span>A specific radio station isn't loading or playing. What should I do?</span>
+            <span class="faq-icon" aria-hidden="true"></span>
+          </summary>
+          <div class="faq-answer">
+            <p>Live radio streams occasionally experience temporary maintenance or broadcast changes from the station provider. Try refreshing the station list or connecting to Wi-Fi/cellular data. If the issue persists, please let us know!</p>
+          </div>
+        </details>
+
+        <!-- FAQ Item 4 -->
+        <details class="faq-item" id="faq-4" role="listitem">
+          <summary>
+            <span>How do I add stations to my Favorites?</span>
+            <span class="faq-icon" aria-hidden="true"></span>
+          </summary>
+          <div class="faq-answer">
+            <p>Tap the heart icon next to any station name in the player or station list to save it to your Favorites for quick access.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-content">
+      <div class="copyright">
+        © 2026 UK Radio Catcher. All rights reserved.
+      </div>
+      
+      <div class="footer-links">
+        <!-- 
+          ====================================================================
+          [IMPORTANT] INSERT YOUR PRIVACY POLICY AND TERMS LINKS BELOW:
+          Replace '#' with your actual Privacy Policy and Terms of Service URLs.
+          ====================================================================
+        -->
+        <a href="privacy.html" id="privacy-link">Privacy Policy</a>
+        <a href="#" id="terms-link">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
