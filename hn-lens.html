@@ -294,7 +294,7 @@
 
     <section class="hero">
         <h1>HN Lens</h1>
-        <p>Intelligent summaries of Hacker News discussions. Powered by AI, processed entirely on your device.</p>
+        <p>Intelligent summaries of Hacker News discussions. Powered by AI, processed on your device by default.</p>
         <a href="#" class="cta-button">Download on App Store</a>
         <div class="requirement">Requires iOS 18 or later</div>
     </section>
@@ -332,7 +332,7 @@
 
                 <div class="feature-card">
                     <h3>Complete Privacy</h3>
-                    <p>All AI processing uses Apple's FoundationModels framework. No data ever leaves your device. No tracking, no analytics.</p>
+                    <p>By default, all AI processing uses Apple's on-device FoundationModels framework. Nothing goes to a cloud AI unless you turn on the optional Brain Upgrade with your own API key. No tracking, no analytics.</p>
                 </div>
 
                 <div class="feature-card">
@@ -392,11 +392,11 @@
     <section class="privacy-section" id="privacy">
         <div class="privacy-content">
             <h2>Privacy Policy</h2>
-            <p><strong>Last Updated:</strong> January 2026</p>
+            <p><strong>Last Updated:</strong> October 30, 2026</p>
 
             <h3>Our Privacy Commitment</h3>
             <p>
-                HN Lens processes all data on your device. We don't collect, store, or transmit any personal information. This isn't just a policy—it's how the app is built.
+                By default, HN Lens processes all data on your device. We don't collect, store, or receive any personal information, and HN Lens has no servers. If you choose to use Claude or Gemini through the optional Brain Upgrade, the text described below is sent directly from your device to that provider, never to us.
             </p>
 
             <h3>What We Don't Collect</h3>
@@ -406,7 +406,7 @@
                 <li>No reading history or usage patterns</li>
                 <li>No analytics or telemetry data</li>
                 <li>No cookies or tracking technologies</li>
-                <li>No data shared with third parties</li>
+                <li>No data shared with third parties, except the text you choose to send to Anthropic or Google (see Optional Cloud AI below)</li>
                 <li>No advertisements or ad tracking</li>
             </ul>
 
@@ -421,6 +421,18 @@
                 <li><strong>No Cloud Services:</strong> We don't operate servers that receive or process your data.</li>
             </ul>
 
+            <h3>Optional Cloud AI (Brain Upgrade)</h3>
+            <p>
+                The Brain Upgrade in-app purchase lets you use Anthropic's Claude or Google's Gemini instead of Apple's on-device model, with your own API key. It is off unless you turn it on, and HN Lens asks for your permission before anything is sent to either provider. When it is on:
+            </p>
+            <ul>
+                <li><strong>What is sent:</strong> the text needed to answer your request: story titles, article text, Hacker News comments, and the messages you type in Deep Dive chat.</li>
+                <li><strong>Where it goes:</strong> directly from your device to Anthropic (api.anthropic.com) or Google (generativelanguage.googleapis.com), authenticated with your API key. It never passes through us.</li>
+                <li><strong>How the provider handles it:</strong> Anthropic's or Google's own privacy policy and API terms apply to that data, under your own account with them.</li>
+                <li><strong>Your API key:</strong> stored only in your iPhone's Keychain, never synced to other devices, and sent only to the provider it belongs to.</li>
+                <li><strong>Turning it off:</strong> remove your key or switch back to Apple Intelligence in Settings &gt; AI Brain, and nothing more is sent.</li>
+            </ul>
+
             <h3>Data Stored on Your Device</h3>
             <p>The following information stays on your device and is never transmitted:</p>
             <ul>
@@ -428,6 +440,7 @@
                 <li>Selected persona preferences</li>
                 <li>Cached story content and generated summaries</li>
                 <li>App settings and user preferences</li>
+                <li>Your Claude or Gemini API key, if you add one (in the Keychain)</li>
             </ul>
             <p>
                 You control this data. Clear it anytime through Settings or by deleting the app.
@@ -440,6 +453,7 @@
             <ul>
                 <li><strong>Hacker News API:</strong> Direct connection from your device to fetch public stories and comments. Hacker News may log API requests according to their privacy policy.</li>
                 <li><strong>Apple FoundationModels:</strong> On-device AI framework. No data sent to Apple servers—all processing is local.</li>
+                <li><strong>Anthropic or Google (optional):</strong> Only if you turn on the Brain Upgrade and add your own API key, as described in Optional Cloud AI above.</li>
             </ul>
             <p>
                 We don't use analytics services, advertising networks, or other tracking tools.
@@ -452,7 +466,7 @@
 
             <h3>Security</h3>
             <p>
-                Since data stays on your device, security relies on your iPhone's built-in protections: encryption, device passcode, and biometric authentication.
+                Data stored by HN Lens stays on your device and relies on your iPhone's built-in protections: encryption, device passcode, and biometric authentication. If you use the optional Brain Upgrade, requests to Anthropic or Google are sent over encrypted HTTPS connections.
             </p>
 
             <h3>Changes to This Policy</h3>
@@ -462,11 +476,12 @@
 
             <h3>Your Rights</h3>
             <p>
-                Since we don't collect your data, there's nothing for us to access or delete. You maintain control through:
+                Since we don't collect your data, there's nothing for us to access or delete. For text you sent to Anthropic or Google, use the privacy controls of your account with that provider. You maintain control through:
             </p>
             <ul>
                 <li>Clearing cache in Settings</li>
                 <li>Managing bookmarks in the Library tab</li>
+                <li>Removing your API key in Settings &gt; AI Brain</li>
                 <li>Deleting the app to remove all local data</li>
             </ul>
 
@@ -477,12 +492,12 @@
 
             <h3>Transparency</h3>
             <p>
-                Our privacy-first approach is built into the app's architecture. All AI processing uses Apple's on-device FoundationModels framework. Your data never leaves your device because the app doesn't have servers to send it to.
+                Our privacy-first approach is built into the app's architecture. By default, all AI processing uses Apple's on-device FoundationModels framework. HN Lens has no servers, so we never receive your data; the only time text leaves your device for an AI is when you choose Claude or Gemini with your own API key.
             </p>
 
             <h3>Legal Compliance</h3>
             <p>
-                This app doesn't process personal data as defined by GDPR, CCPA, or similar regulations because no personal information is collected. Public content from Hacker News is accessed directly by your device.
+                We don't collect or process personal data as defined by GDPR, CCPA, or similar regulations. Public content from Hacker News is accessed directly by your device. If you use the optional Brain Upgrade, Anthropic or Google processes the text you send under your own agreement with them.
             </p>
         </div>
     </section>
