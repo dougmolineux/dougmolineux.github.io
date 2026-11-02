@@ -207,7 +207,7 @@
       <p>This Privacy Policy explains how Chronicle Compass collects, uses, stores, and discloses information when you use the Chronicle Compass mobile application.</p>
       <div class="meta">
         <span>App: Chronicle Compass</span>
-        <span>Effective date: March 30, 2026</span>
+        <span>Effective date: November 1, 2026</span>
         <span>Platform: iOS</span>
       </div>
     </header>
@@ -249,7 +249,7 @@
         <li><strong>Diagnostic information you choose to provide:</strong> If you contact support, you may provide your name, email address, and any information you include in your message.</li>
       </ul>
       <div class="callout">
-        <p><strong>Chronicle Compass does not currently require account creation.</strong> The app does not currently include advertising SDKs, third-party analytics SDKs, or in-app purchase processing in the reviewed codebase.</p>
+        <p><strong>Chronicle Compass does not require account creation.</strong> The app does not include advertising SDKs, tracking SDKs, or third-party analytics SDKs. Optional in-app purchases are processed by Apple, and the app shows one optional sponsored link; both are described in Section 6.</p>
       </div>
     </section>
 
@@ -258,7 +258,8 @@
       <p>The app uses information only for the app features you request. Specifically, Chronicle Compass uses information to:</p>
       <ul>
         <li>find and display nearby historical places;</li>
-        <li>show historical place details and summaries;</li>
+        <li>show historical place details and summaries, including optional one-sentence summaries written on your device by Apple Intelligence;</li>
+        <li>process optional in-app purchases through Apple and remember on your device which ones you own;</li>
         <li>calculate your proximity to a site and determine whether a visit can be recorded;</li>
         <li>monitor a limited number of nearby historical-site geofences and send local notifications if you enable notifications;</li>
         <li>save your visit history, progress, and selected photos locally on your device;</li>
@@ -285,6 +286,7 @@
       <h2>5. Photos and Media</h2>
       <p>If you choose to attach a photo to a site, Chronicle Compass accesses only the image you select through the iOS photo picker. The selected image is processed and stored locally on your device as part of the app's local data store.</p>
       <p>Based on the current implementation reviewed for this policy, user-selected photos are not uploaded by the app to the developer's servers.</p>
+      <p><strong>Camera:</strong> If you open AR Wayfinder, the app asks for camera access and uses the live camera view to show nearby historical sites over it. The camera feed is processed on your device in real time; the app does not record, save, or upload images or video from it.</p>
     </section>
 
     <section id="third-parties" class="card">
@@ -293,7 +295,10 @@
       <ul>
         <li><strong>Wikipedia:</strong> The app uses the public Wikipedia API to search for nearby places and retrieve summary content. Requests to Wikipedia may include your location coordinates so relevant nearby places can be returned. Wikipedia's handling of information is governed by its own policies, available at <a href="https://foundation.wikimedia.org/wiki/Policy:Privacy_policy">foundation.wikimedia.org/wiki/Policy:Privacy_policy</a>.</li>
         <li><strong>Apple platform services:</strong> The app relies on iOS frameworks such as Core Location, MapKit, UserNotifications, SwiftData, and PhotosUI. These system services may process information in accordance with Apple's terms and privacy disclosures.</li>
-        <li><strong>External links:</strong> If the app opens a Wikipedia page or other external link, your interaction with that external site is governed by the third party's own privacy policy.</li>
+        <li><strong>Apple Intelligence:</strong> On supported devices, the app can show a one-sentence summary of each site, written on your device by Apple Intelligence from the site's Wikipedia text. This happens on your iPhone; the app doesn't send this content to the developer or any other third party. You can turn summaries off in the app's Settings.</li>
+        <li><strong>In-app purchases:</strong> Optional purchases (a tip, and Remove Ads) are handled by Apple through the App Store. The developer does not receive your payment details. The app checks with Apple, on your device, which purchases you own so it can apply them, for example to hide the sponsored link after you buy Remove Ads. Apple's handling of purchases is governed by Apple's terms and privacy policy.</li>
+        <li><strong>Sponsored link (Amazon Associates):</strong> The app shows one optional, clearly labelled sponsored link to an audiobook on Amazon. As an Amazon Associate, the developer earns from qualifying purchases. The link opens Amazon in Safari or the Amazon app; it is not shown inside the app. The app does not send Amazon your location, visit history, photos, or any other personal information. The link contains an affiliate tag that identifies the developer's Associates account so Amazon can credit qualifying purchases. Once you are on Amazon, Amazon may collect information (for example, using cookies) under its own privacy notice, available at <a href="https://www.amazon.com/privacy">amazon.com/privacy</a>. Buying Remove Ads hides the sponsored link.</li>
+        <li><strong>External links:</strong> If the app opens a Wikipedia page, Amazon, or another external link, your interaction with that external site is governed by the third party's own privacy policy.</li>
       </ul>
     </section>
 
@@ -303,7 +308,8 @@
       <p>Based on the current app implementation, information is shared only in the following limited ways:</p>
       <ul>
         <li>with Wikipedia when the app requests nearby places and related content using location-based queries;</li>
-        <li>with Apple platform components needed to provide location, notifications, map rendering, and photo-selection functionality; and</li>
+        <li>with Apple platform components needed to provide location, notifications, map rendering, photo selection, on-device summaries, and in-app purchases;</li>
+        <li>with Amazon, only if you tap the sponsored link, and only what any website receives when you open a link (no information from the app itself); and</li>
         <li>if required by law, regulation, legal process, or to protect rights, safety, and security.</li>
       </ul>
     </section>
@@ -323,7 +329,10 @@
         <li>disable notifications in the app or in iOS Settings;</li>
         <li>decline to select photos from your photo library;</li>
         <li>clear visited locations from the app's Settings screen;</li>
-        <li>clear the app's cached nearby-location data from the app's Settings screen; and</li>
+        <li>clear the app's cached nearby-location data from the app's Settings screen;</li>
+        <li>decline or turn off camera access, which only AR Wayfinder uses;</li>
+        <li>turn off AI summaries in the app's Settings screen;</li>
+        <li>ignore the sponsored link, or buy Remove Ads to hide it; and</li>
         <li>delete the app to remove its locally stored data from your device, subject to any iOS backup behavior outside the app's control.</li>
       </ul>
     </section>
@@ -353,10 +362,9 @@
       <p>If you have questions about this Privacy Policy or Chronicle Compass, contact:</p>
       <p>
         <strong>Molineux Studios</strong><br>
-        Email: <a href="mailto:doug.molineux@gmail.com">doug.molineux@gmail.com</a><br>
+        Email: <a href="mailto:dreamseekios@gmail.com">dreamseekios@gmail.com</a><br>
         Website: <a href="https://dougmolineux.github.io/">https://dougmolineux.github.io/</a>
       </p>
-      <p class="small">If you publish this page on your website, consider using the same support email and website address that you present in the app's About screen and App Store listing.</p>
     </section>
 
     <footer>
