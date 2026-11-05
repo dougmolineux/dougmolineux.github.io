@@ -3,936 +3,740 @@
 
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="description" content="Doug Molineux - Senior Software Engineer">
     <meta name="author" content="Doug Molineux">
+    <meta name="theme-color" content="#04050d">
     <title>Doug Molineux - Senior Software Engineer</title>
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>document.documentElement.classList.add('js');</script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #04050d;
+            --ink: #eef1ff;
+            --muted: #a6b0d4;
+            --dim: #6f7aa3;
+            --accent: #8ec5ff;
+            --sun: #ffb86b;
+            --sun-deep: #ff7d4d;
+            --violet: #b69cff;
+            --line: rgba(170, 190, 255, 0.14);
+            --line-strong: rgba(142, 197, 255, 0.38);
+            --radius: 22px;
+            --gutter: clamp(16px, 4vw, 48px);
+            --display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+            --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+            color-scheme: dark;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
+        *, *::before, *::after { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background-color: #f8f9fa;
-            color: #2d3748;
-            line-height: 1.6;
+            margin: 0;
+            font: 400 16px/1.65 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            color: var(--ink);
             overflow-x: hidden;
+            /* Starfield fallback, visible until (or instead of) the WebGL scene. */
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(1.2px 1.2px at 12% 18%, #fff 50%, transparent 51%),
+                radial-gradient(1px 1px at 68% 34%, #cfe0ff 50%, transparent 51%),
+                radial-gradient(1.4px 1.4px at 38% 72%, #ffe9c4 50%, transparent 51%),
+                radial-gradient(1px 1px at 86% 82%, #fff 50%, transparent 51%),
+                radial-gradient(1px 1px at 52% 8%, #a9c7ff 50%, transparent 51%),
+                radial-gradient(1.2px 1.2px at 92% 52%, #fff 50%, transparent 51%),
+                radial-gradient(ellipse 60% 40% at 75% 15%, rgba(110, 70, 200, 0.22), transparent 70%),
+                radial-gradient(ellipse 50% 40% at 15% 85%, rgba(40, 140, 190, 0.16), transparent 70%);
+            background-size: 260px 260px, 340px 340px, 300px 300px, 410px 410px, 380px 380px, 290px 290px, 100% 100%, 100% 100%;
+            background-attachment: fixed;
         }
 
-        /* Parallax Background Elements */
-        .parallax-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
+        a { color: inherit; }
+
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+        .skip-link {
+            position: absolute; left: 16px; top: -60px; z-index: 100;
+            padding: 10px 16px; border-radius: 10px; background: var(--ink); color: var(--bg);
+            font-weight: 600; text-decoration: none;
+        }
+        .skip-link:focus { top: 16px; }
+
+        /* ---------- 3D canvas + overlays ---------- */
+        #space {
+            position: fixed; inset: 0; width: 100%; height: 100%;
+            display: block; z-index: 0;
+            opacity: 0; transition: opacity 1.8s ease;
+        }
+        #space.ready { opacity: 1; }
+        .no-webgl #space { display: none; }
+
+        .vignette {
+            position: fixed; inset: 0; z-index: 1; pointer-events: none;
+            background: radial-gradient(ellipse 120% 90% at 50% 50%, transparent 55%, rgba(4, 5, 13, 0.65) 100%);
         }
 
-        .parallax-circle {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.05;
+        .planet-hover, .planet-hover body { cursor: pointer; }
+
+        .planet-tip {
+            position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none;
+            padding: 6px 12px; border-radius: 999px;
+            font: 500 12px/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase;
+            color: var(--ink); background: rgba(8, 11, 26, 0.8);
+            border: 1px solid var(--line-strong); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            white-space: nowrap;
+        }
+        .planet-tip[hidden] { display: none; }
+
+        /* ---------- Header ---------- */
+        .site-header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+            padding: max(12px, env(safe-area-inset-top)) var(--gutter) 0;
         }
 
-        .circle-1 {
-            width: 600px;
-            height: 600px;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            top: -200px;
-            right: -200px;
-        }
-
-        .circle-2 {
-            width: 400px;
-            height: 400px;
-            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
-            bottom: 10%;
-            left: -100px;
-        }
-
-        .circle-3 {
-            width: 300px;
-            height: 300px;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            top: 50%;
-            right: 10%;
-        }
-
-        /* Header */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
-            z-index: 1000;
-            padding: 0 20px;
-            transition: all 0.3s ease;
-        }
-
-        .header.scrolled {
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
+        .nav {
+            max-width: 1280px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between; gap: 16px;
+            padding: 8px 8px 8px 18px; border-radius: 999px;
+            background: rgba(8, 11, 26, 0.55);
+            border: 1px solid var(--line);
+            backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%);
+            box-shadow: 0 10px 40px -20px rgba(0, 0, 0, 0.8);
         }
 
         .logo {
-            font-weight: 800;
-            font-size: 24px;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
+            display: inline-flex; align-items: center; gap: 12px;
+            font: 700 18px/1 var(--display); letter-spacing: -0.01em;
+            color: var(--ink); text-decoration: none; white-space: nowrap;
         }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 40px;
+        .logo-mark {
+            position: relative; width: 22px; height: 22px; border-radius: 50%; flex: none;
+            background: radial-gradient(circle at 35% 30%, #fff3d6, var(--sun) 35%, var(--sun-deep) 75%, #7a2a12);
+            box-shadow: 0 0 18px rgba(255, 160, 80, 0.55);
         }
+        .logo-mark::after {
+            content: ''; position: absolute; inset: -6px -9px;
+            border: 1.5px solid rgba(142, 197, 255, 0.7); border-radius: 50%;
+            transform: rotate(-24deg) scaleY(0.38);
+        }
+        .logo-dim { opacity: 0.6; font-weight: 500; }
 
+        .nav-links { display: flex; gap: 2px; list-style: none; margin: 0; padding: 0; }
         .nav-links a {
-            color: #4a5568;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            position: relative;
+            display: block; padding: 9px 14px; border-radius: 999px;
+            color: var(--muted); text-decoration: none; font-weight: 500; font-size: 14px;
+            transition: color 0.2s, background-color 0.2s;
         }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            transition: width 0.3s ease;
+        .nav-links a:hover { color: var(--ink); background: rgba(255, 255, 255, 0.07); }
+        .nav-links .nav-cta a {
+            color: #1b0d05; font-weight: 600;
+            background: linear-gradient(135deg, #ffd59a, var(--sun) 45%, var(--sun-deep));
         }
+        .nav-links .nav-cta a:hover { color: #1b0d05; filter: brightness(1.08); }
 
-        .nav-links a:hover {
-            color: #2563eb;
+        .menu-btn {
+            display: none; align-items: center; justify-content: center;
+            width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.05); color: var(--ink); cursor: pointer;
         }
+        .menu-btn svg { width: 20px; height: 20px; }
+        .menu-btn .close { display: none; }
+        .nav.open .menu-btn .open { display: none; }
+        .nav.open .menu-btn .close { display: block; }
 
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        /* Hero Section */
-        .hero {
-            padding: 180px 20px 120px;
-            text-align: center;
-            max-width: 1000px;
-            margin: 0 auto;
-            position: relative;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 1s ease forwards;
-        }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hero h1 {
-            font-size: clamp(3rem, 6vw, 5rem);
-            font-weight: 800;
-            margin-bottom: 24px;
-            background: linear-gradient(135deg, #2d3748 0%, #2563eb 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -2px;
-            line-height: 1.1;
-        }
-
-        .hero .subtitle {
-            font-size: 28px;
-            color: #2563eb;
-            font-weight: 700;
-            margin-bottom: 32px;
-            letter-spacing: -0.5px;
-        }
-
-        .hero .description {
-            font-size: 20px;
-            color: #718096;
-            max-width: 700px;
-            margin: 0 auto 48px;
-            line-height: 1.8;
-        }
-
-        /* Stats Cards */
-        .stats-section {
-            padding: 80px 20px;
-            background: linear-gradient(135deg, rgba(30, 58, 138, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
-            position: relative;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 32px;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 20px;
-            padding: 48px 32px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            opacity: 0;
-            transform: translateY(40px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #1e3a8a, #3b82f6);
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
-        }
-
-        .stat-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.2);
-        }
-
-        .stat-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .stat-number {
-            font-size: 48px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 12px;
-            letter-spacing: -1px;
-        }
-
-        .stat-label {
-            color: #718096;
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        /* Content Sections */
-        .section {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 100px 20px;
-        }
-
-        .section-title {
-            font-size: 48px;
-            font-weight: 800;
-            margin-bottom: 24px;
-            text-align: center;
-            color: #2d3748;
-            letter-spacing: -1px;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease;
-        }
-
-        .section-title.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .section-subtitle {
-            text-align: center;
-            color: #718096;
-            font-size: 18px;
-            max-width: 600px;
-            margin: 0 auto 64px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s ease 0.2s;
-        }
-
-        .section-subtitle.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
-            margin-bottom: 64px;
-        }
-
-        .skill-category {
-            background: white;
-            border-radius: 24px;
-            padding: 48px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            opacity: 0;
-            transform: translateY(40px) scale(0.95);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .skill-category::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(30, 58, 138, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .skill-category.visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        .skill-category:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.15);
-        }
-
-        .skill-category:hover::before {
-            opacity: 1;
-        }
-
-        .skill-category h3 {
-            color: #2d3748;
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .skill-category .icon {
-            font-size: 32px;
-            filter: grayscale(0.3);
-        }
-
-        .skill-category p {
-            color: #4a5568;
-            line-height: 1.8;
-            font-size: 16px;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Projects Section */
-        .projects-section {
-            background: linear-gradient(135deg, rgba(30, 58, 138, 0.03) 0%, rgba(59, 130, 246, 0.03) 100%);
-            padding: 100px 0;
-        }
-
-        .project-card {
-            background: white;
-            border-radius: 24px;
-            padding: 48px;
-            margin-bottom: 32px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            opacity: 0;
-            transform: translateX(-40px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .project-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 6px;
-            background: linear-gradient(180deg, #1e3a8a, #3b82f6);
-            transform: scaleY(0);
-            transition: transform 0.4s ease;
-        }
-
-        .project-card.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .project-card:hover {
-            transform: translateX(8px) scale(1.01);
-            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.15);
-        }
-
-        .project-card:hover::before {
-            transform: scaleY(1);
-        }
-
-        .project-title {
-            color: #2563eb;
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .project-title::after {
-            content: ' →';
-            opacity: 0;
-            transform: translateX(-10px);
-            transition: all 0.3s ease;
-        }
-
-        .project-title:hover {
-            color: #1e3a8a;
-        }
-
-        .project-title:hover::after {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .project-description {
-            color: #4a5568;
-            line-height: 1.8;
-            font-size: 16px;
-        }
-
-        .project-link {
-            color: #2563eb;
-            display: inline-block;
-            font-size: 15px;
-            font-weight: 600;
-            margin-top: 16px;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .project-link:hover {
-            color: #1e3a8a;
-        }
-
-        /* Footer */
-        .footer {
-            background: white;
-            border-top: 1px solid #e2e8f0;
-            padding: 80px 20px 40px;
-            text-align: center;
-            margin-top: 100px;
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-bottom: 48px;
-            flex-wrap: wrap;
-        }
-
-        .social-link {
-            color: #4a5568;
-            text-decoration: none;
-            font-weight: 600;
-            padding: 14px 28px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            font-size: 15px;
-        }
-
-        .social-link:hover {
-            color: white;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            border-color: transparent;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
-        }
-
-        .copyright {
-            color: #a0aec0;
-            font-size: 15px;
-            padding-top: 32px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        /* Mobile Menu */
-        .mobile-menu {
-            display: none;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            border: none;
-            color: white;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        /* Scroll Indicator */
-        .scroll-indicator {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 50px;
-            border: 2px solid #cbd5e0;
-            border-radius: 20px;
-            display: flex;
-            justify-content: center;
-            padding-top: 8px;
-            opacity: 0.6;
-        }
-
-        .scroll-indicator::before {
-            content: '';
-            width: 4px;
-            height: 8px;
-            background: #2563eb;
-            border-radius: 2px;
-            animation: scroll 2s ease-in-out infinite;
-        }
-
-        @keyframes scroll {
-            0%, 20% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 1080px) {
+            .menu-btn { display: inline-flex; }
             .nav-links {
-                display: none;
+                /* .nav's backdrop-filter makes it the containing block, so 0/0 lines up with the bar. */
+                position: absolute; top: calc(100% + 10px); left: 0; right: 0;
+                flex-direction: column; gap: 2px; padding: 10px; border-radius: 22px;
+                background: rgba(9, 12, 30, 0.98); border: 1px solid var(--line);
+                backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.9);
+                opacity: 0; visibility: hidden; transform: translateY(-8px) scale(0.98);
+                transform-origin: top center;
+                transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
             }
-
-            .mobile-menu {
-                display: block;
+            .nav.open .nav-links {
+                opacity: 1; visibility: visible; transform: none;
+                transition: opacity 0.25s ease, transform 0.25s ease;
             }
-
-            .hero {
-                padding: 140px 20px 80px;
-            }
-
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero .subtitle {
-                font-size: 20px;
-            }
-
-            .hero .description {
-                font-size: 16px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
-            }
-
-            .skills-grid {
-                grid-template-columns: 1fr;
-                gap: 24px;
-            }
-
-            .skill-category,
-            .project-card {
-                padding: 32px 24px;
-            }
-
-            .section-title {
-                font-size: 32px;
-            }
-
-            .social-links {
-                gap: 16px;
-            }
+            .nav-links a { padding: 14px 16px; font-size: 16px; border-radius: 14px; }
+            .nav-links .nav-cta a { text-align: center; margin-top: 6px; }
         }
 
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
+        /* ---------- Orbit nav (section dots) ---------- */
+        .orbit-nav {
+            position: fixed; right: clamp(14px, 2vw, 28px); top: 50%; transform: translateY(-50%);
+            z-index: 40; display: flex; flex-direction: column; gap: 14px;
+        }
+        .orbit-nav a {
+            position: relative; display: block; width: 12px; height: 12px; border-radius: 50%;
+            border: 1.5px solid rgba(170, 190, 255, 0.45); text-decoration: none;
+            transition: border-color 0.3s, background-color 0.3s, transform 0.3s;
+        }
+        .orbit-nav a::before {
+            content: attr(data-label); position: absolute; right: 24px; top: 50%;
+            transform: translate(6px, -50%); opacity: 0; pointer-events: none;
+            font: 500 11px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--ink); white-space: nowrap; transition: opacity 0.2s, transform 0.2s;
+        }
+        .orbit-nav a:hover::before, .orbit-nav a:focus-visible::before { opacity: 1; transform: translate(0, -50%); }
+        .orbit-nav a.active { background: var(--accent); border-color: var(--accent); transform: scale(1.25); box-shadow: 0 0 14px rgba(142, 197, 255, 0.8); }
+        @media (max-width: 900px) { .orbit-nav { display: none; } }
 
-            .stat-card {
-                padding: 32px 24px;
+        /* ---------- Sections ---------- */
+        main { position: relative; z-index: 2; }
+
+        .section {
+            position: relative;
+            min-height: 100vh; min-height: 100svh;
+            display: flex; align-items: center;
+            padding: 120px calc(var(--gutter) + 28px) 96px var(--gutter);
+        }
+        .wrap { width: 100%; max-width: 1280px; margin: 0 auto; }
+        .split { display: flex; }
+        .split > .col { width: min(100%, 580px); }
+        .split.right > .col { margin-left: auto; }
+        .scrim-left::before, .scrim-right::before {
+            content: ''; position: absolute; inset: 0; pointer-events: none; z-index: -1;
+            background: linear-gradient(90deg, rgba(4, 5, 13, 0.72) 0%, rgba(4, 5, 13, 0.35) 42%, transparent 62%);
+        }
+        .scrim-right::before { transform: scaleX(-1); }
+        h2, .section-sub, .lede, .kicker { text-shadow: 0 2px 24px rgba(4, 5, 13, 0.9); }
+
+        .kicker {
+            display: inline-flex; align-items: center; gap: 12px; margin: 0 0 18px;
+            font: 500 12px/1 var(--mono); letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--accent);
+        }
+        .kicker::before { content: ''; width: 28px; height: 1px; background: currentColor; opacity: 0.7; }
+
+        h1, h2, h3 { font-family: var(--display); margin: 0; }
+        h2 {
+            font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 700; line-height: 1.02; letter-spacing: -0.03em;
+            margin-bottom: 16px;
+        }
+        .section-sub { color: var(--muted); font-size: clamp(1rem, 1.6vw, 1.125rem); margin: 0 0 36px; max-width: 52ch; }
+
+        /* Hero */
+        .hero { padding-top: 140px; }
+        .hero h1 {
+            font-size: clamp(3.2rem, 10vw, 7.4rem); font-weight: 700; line-height: 0.92; letter-spacing: -0.045em;
+            margin-bottom: 26px;
+            background: linear-gradient(180deg, #ffffff 25%, #c9d5ff 70%, #8ea6ff);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            filter: drop-shadow(0 6px 40px rgba(120, 150, 255, 0.25));
+        }
+        .hero .role {
+            font: 600 clamp(1.15rem, 2.4vw, 1.6rem)/1.2 var(--display); letter-spacing: -0.01em;
+            color: var(--sun); margin: 0 0 18px;
+        }
+        .lede { color: var(--muted); font-size: clamp(1.02rem, 1.7vw, 1.2rem); max-width: 46ch; margin: 0 0 36px; }
+
+        .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            min-height: 48px; padding: 0 22px; border-radius: 999px;
+            font-weight: 600; font-size: 15px; text-decoration: none; color: var(--ink);
+            border: 1px solid var(--line-strong); background: rgba(10, 14, 34, 0.5);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease, border-color 0.25s;
+        }
+        .btn:hover { transform: translateY(-2px); background: rgba(142, 197, 255, 0.12); border-color: var(--accent); }
+        .btn.primary {
+            color: #1b0d05; border-color: transparent;
+            background: linear-gradient(135deg, #ffd59a, var(--sun) 45%, var(--sun-deep));
+            box-shadow: 0 12px 40px -12px rgba(255, 140, 70, 0.7);
+        }
+        .btn.primary:hover { box-shadow: 0 18px 50px -12px rgba(255, 140, 70, 0.9); }
+        .btn svg { width: 18px; height: 18px; flex: none; }
+
+        .scroll-cue {
+            position: absolute; left: 50%; bottom: max(28px, env(safe-area-inset-bottom)); transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            font: 500 11px/1 var(--mono); letter-spacing: 0.24em; text-transform: uppercase;
+            color: var(--dim); text-decoration: none;
+        }
+        .scroll-cue::after {
+            content: ''; width: 1px; height: 44px;
+            background: linear-gradient(180deg, var(--accent), transparent);
+            animation: cue 2.2s ease-in-out infinite; transform-origin: top;
+        }
+        @keyframes cue { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
+
+        /* Glass panels */
+        .glass {
+            position: relative;
+            background: linear-gradient(160deg, rgba(24, 30, 64, 0.62), rgba(9, 12, 28, 0.6));
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            backdrop-filter: blur(16px) saturate(130%); -webkit-backdrop-filter: blur(16px) saturate(130%);
+            box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+        }
+
+        /* 3D entrance + pointer tilt share one transform, driven by custom properties. */
+        .fx {
+            transform:
+                perspective(1100px)
+                translate3d(0, var(--ty, 0px), 0)
+                rotateX(calc(var(--rx0, 0deg) + var(--rx, 0deg)))
+                rotateY(var(--ry, 0deg));
+            transition:
+                transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0s),
+                opacity 0.9s ease var(--d, 0s),
+                border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .js .fx:not(.in) { opacity: 0; --ty: 48px; --rx0: 14deg; }
+        .fx.tilting { transition: transform 0.12s linear, opacity 0.9s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
+        .tilt::after {
+            content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+            background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.09), transparent 45%);
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .tilt:hover::after { opacity: 1; }
+
+        /* Stats */
+        .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+        .stat { padding: 26px 24px; }
+        .stat-num {
+            font: 700 clamp(2.2rem, 4.5vw, 3.2rem)/1 var(--display); letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #fff, var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent;
+            margin-bottom: 10px;
+        }
+        .stat-label { font: 500 12px/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+        /* Skills */
+        .skills { display: grid; gap: 16px; }
+        .skill { padding: 28px; }
+        .skill h3 { display: flex; align-items: center; gap: 14px; font-size: 1.35rem; font-weight: 600; margin-bottom: 10px; }
+        .skill p { margin: 0; color: var(--muted); }
+
+        .orb {
+            width: 34px; height: 34px; border-radius: 50%; flex: none;
+            background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.95) 0, var(--c1) 22%, var(--c2) 62%, #05060f 100%);
+            box-shadow: 0 0 26px -6px var(--c1);
+        }
+        .orb.ringed { position: relative; }
+        .orb.ringed::after {
+            content: ''; position: absolute; inset: 10px -10px;
+            border: 2px solid color-mix(in srgb, var(--c1) 70%, transparent); border-radius: 50%;
+            transform: rotate(-18deg);
+        }
+
+        /* Projects */
+        .section-head { max-width: 720px; margin-bottom: 48px; }
+        .groups { display: grid; gap: 56px; }
+        .group-title {
+            display: flex; align-items: center; gap: 14px; margin: 0 0 18px;
+            font: 500 14px/1 var(--mono); letter-spacing: 0.04em; color: var(--muted);
+        }
+        .group-title::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+        .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+
+        .card { display: flex; flex-direction: column; gap: 12px; padding: 26px; }
+        .card:hover { border-color: var(--line-strong); box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(142, 197, 255, 0.12), 0 20px 60px -30px rgba(120, 170, 255, 0.5); }
+        .card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .chip {
+            font: 500 12px/1 var(--mono); letter-spacing: 0.02em;
+            padding: 6px 10px; border-radius: 999px; color: var(--muted);
+            border: 1px solid var(--line); background: rgba(255, 255, 255, 0.03);
+        }
+        .card h3 { font-size: 1.22rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
+        .card h3 a { text-decoration: none; }
+        /* Whole card is clickable via the title link. */
+        .card h3 a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: 1; }
+        .card h3 a:focus-visible { outline: none; }
+        .card:has(h3 a:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
+        .card h3 .arrow { display: inline-block; margin-left: 6px; color: var(--accent); transition: transform 0.25s ease; }
+        .card:hover h3 .arrow { transform: translate(3px, -3px); }
+        .card p { margin: 0; color: var(--muted); font-size: 15px; }
+        .card .secondary {
+            position: relative; z-index: 2; align-self: flex-start; margin-top: auto;
+            font-weight: 600; font-size: 14px; color: var(--accent); text-decoration: none;
+        }
+        .card .secondary:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+        .g-ios { --c1: #ffb86b; --c2: #c2410c; }
+        .g-sim { --c1: #8ec5ff; --c2: #4338ca; }
+        .g-tool { --c1: #7ff0d0; --c2: #0f766e; }
+
+        /* Contact */
+        .contact .wrap { display: flex; justify-content: center; }
+        .contact-panel { width: min(100%, 760px); padding: clamp(32px, 6vw, 64px); text-align: center; }
+        .contact-panel .kicker { justify-content: center; }
+        .contact-panel .section-sub { margin-left: auto; margin-right: auto; }
+        .socials { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 40px; }
+        .copyright {
+            padding-top: 24px; border-top: 1px solid var(--line);
+            color: var(--dim); font: 400 12px/1.6 var(--mono); letter-spacing: 0.08em;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 900px) {
+            .section { padding: 112px var(--gutter) 80px; }
+            .split > .col { width: 100%; }
+            .scrim-left::before, .scrim-right::before {
+                transform: none;
+                background: linear-gradient(180deg, rgba(4, 5, 13, 0.7), rgba(4, 5, 13, 0.3) 55%, rgba(4, 5, 13, 0.5));
             }
+            .hero.scrim-left::before { background: linear-gradient(180deg, rgba(4, 5, 13, 0.7), rgba(4, 5, 13, 0.3) 60%, transparent 75%); }
+            .hero { align-items: flex-start; padding-top: 22vh; padding-top: 22svh; }
+        }
+        @media (max-width: 520px) {
+            .stats { gap: 10px; }
+            .stat { padding: 20px 18px; }
+            .skill, .card { padding: 22px; }
+            .cta .btn { flex: 1 1 auto; justify-content: center; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .fx { transition: opacity 0.6s ease; --rx: 0deg !important; --ry: 0deg !important; }
+            .js .fx:not(.in) { --ty: 0px; --rx0: 0deg; }
+            .scroll-cue::after { animation: none; }
         }
     </style>
 </head>
 
 <body>
-    <!-- Parallax Background -->
-    <div class="parallax-bg">
-        <div class="parallax-circle circle-1"></div>
-        <div class="parallax-circle circle-2"></div>
-        <div class="parallax-circle circle-3"></div>
-    </div>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-    <!-- Header -->
-    <header class="header">
-        <div class="nav-container">
-            <div class="logo">doug.molineux</div>
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="https://dougmolineux.github.io/blog/">Blog</a></li>
-                    <li><a href="https://github.com/dougmolineux">GitHub</a></li>
-                    <li><a href="https://www.linkedin.com/in/doug-molineux-0a237a96">LinkedIn</a></li>
-                    <li><a href="http://stackoverflow.com/users/242934/doug-molineux">Stack Overflow</a></li>
-                    <li><a href="mailto:doug.molineux@gmail.com">Contact</a></li>
-                </ul>
-                <button class="mobile-menu">☰</button>
-            </nav>
-        </div>
+    <canvas id="space" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="planet-tip" id="planet-tip" hidden></div>
+
+    <header class="site-header">
+        <nav class="nav" aria-label="Primary">
+            <a class="logo" href="#home" aria-label="Doug Molineux, home">
+                <span class="logo-mark" aria-hidden="true"></span><span>doug<span class="logo-dim">.molineux</span></span>
+            </a>
+            <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+                <svg class="open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+                <svg class="close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#expertise">Expertise</a></li>
+                <li><a href="https://github.com/dougmolineux">GitHub</a></li>
+                <li><a href="https://www.linkedin.com/in/doug-molineux-0a237a96">LinkedIn</a></li>
+                <li><a href="http://stackoverflow.com/users/242934/doug-molineux">Stack Overflow</a></li>
+                <li class="nav-cta"><a href="mailto:doug.molineux@gmail.com">Contact</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <h1>Doug Molineux</h1>
-        <div class="subtitle">Senior Software Engineer</div>
-        <div class="description">
-            Building scalable applications with modern technologies. Passionate about clean code, performance
-            optimization, and open source contributions.
-        </div>
-        <div class="scroll-indicator"></div>
-    </section>
+    <nav class="orbit-nav" aria-label="Sections">
+        <a href="#home" data-label="Home" aria-label="Home"></a>
+        <a href="#about" data-label="About" aria-label="About"></a>
+        <a href="#expertise" data-label="Expertise" aria-label="Expertise"></a>
+        <a href="#projects" data-label="Projects" aria-label="Projects"></a>
+        <a href="#contact" data-label="Contact" aria-label="Contact"></a>
+    </nav>
 
-    <!-- Stats Section -->
-    <section class="stats-section">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number">10+</div>
-                <div class="stat-label">Years Experience</div>
+    <main id="main">
+        <!-- Hero -->
+        <section class="section hero scrim-left" id="home" data-cam="home">
+            <div class="wrap split">
+                <div class="col hero-copy">
+                    <p class="kicker fx" style="--d:.1s">Sol system · Earth</p>
+                    <h1 class="fx" style="--d:.2s">Doug<br>Molineux</h1>
+                    <p class="role fx" style="--d:.35s">Senior Software Engineer</p>
+                    <p class="lede fx" style="--d:.45s">
+                        Building scalable applications with modern technologies. Passionate about clean code,
+                        performance optimization, and open source contributions.
+                    </p>
+                    <div class="cta fx" style="--d:.55s">
+                        <a class="btn primary" href="#projects">
+                            Explore projects
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+                        </a>
+                        <a class="btn" href="mailto:doug.molineux@gmail.com">Get in touch</a>
+                    </div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">8+</div>
-                <div class="stat-label">Languages</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">12+</div>
-                <div class="stat-label">Databases</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">Open</div>
-                <div class="stat-label">Source Contributor</div>
-            </div>
-        </div>
-    </section>
+            <a class="scroll-cue" href="#about">Scroll to explore</a>
+        </section>
 
-    <!-- Skills Section -->
-    <section class="section">
-        <h2 class="section-title">Technical Expertise</h2>
-        <p class="section-subtitle">
-            Leveraging cutting-edge technologies to build robust, scalable solutions
-        </p>
-        <div class="skills-grid">
-            <div class="skill-category">
-                <h3><span class="icon">💻</span> Languages</h3>
-                <p>
-                    Server-side and client-side JavaScript, Node.js, Angular, React, TypeScript.
-                    Professional experience in PHP, C, Java, and Python. Always exploring new
-                    technologies and frameworks to stay current with industry trends.
-                </p>
+        <!-- About / stats -->
+        <section class="section scrim-right" id="about" data-cam="about">
+            <div class="wrap split right">
+                <div class="col">
+                    <div class="section-head">
+                        <p class="kicker fx">01 · Flight log</p>
+                        <h2 class="fx">About</h2>
+                        <p class="section-sub fx">
+                            Over a decade building software across the full stack, from backend services and
+                            databases to iOS apps and interactive 3D visualizations.
+                        </p>
+                    </div>
+                    <div class="stats">
+                        <div class="stat glass fx tilt"><div class="stat-num">10+</div><div class="stat-label">Years experience</div></div>
+                        <div class="stat glass fx tilt"><div class="stat-num">8+</div><div class="stat-label">Languages</div></div>
+                        <div class="stat glass fx tilt"><div class="stat-num">12+</div><div class="stat-label">Databases</div></div>
+                        <div class="stat glass fx tilt"><div class="stat-num">Open</div><div class="stat-label">Source contributor</div></div>
+                    </div>
+                </div>
             </div>
-            <div class="skill-category">
-                <h3><span class="icon">🗄️</span> Databases</h3>
-                <p>
-                    Extensive experience with MongoDB, Elasticsearch, U2 (Universe and Unidata),
-                    Cassandra, MSSQL, PostgreSQL, CouchDB, and Redis. Skilled in database design,
-                    optimization, and scaling for high-performance applications.
-                </p>
-            </div>
-            <div class="skill-category">
-                <h3><span class="icon">🚀</span> Specialties</h3>
-                <p>
-                    Full-stack development, API design, microservices architecture, cloud computing,
-                    DevOps practices, and performance optimization. Committed to writing clean,
-                    maintainable code and following best practices.
-                </p>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Projects Section -->
-    <section class="projects-section">
-        <div class="section">
-            <h2 class="section-title">Featured Projects</h2>
-            <p class="section-subtitle">
-                Explore my latest work and open source contributions
-            </p>
+        <!-- Expertise -->
+        <section class="section scrim-left" id="expertise" data-cam="expertise">
+            <div class="wrap split">
+                <div class="col">
+                    <div class="section-head">
+                        <p class="kicker fx">02 · Instruments</p>
+                        <h2 class="fx">Technical Expertise</h2>
+                        <p class="section-sub fx">Leveraging cutting-edge technologies to build robust, scalable solutions</p>
+                    </div>
+                    <div class="skills">
+                        <article class="skill glass fx tilt">
+                            <h3><span class="orb" style="--c1:#8ec5ff;--c2:#1e40af" aria-hidden="true"></span>Languages</h3>
+                            <p>
+                                Server-side and client-side JavaScript, Node.js, Angular, React, TypeScript.
+                                Professional experience in PHP, C, Java, and Python. Always exploring new
+                                technologies and frameworks to stay current with industry trends.
+                            </p>
+                        </article>
+                        <article class="skill glass fx tilt">
+                            <h3><span class="orb ringed" style="--c1:#f3c98b;--c2:#92400e" aria-hidden="true"></span>Databases</h3>
+                            <p>
+                                Extensive experience with MongoDB, Elasticsearch, U2 (Universe and Unidata),
+                                Cassandra, MSSQL, PostgreSQL, CouchDB, and Redis. Skilled in database design,
+                                optimization, and scaling for high-performance applications.
+                            </p>
+                        </article>
+                        <article class="skill glass fx tilt">
+                            <h3><span class="orb" style="--c1:#7fe8ff;--c2:#0e7490" aria-hidden="true"></span>Specialties</h3>
+                            <p>
+                                Full-stack development, API design, microservices architecture, cloud computing,
+                                DevOps practices, and performance optimization. Committed to writing clean,
+                                maintainable code and following best practices.
+                            </p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-            <div class="project-card">
-                <a href="https://apps.apple.com/us/app/dreamseek/id6745529400" class="project-title">
-                    Dreamseek (iOS)
-                </a>
-                <p class="project-description">
-                    iOS application - Dream recorder and analyzer. Uses on-device Foundation Models 
-                    to interpret and make images from dreams.
-                </p>
-            </div>
+        <!-- Projects -->
+        <section class="section" id="projects" data-cam="projects">
+            <div class="wrap">
+                <div class="section-head">
+                    <p class="kicker fx">03 · Discoveries</p>
+                    <h2 class="fx">Featured Projects</h2>
+                    <p class="section-sub fx">Explore my latest work and open source contributions</p>
+                </div>
 
-            <div class="project-card">
-                <a href="chronicle-compass/" class="project-title">
-                    Chronicle Compass
-                </a>
-                <p class="project-description">
-                    Explore nearby historical sites through an interactive, location-based history experience.
-                </p>
-                <a href="https://apps.apple.com/us/app/chronicle-compass/id6747997313" class="project-link">
-                    View on the App Store
-                </a>
-            </div>
+                <div class="groups">
+                    <div class="group g-ios">
+                        <h3 class="group-title fx">iOS apps</h3>
+                        <div class="cards">
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">App Store</span></div>
+                                <h3><a href="https://apps.apple.com/us/app/dreamseek/id6745529400">Dreamseek<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>Dream recorder and analyzer. Uses on-device Foundation Models to interpret and make images from dreams.</p>
+                            </article>
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">iOS</span></div>
+                                <h3><a href="chronicle-compass/">Chronicle Compass<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>Explore nearby historical sites through an interactive, location-based history experience.</p>
+                                <a class="secondary" href="https://apps.apple.com/us/app/chronicle-compass/id6747997313">View on the App Store</a>
+                            </article>
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">On-device AI</span></div>
+                                <h3><a href="hn-lens.html">HN Lens<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>Hacker News comment threads summarized through AI personas, from a software engineer to a critical journalist, then follow-up chat. Runs on Apple's on-device Foundation Models by default.</p>
+                                <a class="secondary" href="https://apps.apple.com/us/app/hn-lens/id6758169588">View on the App Store</a>
+                            </article>
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">Game</span></div>
+                                <h3><a href="three-lions/app-store-marketing.html">Three Lions<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>An AI-driven soccer game where you manage England from the dugout with live tactical prompts and chase the World Cup.</p>
+                                <a class="secondary" href="https://apps.apple.com/us/app/three-lions/id6759995531">View on the App Store</a>
+                            </article>
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">CarPlay</span></div>
+                                <h3><a href="uk-radio-catcher/">UK Radio Catcher<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>Ad-free UK radio streaming on iPhone and CarPlay: national BBC stations, commercial and regional radio, and live sports commentary.</p>
+                                <a class="secondary" href="https://apps.apple.com/us/app/uk-radio-catcher/id6785978047">View on the App Store</a>
+                            </article>
+                        </div>
+                    </div>
 
-            <div class="project-card">
-                <a href="https://github.com/dougmolineux/node-mongo-vs-postgres-jsonb" class="project-title">
-                    node-mongo-vs-postgres-jsonb (GitHub Repo)
-                </a>
-                <p class="project-description">
-                    Performance comparison tool between PostgreSQL JSONB and MongoDB implementations in Node.js.
-                    Comprehensive benchmarking suite to help developers make informed database decisions.
-                </p>
-            </div>
+                    <div class="group g-sim">
+                        <h3 class="group-title fx">Simulations &amp; visualizations</h3>
+                        <div class="cards">
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb ringed" aria-hidden="true"></span><span class="chip">3D</span></div>
+                                <h3><a href="projects/pluto.html">Pluto<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>3D simulation of the orbit of Pluto and its moons.</p>
+                            </article>
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">Physics</span></div>
+                                <h3><a href="projects/quantum-entanglement.html">Quantum Entanglement Visualization<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>Visualization of when the wave function collapses in quantum entanglement.</p>
+                            </article>
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">Three.js</span></div>
+                                <h3><a href="projects/navier-stokes.html">Navier–Stokes Equations Visualized<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>Interactive Three.js fluid simulation that walks through each term of the Navier–Stokes equations: advection, pressure, viscosity, external force and incompressibility.</p>
+                            </article>
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">Three.js</span></div>
+                                <h3><a href="projects/flight-sim/">Flight Sim<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>Flight simulator written in Three.js</p>
+                            </article>
+                        </div>
+                    </div>
 
-            <div class="project-card">
-                <a href="https://github.com/dougmolineux/foundation-language-model-macos" class="project-title">
-                    foundation-language-model-macos (GitHub Repo)
-                </a>
-                <p class="project-description">
-                    This project is a macOS 26 application that demonstrates how to integrate Apple's FoundationModels framework for on-device large language model (LLM) inference.
-                </p>
+                    <div class="group g-tool">
+                        <h3 class="group-title fx">Tools &amp; open source</h3>
+                        <div class="cards">
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">Web tool</span></div>
+                                <h3><a href="projects/alpha-remover/">Alpha Remover<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>Remove transparency from Apple App Store screenshots to avoid "Alpha Channel" errors.</p>
+                            </article>
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">GitHub</span></div>
+                                <h3><a href="https://github.com/dougmolineux/node-mongo-vs-postgres-jsonb">node-mongo-vs-postgres-jsonb<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>Performance comparison tool between PostgreSQL JSONB and MongoDB implementations in Node.js. Comprehensive benchmarking suite to help developers make informed database decisions.</p>
+                            </article>
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">GitHub</span></div>
+                                <h3><a href="https://github.com/dougmolineux/foundation-language-model-macos">foundation-language-model-macos<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>A macOS 26 application that demonstrates how to integrate Apple's FoundationModels framework for on-device large language model (LLM) inference.</p>
+                            </article>
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">GitHub</span></div>
+                                <h3><a href="https://github.com/dougmolineux/compressor-monitor">compressor-monitor<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>Node.js-based system for generating, storing, and visualizing metrics from industrial gas compressors</p>
+                            </article>
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">Web</span></div>
+                                <h3><a href="projects/github-repo-puller.html">GitHub Repo Puller<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>Pulls public repos and displays them in a list</p>
+                            </article>
+                            <article class="card glass fx tilt">
+                                <div class="card-top"><span class="orb" aria-hidden="true"></span><span class="chip">React</span></div>
+                                <h3><a href="projects/fm.html">Football Text Manager<span class="arrow" aria-hidden="true">↗</span></a></h3>
+                                <p>Like the old championship manager games. Written in React</p>
+                            </article>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <div class="project-card">
-                <a href="https://github.com/dougmolineux/arm-template-generator" class="project-title">
-                    compressor-monitor (GitHub Repo)
-                </a>
-                <p class="project-description">
-                    Node.js-based system for generating, storing, and visualizing metrics from industrial gas compressors
-                </p>
+        <!-- Contact -->
+        <section class="section contact" id="contact" data-cam="contact">
+            <div class="wrap">
+                <footer class="contact-panel glass fx">
+                    <p class="kicker">04 · Transmission</p>
+                    <h2>Get in touch</h2>
+                    <p class="section-sub">
+                        Email is the fastest way to reach me. You can also find me on GitHub, LinkedIn and Stack Overflow.
+                    </p>
+                    <div class="socials">
+                        <a class="btn primary" href="mailto:doug.molineux@gmail.com">doug.molineux@gmail.com</a>
+                        <a class="btn" href="https://github.com/dougmolineux">GitHub</a>
+                        <a class="btn" href="https://www.linkedin.com/in/doug-molineux-0a237a96">LinkedIn</a>
+                        <a class="btn" href="http://stackoverflow.com/users/242934/doug-molineux">Stack Overflow</a>
+                    </div>
+                    <div class="copyright">© <span id="year">2026</span> Doug Molineux. All rights reserved.</div>
+                </footer>
             </div>
-
-            <div class="project-card">
-                <a href="projects/alpha-remover/" class="project-title">
-                    Alpha Remover
-                </a>
-                <p class="project-description">
-                    Remove transparency from Apple App Store screenshots to avoid "Alpha Channel" errors.
-                </p>
-            </div>
-
-            <div class="project-card">
-                <a href="projects/pluto.html" class="project-title">
-                    Pluto
-                </a>
-                <p class="project-description">
-                    3D simulation of the orbit of Pluto and its moons.
-                </p>
-            </div>
-
-            <div class="project-card">
-                <a href="projects/quantum-entanglement.html" class="project-title">
-                    Quantum Entanglement Visualization
-                </a>
-                <p class="project-description">
-                    Visualization of when the wave function collapses in quantum entanglement.
-                </p>
-            </div>
-
-            <div class="project-card">
-                <a href="projects/navier-stokes.html" class="project-title">
-                    Navier–Stokes Equations Visualized
-                </a>
-                <p class="project-description">
-                    Interactive Three.js fluid simulation that walks through each term of the Navier–Stokes
-                    equations: advection, pressure, viscosity, external force and incompressibility.
-                </p>
-            </div>
-
-            <div class="project-card">
-                <a href="projects/github-repo-puller.html" class="project-title">
-                    GitHub Repo Puller
-                </a>
-                <p class="project-description">
-                    Pulls public repos and displays them in a list
-                </p>
-            </div>
-
-            <div class="project-card">
-                <a href="projects/fm.html" class="project-title">
-                    Football Text Manager
-                </a>
-                <p class="project-description">
-                    Like the old championship manager games. Written in React
-                </p>
-            </div>
-
-            <div class="project-card">
-                <a href="projects/flight-sim/" class="project-title">
-                    Flight Sim
-                </a>
-                <p class="project-description">
-                    Flight simulator written in Three.js
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="social-links">
-                <a href="https://github.com/dougmolineux" class="social-link">GitHub</a>
-                <a href="https://www.linkedin.com/in/doug-molineux-0a237a96" class="social-link">LinkedIn</a>
-                <a href="http://stackoverflow.com/users/242934/doug-molineux" class="social-link">Stack Overflow</a>
-                <a href="mailto:doug.molineux@gmail.com" class="social-link">Contact</a>
-                <a href="https://dougmolineux.github.io/blog/" class="social-link">Blog</a>
-            </div>
-            <div class="copyright">
-                © 2024 Doug Molineux. All rights reserved.
-            </div>
-        </div>
-    </footer>
+        </section>
+    </main>
 
     <script>
-        // Parallax effect for background circles
-        document.addEventListener('mousemove', (e) => {
-            const circles = document.querySelectorAll('.parallax-circle');
-            const mouseX = e.clientX / window.innerWidth;
-            const mouseY = e.clientY / window.innerHeight;
+        (function () {
+            var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-            circles.forEach((circle, index) => {
-                const speed = (index + 1) * 20;
-                const x = (mouseX - 0.5) * speed;
-                const y = (mouseY - 0.5) * speed;
-                circle.style.transform = `translate(${x}px, ${y}px)`;
-            });
-        });
+            document.getElementById('year').textContent = new Date().getFullYear();
 
-        // Parallax scroll effect
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const circles = document.querySelectorAll('.parallax-circle');
-
-            circles.forEach((circle, index) => {
-                const speed = (index + 1) * 0.3;
-                circle.style.transform = `translateY(${scrolled * speed}px)`;
-            });
-        });
-
-        // Intersection Observer for scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, index * 100);
-                }
-            });
-        }, observerOptions);
-
-        // Observe all animated elements
-        document.addEventListener('DOMContentLoaded', () => {
-            const animatedElements = document.querySelectorAll(
-                '.stat-card, .skill-category, .project-card, .section-title, .section-subtitle'
-            );
-
-            animatedElements.forEach((el) => {
-                observer.observe(el);
-            });
-        });
-
-        // Header scroll effect
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('.header');
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
+            // Mobile menu
+            var nav = document.querySelector('.nav');
+            var menuBtn = document.querySelector('.menu-btn');
+            function setMenu(open) {
+                nav.classList.toggle('open', open);
+                menuBtn.setAttribute('aria-expanded', String(open));
+                menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
             }
-        });
-
-        // Smooth scroll for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
+            menuBtn.addEventListener('click', function () { setMenu(!nav.classList.contains('open')); });
+            document.querySelectorAll('.nav-links a').forEach(function (a) {
+                a.addEventListener('click', function () { setMenu(false); });
             });
-        });
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+            document.addEventListener('click', function (e) { if (!nav.contains(e.target)) setMenu(false); });
+
+            // 3D entrance animations, staggered per group of siblings
+            var fx = document.querySelectorAll('.fx');
+            if (!('IntersectionObserver' in window)) {
+                fx.forEach(function (el) { el.classList.add('in'); });
+            } else {
+                var io = new IntersectionObserver(function (entries) {
+                    var i = 0;
+                    entries.forEach(function (entry) {
+                        if (!entry.isIntersecting) return;
+                        var el = entry.target;
+                        if (!el.style.getPropertyValue('--d')) el.style.setProperty('--d', (i++ * 0.08) + 's');
+                        el.classList.add('in');
+                        io.unobserve(el);
+                        // Drop the delay afterwards so hover tilt responds immediately.
+                        setTimeout(function () { el.style.removeProperty('--d'); }, 1600);
+                    });
+                }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+                fx.forEach(function (el) { io.observe(el); });
+            }
+
+            // Pointer tilt on glass cards
+            if (finePointer && !reduceMotion) {
+                document.querySelectorAll('.tilt').forEach(function (el) {
+                    var max = el.classList.contains('card') ? 7 : 5;
+                    el.addEventListener('pointermove', function (e) {
+                        var r = el.getBoundingClientRect();
+                        var px = (e.clientX - r.left) / r.width;
+                        var py = (e.clientY - r.top) / r.height;
+                        el.classList.add('tilting');
+                        el.style.setProperty('--ry', ((px - 0.5) * max * 2).toFixed(2) + 'deg');
+                        el.style.setProperty('--rx', ((0.5 - py) * max * 2).toFixed(2) + 'deg');
+                        el.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+                        el.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+                    });
+                    el.addEventListener('pointerleave', function () {
+                        el.classList.remove('tilting');
+                        el.style.setProperty('--rx', '0deg');
+                        el.style.setProperty('--ry', '0deg');
+                    });
+                });
+            }
+
+            // Section dots: highlight whichever section is in the middle of the screen
+            var dots = document.querySelectorAll('.orbit-nav a');
+            if ('IntersectionObserver' in window) {
+                var spy = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (!entry.isIntersecting) return;
+                        dots.forEach(function (d) {
+                            d.classList.toggle('active', d.getAttribute('href') === '#' + entry.target.id);
+                        });
+                    });
+                }, { rootMargin: '-50% 0px -50% 0px' });
+                document.querySelectorAll('main > section[id]').forEach(function (s) { spy.observe(s); });
+            }
+        })();
     </script>
+    <script type="module" src="js/cosmos.js"></script>
 </body>
 
 </html>
