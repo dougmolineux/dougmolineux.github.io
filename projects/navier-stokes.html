@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Navier–Stokes, Visualized</title>
+<meta name="description" content="An interactive Three.js fluid simulation that explains each term of the Navier–Stokes equations, the partial differential equations that govern viscous fluids.">
+<meta name="author" content="Doug Molineux">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05080f;
+    --panel: rgba(9, 14, 28, 0.8);
+    --line: rgba(148, 163, 184, 0.16);
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --c-dudt: #facc15;
+    --c-adv: #34d399;
+    --c-press: #60a5fa;
+    --c-visc: #f472b6;
+    --c-force: #fb923c;
+    --c-div: #a78bfa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 45%, #0e1a33 0%, #05080f 70%);
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  #scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+  .panel {
+    background: var(--panel);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  /* ---------- Back link ---------- */
+  #back {
+    position: fixed; top: 16px; left: 16px; z-index: 5;
+    padding: 9px 13px; font-size: 13px; font-weight: 500;
+    color: var(--muted); text-decoration: none;
+  }
+  #back:hover { color: var(--text); }
+
+  /* ---------- Equation ---------- */
+  #eq {
+    position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 5;
+    display: flex; flex-wrap: wrap; align-items: stretch; justify-content: center;
+    gap: 4px 10px; padding: 8px 12px 6px;
+    max-width: calc(100vw - 24px);
+    font-family: 'STIX Two Text', 'Cambria Math', 'Times New Roman', serif;
+    font-size: clamp(15px, 1.9vw, 25px);
+  }
+  .eq-row { display: flex; align-items: flex-start; }
+  .eq-sep { width: 1px; background: var(--line); margin: 6px 4px; }
+  .term {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 2px 6px 4px; border-radius: 10px; cursor: pointer;
+    border: 1px solid transparent;
+    transition: background .2s, border-color .2s, box-shadow .2s;
+  }
+  .term .m { height: 2.1em; display: flex; align-items: center; white-space: nowrap; color: var(--c); }
+  .term .l {
+    font-family: 'Inter', sans-serif; font-size: 9.5px; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+    transition: color .2s;
+  }
+  .term:hover { background: rgba(255, 255, 255, 0.05); }
+  .term.on {
+    border-color: var(--c);
+    background: color-mix(in srgb, var(--c) 14%, transparent);
+    box-shadow: 0 0 26px color-mix(in srgb, var(--c) 30%, transparent);
+  }
+  .term.on .l { color: var(--c); }
+  .op { height: 2.1em; display: flex; align-items: center; padding: 0 3px; color: #cbd5e1; margin-top: 3px; }
+  .frac { display: inline-flex; flex-direction: column; align-items: center; line-height: 1.08; font-size: .78em; margin: 0 2px; }
+  .frac > span:first-child { border-bottom: 1.4px solid currentColor; padding: 0 3px 1px; }
+  .frac > span:last-child { padding-top: 1px; }
+  b { font-weight: 700; font-style: normal; }
+  #eq i, .k i { font-style: italic; }
+
+  /* ---------- Story panel ---------- */
+  #story {
+    position: fixed; left: 16px; bottom: 16px; z-index: 5;
+    width: 380px; max-height: calc(100vh - 150px);
+    display: flex; flex-direction: column;
+  }
+  #story .head { padding: 16px 18px 4px; }
+  .kicker { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: var(--sc, var(--muted)); }
+  #story h2 { font-size: 20px; line-height: 1.25; font-weight: 700; margin-top: 4px; letter-spacing: -0.01em; }
+  #story .body { padding: 6px 18px 10px; overflow-y: auto; font-size: 14px; line-height: 1.6; color: #cbd5e1; }
+  #story .body p + p, #story .body p + .acts, #story .body .acts + p { margin-top: 10px; }
+  #story .hint { padding: 0 18px 10px; font-size: 12px; color: var(--muted); }
+  .k { font-family: 'STIX Two Text', serif; font-size: 1.08em; white-space: nowrap; }
+  .k.dudt { color: var(--c-dudt); } .k.adv { color: var(--c-adv); } .k.press { color: var(--c-press); }
+  .k.visc { color: var(--c-visc); } .k.force { color: var(--c-force); } .k.div { color: var(--c-div); }
+  .acts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .act {
+    font: 600 13px 'Inter', sans-serif; color: var(--text); cursor: pointer;
+    padding: 7px 12px; border-radius: 9px;
+    background: color-mix(in srgb, var(--sc, #64748b) 18%, transparent);
+    border: 1px solid color-mix(in srgb, var(--sc, #64748b) 55%, transparent);
+  }
+  .act:hover { background: color-mix(in srgb, var(--sc, #64748b) 30%, transparent); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { font-size: 12px; padding: 4px 9px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.03); }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--line); }
+  .nav button {
+    font: 600 13px 'Inter', sans-serif; color: var(--text); cursor: pointer;
+    background: rgba(255,255,255,.06); border: 1px solid var(--line);
+    border-radius: 9px; padding: 7px 12px; min-width: 70px;
+  }
+  .nav > button { white-space: nowrap; }
+  .nav button:disabled { opacity: .35; cursor: default; }
+  .dots { display: flex; gap: 7px; }
+  .nav .dot { width: 8px; height: 8px; min-width: 0; border-radius: 50%; background: #334155; cursor: pointer; border: 0; padding: 0; }
+  .nav .dot.on { background: var(--sc, #e2e8f0); box-shadow: 0 0 10px var(--sc, #e2e8f0); }
+
+  /* ---------- Controls ---------- */
+  #controls {
+    position: fixed; right: 16px; top: 16px; z-index: 6;
+    width: 264px; max-height: calc(100vh - 32px); overflow-y: auto;
+    font-size: 13px;
+  }
+  #ctl-toggle {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    background: none; border: 0; color: var(--text); cursor: pointer;
+    font: 600 13px 'Inter', sans-serif; padding: 12px 14px;
+  }
+  #ctl-toggle .chev { transition: transform .2s; color: var(--muted); }
+  #controls.collapsed #ctl-toggle .chev { transform: rotate(-90deg); }
+  #controls.collapsed .ctl-body { display: none; }
+  .ctl-body { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 14px; }
+  .lbl { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .seg { display: flex; flex-wrap: wrap; gap: 4px; }
+  .seg button {
+    flex: 1 1 auto; font: 500 12px 'Inter', sans-serif; color: #cbd5e1; cursor: pointer;
+    background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px;
+  }
+  .seg button.on { background: rgba(96,165,250,.18); border-color: rgba(96,165,250,.6); color: #fff; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 3px 0; }
+  .row label { display: flex; align-items: center; gap: 8px; cursor: pointer; color: #cbd5e1; }
+  .row .k { font-size: 14px; }
+  input[type=checkbox] { accent-color: #60a5fa; width: 15px; height: 15px; }
+  input[type=range] { width: 100%; accent-color: var(--c-visc); }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; color: #e2e8f0; }
+  .readout { display: flex; justify-content: space-between; align-items: baseline; }
+  .bar { height: 5px; border-radius: 3px; background: rgba(255,255,255,.07); overflow: hidden; margin-top: 5px; }
+  .bar > div { height: 100%; width: 0; background: var(--c-div); transition: width .25s; }
+  .legend .grad { height: 8px; border-radius: 4px; }
+  .legend .ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .legend .note { font-size: 12px; color: var(--muted); line-height: 1.45; }
+  .btns { display: flex; gap: 6px; }
+  .btns button {
+    flex: 1; font: 600 12px 'Inter', sans-serif; color: var(--text); cursor: pointer;
+    background: rgba(255,255,255,.06); border: 1px solid var(--line); border-radius: 8px; padding: 8px;
+  }
+  .btns button:hover, .seg button:hover { border-color: rgba(148,163,184,.4); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1239px) {
+    #controls { width: 240px; }
+  }
+  @media (max-width: 999px) {
+    #back { display: none; }
+  }
+  @media (max-width: 759px) {
+    #eq { top: 8px; padding: 4px 6px; gap: 0 6px; font-size: clamp(14px, 4.3vw, 19px); }
+    .term { padding: 1px 3px 2px; }
+    .term .l { font-size: 7.5px; letter-spacing: .03em; }
+    .eq-sep { display: none; }
+    #story {
+      left: 8px; right: 8px; bottom: 8px; width: auto;
+      max-height: 44vh;
+    }
+    #story .head { padding: 12px 14px 2px; }
+    #story h2 { font-size: 17px; }
+    #story .body { padding: 4px 14px 8px; font-size: 13.5px; line-height: 1.55; }
+    #story .hint { padding: 0 14px 8px; }
+    #controls { right: 8px; width: 230px; max-height: 50vh; }
+  }
+  @media (max-width: 420px) {
+    .term .l { display: none; }
+  }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<a id="back" class="panel" href="../">← Doug Molineux</a>
+
+<div id="eq" class="panel" aria-label="The incompressible Navier–Stokes equations">
+  <div class="eq-row">
+    <div class="term" data-term="dudt" style="--c:var(--c-dudt)" title="Local acceleration">
+      <div class="m"><span class="frac"><span>∂<b>u</b></span><span>∂<i>t</i></span></span></div><div class="l">acceleration</div>
+    </div>
+    <div class="op">+</div>
+    <div class="term" data-term="adv" style="--c:var(--c-adv)" title="Advection (convective acceleration)">
+      <div class="m">(<b>u</b>·∇)<b>u</b></div><div class="l">advection</div>
+    </div>
+    <div class="op">=</div>
+    <div class="term" data-term="press" style="--c:var(--c-press)" title="Pressure gradient">
+      <div class="m">−<span class="frac"><span>1</span><span><i>ρ</i></span></span>∇<i>p</i></div><div class="l">pressure</div>
+    </div>
+    <div class="op">+</div>
+    <div class="term" data-term="visc" style="--c:var(--c-visc)" title="Viscous diffusion">
+      <div class="m"><i>ν</i>∇²<b>u</b></div><div class="l">viscosity</div>
+    </div>
+    <div class="op">+</div>
+    <div class="term" data-term="force" style="--c:var(--c-force)" title="External force">
+      <div class="m"><b>f</b></div><div class="l">force</div>
+    </div>
+  </div>
+  <div class="eq-sep"></div>
+  <div class="eq-row">
+    <div class="term" data-term="div" style="--c:var(--c-div)" title="Incompressibility (conservation of mass)">
+      <div class="m">∇·<b>u</b> = 0</div><div class="l">incompressible</div>
+    </div>
+  </div>
+</div>
+
+<section id="story" class="panel" aria-live="polite">
+  <div class="head">
+    <div class="kicker" id="st-kicker"></div>
+    <h2 id="st-title"></h2>
+  </div>
+  <div class="body" id="st-body"></div>
+  <div class="hint" id="st-hint"></div>
+  <div class="nav">
+    <button id="st-prev">← Back</button>
+    <div class="dots" id="st-dots"></div>
+    <button id="st-next">Next →</button>
+  </div>
+</section>
+
+<aside id="controls" class="panel">
+  <button id="ctl-toggle" aria-expanded="true"><span>Controls</span><span class="chev">▾</span></button>
+  <div class="ctl-body">
+    <div>
+      <div class="lbl">Scene</div>
+      <div class="seg" data-key="scenario">
+        <button data-v="stir">Stir</button>
+        <button data-v="cylinder">Cylinder</button>
+        <button data-v="jets">Jets</button>
+      </div>
+    </div>
+    <div>
+      <div class="lbl">Colour by</div>
+      <div class="seg" data-key="color">
+        <button data-v="dye">Dye</button>
+        <button data-v="speed">Speed</button>
+        <button data-v="pressure">Pressure</button>
+        <button data-v="vorticity">Vorticity</button>
+        <button data-v="divergence">Divergence</button>
+      </div>
+      <div class="legend" id="legend" style="margin-top:8px"></div>
+    </div>
+    <div>
+      <div class="lbl">Overlays</div>
+      <div class="row"><label><input type="checkbox" data-bool="arrows"> Velocity arrows <span class="k dudt"><b>u</b></span></label></div>
+      <div class="row"><label><input type="checkbox" data-bool="particles"> Tracer particles</label></div>
+      <div class="row"><label><input type="checkbox" data-bool="relief"> Pressure as height <span class="k press"><i>p</i></span></label></div>
+    </div>
+    <div>
+      <div class="lbl">Physics</div>
+      <div class="row"><label><input type="checkbox" data-bool="advect"> Advection <span class="k adv">(<b>u</b>·∇)<b>u</b></span></label></div>
+      <div class="row"><label><input type="checkbox" data-bool="project"> Enforce <span class="k div">∇·<b>u</b> = 0</span></label></div>
+      <div class="readout" style="margin-top:8px"><span>Viscosity <span class="k visc"><i>ν</i></span></span><span class="mono" id="ro-nu"></span></div>
+      <input type="range" id="nu" min="0" max="100" step="1" aria-label="Viscosity">
+    </div>
+    <div>
+      <div class="readout"><span>Reynolds number</span><span class="mono" id="ro-re"></span></div>
+      <div class="readout" style="margin-top:8px"><span>RMS <span class="k div">∇·<b>u</b></span></span><span class="mono" id="ro-div"></span></div>
+      <div class="bar"><div id="ro-divbar"></div></div>
+    </div>
+    <div class="btns">
+      <button id="btn-pause">Pause</button>
+      <button id="btn-reset">Reset</button>
+    </div>
+  </div>
+</aside>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* =====================================================================
+   1. The solver: Jos Stam's "Stable Fluids" on a collocated grid.
+      Each step splits the momentum equation into pieces:
+        add f  ->  diffuse (nu Laplacian u)  ->  project  ->
+        advect ((u.grad)u)  ->  project (solve for p, subtract grad p)
+   ===================================================================== */
+const NX = 160, NY = 80;            // interior cells
+const SX = NX + 2, N = SX * (NY + 2); // with one ghost cell on each side
+const IX = (i, j) => i + SX * j;
+const DT = 1 / 60;                  // seconds per step (velocities in cells/s)
+const U_IN = 45;                    // inflow speed for the cylinder scene
+const CYL = { x: NX * 0.2, y: NY / 2 + 0.5, r: 5.5 };
+const NU_DEFAULT = { stir: 0.05, cylinder: 1.0, jets: 0.4 };
+
+const F32 = () => new Float32Array(N);
+const u = F32(), v = F32(), u0 = F32(), v0 = F32();
+const pA = F32(), pB = F32(), dv = F32();
+const tA = F32(), tB = F32(), tC = F32();
+const vort = F32(), divg = F32(), pDisp = F32();
+const dye = [F32(), F32(), F32()];
+const solid = new Uint8Array(N);
+
+const S = {
+  step: 0, scenario: 'stir', color: 'dye',
+  arrows: false, particles: false, relief: false,
+  advect: true, project: true, nu: NU_DEFAULT.stir, paused: false,
+};
+let simTime = 0;
+let autoStir = true;
+
+// Boundary conditions. type: 0 scalar, 1 u (x-velocity), 2 v (y-velocity), 3 pressure
+function setBnd(type, x) {
+  const channel = S.scenario === 'cylinder';
+  for (let j = 1; j <= NY; j++) {
+    const L = IX(0, j), R = IX(NX + 1, j);
+    if (channel) {                       // inflow on the left, open outflow on the right
+      if (type === 1) { x[L] = U_IN; x[R] = x[R - 1]; }
+      else if (type === 2) { x[L] = 0; x[R] = x[R - 1]; }
+      else if (type === 3) { x[L] = x[L + 1]; x[R] = -x[R - 1]; }
+      else { x[L] = x[L + 1]; x[R] = x[R - 1]; }
+    } else {                             // closed box: no flow through the walls
+      x[L] = type === 1 ? -x[L + 1] : x[L + 1];
+      x[R] = type === 1 ? -x[R - 1] : x[R - 1];
+    }
+  }
+  for (let i = 1; i <= NX; i++) {        // top and bottom: free-slip walls
+    const B = IX(i, 0), T = IX(i, NY + 1);
+    x[B] = type === 2 ? -x[B + SX] : x[B + SX];
+    x[T] = type === 2 ? -x[T - SX] : x[T - SX];
+  }
+  x[IX(0, 0)] = 0.5 * (x[IX(1, 0)] + x[IX(0, 1)]);
+  x[IX(0, NY + 1)] = 0.5 * (x[IX(1, NY + 1)] + x[IX(0, NY)]);
+  x[IX(NX + 1, 0)] = 0.5 * (x[IX(NX, 0)] + x[IX(NX + 1, 1)]);
+  x[IX(NX + 1, NY + 1)] = 0.5 * (x[IX(NX, NY + 1)] + x[IX(NX + 1, NY)]);
+}
+
+function zeroSolids() {
+  for (let c = 0; c < N; c++) if (solid[c]) { u[c] = 0; v[c] = 0; }
+}
+
+// Bilinear sample of a grid field at fractional cell coords
+function sample(f, x, y) {
+  if (x < 0.5) x = 0.5; else if (x > NX + 0.5) x = NX + 0.5;
+  if (y < 0.5) y = 0.5; else if (y > NY + 0.5) y = NY + 0.5;
+  const i0 = x | 0, j0 = y | 0, sx = x - i0, sy = y - j0, k = i0 + SX * j0;
+  return (1 - sy) * ((1 - sx) * f[k] + sx * f[k + 1]) + sy * ((1 - sx) * f[k + SX] + sx * f[k + SX + 1]);
+}
+
+// Semi-Lagrangian advection: trace each cell backwards along the flow
+function semiLagrangian(out, d0, uu, vv, dt) {
+  for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) {
+    const c = IX(i, j);
+    if (solid[c]) { out[c] = 0; continue; }
+    out[c] = sample(d0, i - dt * uu[c], j - dt * vv[c]);
+  }
+}
+
+// MacCormack advection (less smearing), falling back to plain SL near extrema
+function advect(type, d, d0, uu, vv) {
+  semiLagrangian(tA, d0, uu, vv, DT); setBnd(type, tA);
+  semiLagrangian(tB, tA, uu, vv, -DT);
+  for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) {
+    const c = IX(i, j);
+    if (solid[c]) { d[c] = 0; continue; }
+    let x = i - DT * uu[c], y = j - DT * vv[c];
+    if (x < 0.5) x = 0.5; else if (x > NX + 0.5) x = NX + 0.5;
+    if (y < 0.5) y = 0.5; else if (y > NY + 0.5) y = NY + 0.5;
+    const k = (x | 0) + SX * (y | 0);
+    const a = d0[k], b = d0[k + 1], e = d0[k + SX], g = d0[k + SX + 1];
+    const mn = Math.min(a, b, e, g), mx = Math.max(a, b, e, g);
+    const val = tA[c] + 0.5 * (d0[c] - tB[c]);
+    d[c] = (val < mn || val > mx) ? tA[c] : val;
+  }
+  setBnd(type, d);
+}
+
+// Implicit viscous diffusion: (I - nu dt Laplacian) u = u0, Gauss-Seidel
+function diffuse(type, x, x0, a, iters) {
+  const inv = 1 / (1 + 4 * a);
+  for (let k = 0; k < iters; k++) {
+    for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) {
+      const c = IX(i, j);
+      if (solid[c]) { x[c] = 0; continue; }
+      x[c] = (x0[c] + a * (x[c - 1] + x[c + 1] + x[c - SX] + x[c + SX])) * inv;
+    }
+    setBnd(type, x);
+  }
+}
+
+// Pressure projection: solve Laplacian p = div u, then u -= grad p
+function project(p, iters) {
+  for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) {
+    const c = IX(i, j);
+    dv[c] = solid[c] ? 0 : -0.5 * (u[c + 1] - u[c - 1] + v[c + SX] - v[c - SX]);
+  }
+  for (let k = 0; k < iters; k++) {
+    for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) {
+      const c = IX(i, j);
+      if (solid[c]) continue;
+      let s = dv[c], n = 0;                 // solid neighbours: zero normal pressure gradient
+      if (!solid[c - 1]) { s += p[c - 1]; n++; }
+      if (!solid[c + 1]) { s += p[c + 1]; n++; }
+      if (!solid[c - SX]) { s += p[c - SX]; n++; }
+      if (!solid[c + SX]) { s += p[c + SX]; n++; }
+      p[c] = n ? s / n : 0;
+    }
+    setBnd(3, p);
+  }
+  if (S.scenario !== 'cylinder') {          // closed box: pressure is defined up to a constant
+    let m = 0, n = 0;
+    for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) { const c = IX(i, j); if (!solid[c]) { m += p[c]; n++; } }
+    m /= n;
+    for (let c = 0; c < N; c++) p[c] -= m;
+  }
+  for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) {
+    const c = IX(i, j);
+    if (solid[c]) continue;
+    const pc = p[c];
+    const pl = solid[c - 1] ? pc : p[c - 1], pr = solid[c + 1] ? pc : p[c + 1];
+    const pd = solid[c - SX] ? pc : p[c - SX], pu = solid[c + SX] ? pc : p[c + SX];
+    u[c] -= 0.5 * (pr - pl);
+    v[c] -= 0.5 * (pu - pd);
+  }
+  zeroSolids();
+  setBnd(1, u); setBnd(2, v);
+}
+
+/* ---------- Forces (the f term) ---------- */
+function hsl(h, s, l) {
+  const a = s * Math.min(l, 1 - l);
+  const f = n => { const k = (n + h * 12) % 12; return l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)); };
+  return [f(0), f(8), f(4)];
+}
+
+// Gaussian brush: pulls nearby velocity toward (vx, vy) and adds dye
+function splat(cx, cy, vx, vy, r, str, col, amt) {
+  const r2 = r * r, R = Math.ceil(r * 2.5);
+  const i0 = Math.max(1, Math.floor(cx - R)), i1 = Math.min(NX, Math.ceil(cx + R));
+  const j0 = Math.max(1, Math.floor(cy - R)), j1 = Math.min(NY, Math.ceil(cy + R));
+  for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
+    const c = IX(i, j);
+    if (solid[c]) continue;
+    const dx = i - cx, dy = j - cy;
+    const w = Math.exp(-(dx * dx + dy * dy) / r2);
+    if (w < 0.003) continue;
+    if (vx !== null) { u[c] += w * str * (vx - u[c]); v[c] += w * str * (vy - v[c]); }
+    if (col) {
+      dye[0][c] = Math.min(4, dye[0][c] + w * amt * col[0]);
+      dye[1][c] = Math.min(4, dye[1][c] + w * amt * col[1]);
+      dye[2][c] = Math.min(4, dye[2][c] + w * amt * col[2]);
+    }
+  }
+}
+
+const brush = { down: false, x: 0, y: 0, lx: 0, ly: 0, has: false };
+const STREAKS = [[0.15, 0.85, 1.0], [1.0, 0.75, 0.15], [1.0, 0.3, 0.7]];
+
+function applyForces() {
+  let bx = 0, by = 0, active = false;
+  if (brush.down) { bx = brush.x; by = brush.y; active = true; }
+  else if (autoStir && S.scenario === 'stir') {
+    bx = NX / 2 + NX * 0.33 * Math.sin(simTime * 0.83);
+    by = NY / 2 + NY * 0.3 * Math.sin(simTime * 1.31 + 0.7);
+    active = true;
+  }
+  if (active) {
+    if (brush.has) {
+      const dx = bx - brush.lx, dy = by - brush.ly, len = Math.hypot(dx, dy);
+      if (len > 0.01) {
+        let vx = dx / DT, vy = dy / DT;
+        const sp = Math.hypot(vx, vy), MAXV = 140;
+        if (sp > MAXV) { vx *= MAXV / sp; vy *= MAXV / sp; }
+        const col = hsl((simTime * 0.06) % 1, 0.9, 0.55);
+        const n = Math.max(1, Math.ceil(len / 2));
+        for (let k = 1; k <= n; k++) {
+          const t = k / n;
+          splat(brush.lx + dx * t, brush.ly + dy * t, vx, vy, 4.5, 0.45, col, 0.55);
+        }
+      }
+    }
+    brush.lx = bx; brush.ly = by; brush.has = true;
+  } else brush.has = false;
+
+  if (S.scenario === 'jets') {
+    const wob = Math.sin(simTime * 0.6) * 3;
+    splat(NX * 0.08, NY / 2 + 0.5 + wob, 75, 0, 3.2, 0.5, [0.15, 0.8, 1.0], 0.45);
+    splat(NX * 0.92, NY / 2 + 0.5 - wob, -75, 0, 3.2, 0.5, [1.0, 0.3, 0.7], 0.45);
+  }
+  if (S.scenario === 'cylinder') {
+    if (simTime < 0.6) splat(CYL.x + CYL.r + 5, CYL.y + 2, U_IN, 22, 3, 0.3, null, 0); // nudge to break symmetry
+    for (let j = 1; j <= NY; j++) { const c = IX(1, j); u[c] = U_IN; v[c] = 0; }
+  }
+}
+
+function injectDye() {
+  if (S.scenario !== 'cylinder') return;
+  for (let j = 1; j <= NY; j++) {
+    const thin = ((j - 1) % 10) < 3;
+    const col = STREAKS[Math.floor((j - 1) / 10) % STREAKS.length];
+    for (let i = 1; i <= 2; i++) {
+      const c = IX(i, j);
+      for (let ch = 0; ch < 3; ch++) dye[ch][c] = thin ? col[ch] * 1.5 : 0;
+    }
+  }
+}
+
+function step() {
+  applyForces();
+  zeroSolids();
+  setBnd(1, u); setBnd(2, v);
+  if (S.nu > 0) {                                     // nu Laplacian u
+    const a = DT * S.nu;
+    u0.set(u); v0.set(v);
+    diffuse(1, u, u0, a, 20); diffuse(2, v, v0, a, 20);
+  }
+  if (S.project) project(pA, 25);                    // keep it divergence-free before advecting
+  if (S.advect) {                                     // (u . grad) u
+    u0.set(u); v0.set(v);
+    advect(1, u, u0, u0, v0); advect(2, v, v0, u0, v0);
+  }
+  if (S.project) project(pB, 40); else pB.fill(0);   // -grad p  so that  div u = 0
+  const decay = S.scenario === 'stir' ? 0.998 : S.scenario === 'jets' ? 0.993 : 1;
+  for (let ch = 0; ch < 3; ch++) {                    // dye is a passive tracer carried by u
+    tC.set(dye[ch]);
+    advect(0, dye[ch], tC, u, v);
+    if (decay < 1) { const d = dye[ch]; for (let c = 0; c < N; c++) d[c] *= decay; }
+  }
+  injectDye();
+  simTime += DT;
+}
+
+function buildSolids() {
+  solid.fill(0);
+  if (S.scenario !== 'cylinder') return;
+  for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) {
+    const dx = i - CYL.x, dy = j - CYL.y;
+    if (dx * dx + dy * dy < CYL.r * CYL.r) solid[IX(i, j)] = 1;
+  }
+}
+
+function resetFields() {
+  for (const a of [u, v, u0, v0, pA, pB, dv, vort, divg, pDisp, ...dye]) a.fill(0);
+  buildSolids();
+  if (S.scenario === 'cylinder') {
+    for (let c = 0; c < N; c++) if (!solid[c]) u[c] = U_IN;
+  }
+  simTime = 0;
+  brush.has = false;
+  for (const k in scale) scale[k] = SCALE_FLOOR[k];
+  if (typeof onReset === 'function') onReset();
+}
+
+/* ---------- Derived fields for display ---------- */
+const SCALE_FLOOR = { speed: 8, pressure: 0.4, vorticity: 3 };
+const scale = { ...SCALE_FLOOR };
+let rmsDiv = 0;
+
+function computeFields() {
+  let mean = 0, cnt = 0;
+  for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) { const c = IX(i, j); if (!solid[c]) { mean += pB[c]; cnt++; } }
+  mean /= cnt;
+  let mS = 0, mP = 0, mV = 0, sd = 0;
+  for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) {
+    const c = IX(i, j);
+    if (solid[c]) { vort[c] = divg[c] = pDisp[c] = 0; continue; }
+    vort[c] = 0.5 * ((v[c + 1] - v[c - 1]) - (u[c + SX] - u[c - SX]));
+    divg[c] = 0.5 * (u[c + 1] - u[c - 1] + v[c + SX] - v[c - SX]);
+    pDisp[c] = pB[c] - mean;
+    const sp = Math.hypot(u[c], v[c]);
+    if (sp > mS) mS = sp;
+    const ap = Math.abs(pDisp[c]); if (ap > mP) mP = ap;
+    const av = Math.abs(vort[c]); if (av > mV) mV = av;
+    sd += divg[c] * divg[c];
+  }
+  rmsDiv = Math.sqrt(sd / cnt);
+  const ema = (k, m) => { scale[k] = Math.max(SCALE_FLOOR[k], scale[k] * 0.95 + m * 0.05); };
+  ema('speed', mS); ema('pressure', mP); ema('vorticity', mV * 0.6);
+}
+
+/* =====================================================================
+   2. Three.js scene
+   ===================================================================== */
+const W = 10, H = 5;
+const gx2wx = gx => ((gx - 1) / (NX - 1) - 0.5) * W;
+const gy2wz = gy => ((gy - 1) / (NY - 1) - 0.5) * H;
+
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.enablePan = false;
+controls.minDistance = 3;
+controls.maxDistance = 45;
+controls.maxPolarAngle = Math.PI * 0.47;
+controls.mouseButtons = { LEFT: -1, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
+controls.touches = { ONE: -1, TWO: THREE.TOUCH.DOLLY_ROTATE };
+
+scene.add(new THREE.HemisphereLight(0xc7d7ff, 0x0a0f1e, 1.2));
+const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+sun.position.set(-5, 9, 4);
+scene.add(sun);
+
+// The fluid surface: one vertex per grid cell, coloured by a data texture
+const surfGeo = new THREE.PlaneGeometry(W, H, NX - 1, NY - 1);
+surfGeo.rotateX(-Math.PI / 2);   // vertex row r <-> grid j = r + 1 (z from -H/2 to +H/2)
+const texData = new Uint8Array(NX * NY * 4);
+const tex = new THREE.DataTexture(texData, NX, NY, THREE.RGBAFormat);
+tex.colorSpace = THREE.SRGBColorSpace;
+tex.magFilter = THREE.LinearFilter; tex.minFilter = THREE.LinearFilter;
+tex.generateMipmaps = false;
+tex.needsUpdate = true;
+const surfMat = new THREE.MeshStandardMaterial({
+  map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.62,
+  roughness: 0.75, metalness: 0.0,
+});
+const surface = new THREE.Mesh(surfGeo, surfMat);
+scene.add(surface);
+const hgt = new Float32Array(NX * NY);
+const HSCALE = 0.7;
+let reliefAmt = 0, reliefWasOn = false;
+
+// Tank outline
+const tank = new THREE.LineSegments(
+  new THREE.EdgesGeometry(new THREE.BoxGeometry(W + 0.08, 1.0, H + 0.08)),
+  new THREE.LineBasicMaterial({ color: 0x334155, transparent: true, opacity: 0.8 })
+);
+tank.position.y = -0.46;
+scene.add(tank);
+
+// Cylinder obstacle
+const cellW = W / (NX - 1);
+const cyl = new THREE.Mesh(
+  new THREE.CylinderGeometry(CYL.r * cellW, CYL.r * cellW, 0.5, 48),
+  new THREE.MeshStandardMaterial({ color: 0xd8dee9, roughness: 0.35, metalness: 0.25 })
+);
+cyl.position.set(gx2wx(CYL.x), 0.15, gy2wz(CYL.y));
+scene.add(cyl);
+
+// Velocity arrows (instanced flat arrows lying on the surface)
+const AX = 32, AY = 16;
+const arrowShape = new THREE.Shape();
+arrowShape.moveTo(0, -0.07); arrowShape.lineTo(0.6, -0.07); arrowShape.lineTo(0.6, -0.22);
+arrowShape.lineTo(1, 0); arrowShape.lineTo(0.6, 0.22); arrowShape.lineTo(0.6, 0.07);
+arrowShape.lineTo(0, 0.07); arrowShape.closePath();
+const arrowGeo = new THREE.ShapeGeometry(arrowShape);
+arrowGeo.translate(-0.5, 0, 0);
+arrowGeo.rotateX(-Math.PI / 2);
+const arrows = new THREE.InstancedMesh(arrowGeo,
+  new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, depthWrite: false, side: THREE.DoubleSide }),
+  AX * AY);
+arrows.frustumCulled = false;
+scene.add(arrows);
+const ARROW_C = new THREE.Color('#facc15');
+const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _p = new THREE.Vector3(), _s = new THREE.Vector3(), _c = new THREE.Color();
+const UP = new THREE.Vector3(0, 1, 0);
+
+// Tracer particles
+const NP = matchMedia('(pointer: coarse)').matches ? 2200 : 4000;
+const ppx = new Float32Array(NP), ppy = new Float32Array(NP), page = new Float32Array(NP), plife = new Float32Array(NP);
+const pPos = new Float32Array(NP * 3), pCol = new Float32Array(NP * 3);
+const pGeo = new THREE.BufferGeometry();
+pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
+const points = new THREE.Points(pGeo, new THREE.PointsMaterial({
+  size: 2.4 * renderer.getPixelRatio(), sizeAttenuation: false, vertexColors: true,
+  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+}));
+points.frustumCulled = false;
+scene.add(points);
+
+function spawn(k, anywhere) {
+  for (let tries = 0; tries < 12; tries++) {
+    let x, y;
+    if (S.scenario === 'cylinder' && !anywhere) { x = 1 + Math.random() * 1.5; y = 1 + Math.random() * (NY - 1); }
+    else { x = 1 + Math.random() * (NX - 1); y = 1 + Math.random() * (NY - 1); }
+    if (!solid[IX(Math.round(x), Math.round(y))]) { ppx[k] = x; ppy[k] = y; break; }
+  }
+  page[k] = anywhere ? Math.random() * 2 : 0;
+  plife[k] = S.scenario === 'cylinder' ? 14 + Math.random() * 8 : 3 + Math.random() * 6;
+}
+
+function onReset() {
+  for (let k = 0; k < NP; k++) spawn(k, true);
+  cyl.visible = S.scenario === 'cylinder';
+}
+
+function heightAt(x, y) {
+  if (reliefAmt < 0.001) return 0;
+  let i = Math.round(x), j = Math.round(y);
+  i = Math.max(1, Math.min(NX, i)); j = Math.max(1, Math.min(NY, j));
+  return hgt[(j - 1) * NX + (i - 1)] * reliefAmt * HSCALE;
+}
+
+function updateParticles(dt) {
+  for (let k = 0; k < NP; k++) {
+    let x = ppx[k], y = ppy[k];
+    const vx1 = sample(u, x, y), vy1 = sample(v, x, y);
+    const mx = x + 0.5 * dt * vx1, my = y + 0.5 * dt * vy1;
+    x += dt * sample(u, mx, my); y += dt * sample(v, mx, my);
+    ppx[k] = x; ppy[k] = y; page[k] += dt;
+    if (page[k] > plife[k] || x < 1 || x > NX || y < 1 || y > NY || solid[IX(Math.round(x), Math.round(y))]) spawn(k, false);
+  }
+}
+
+function writeParticles() {
+  for (let k = 0; k < NP; k++) {
+    const x = ppx[k], y = ppy[k];
+    pPos[k * 3] = gx2wx(x); pPos[k * 3 + 1] = heightAt(x, y) + 0.04; pPos[k * 3 + 2] = gy2wz(y);
+    const f = Math.max(0, Math.min(1, page[k] / 0.4, (plife[k] - page[k]) / 0.6));
+    pCol[k * 3] = 0.6 * f; pCol[k * 3 + 1] = 0.72 * f; pCol[k * 3 + 2] = 0.8 * f;
+  }
+  pGeo.attributes.position.needsUpdate = true;
+  pGeo.attributes.color.needsUpdate = true;
+}
+
+function updateArrows() {
+  const maxLen = (W / AX) * 0.95, ref = scale.speed;
+  let n = 0;
+  for (let b = 0; b < AY; b++) for (let a = 0; a < AX; a++) {
+    const gx = 1 + (a + 0.5) * (NX - 1) / AX, gy = 1 + (b + 0.5) * (NY - 1) / AY;
+    const c = IX(Math.round(gx), Math.round(gy));
+    const vx = solid[c] ? 0 : sample(u, gx, gy), vy = solid[c] ? 0 : sample(v, gx, gy);
+    const sp = Math.hypot(vx, vy), t = Math.min(1, sp / ref);
+    const L = maxLen * Math.sqrt(t);
+    _p.set(gx2wx(gx), heightAt(gx, gy) + 0.03, gy2wz(gy));
+    _q.setFromAxisAngle(UP, Math.atan2(-vy, vx));
+    _s.set(Math.max(L, 1e-4), 1, Math.max(L, 1e-4) * 0.8 + maxLen * 0.12);
+    if (L < 0.01) _s.set(1e-4, 1, 1e-4);
+    _m.compose(_p, _q, _s);
+    arrows.setMatrixAt(n, _m);
+    _c.copy(ARROW_C).multiplyScalar(0.35 + 0.65 * t);
+    arrows.setColorAt(n, _c);
+    n++;
+  }
+  arrows.instanceMatrix.needsUpdate = true;
+  if (arrows.instanceColor) arrows.instanceColor.needsUpdate = true;
+}
+
+/* ---------- Colour maps ---------- */
+const hex = h => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+function makeLUT(stops) {
+  const cs = stops.map(hex), out = new Uint8Array(256 * 3);
+  for (let k = 0; k < 256; k++) {
+    const t = k / 255 * (cs.length - 1), a = Math.min(cs.length - 2, Math.floor(t)), f = t - a;
+    for (let ch = 0; ch < 3; ch++) out[k * 3 + ch] = cs[a][ch] + (cs[a + 1][ch] - cs[a][ch]) * f;
+  }
+  return out;
+}
+const BG = hex('#0a1222');
+const MAPS = {
+  speed: { stops: ['#0a1222', '#1e3a8a', '#0e7490', '#facc15', '#fffbe6'], lo: 'still', hi: 'fast' },
+  pressure: { stops: ['#bfdbfe', '#2563eb', '#0a1222', '#e11d48', '#fecdd3'], lo: 'low p', mid: '0', hi: 'high p' },
+  vorticity: { stops: ['#99f6e4', '#0d9488', '#0a1222', '#c026d3', '#f5d0fe'], lo: '↺ counter-clockwise', hi: 'clockwise ↻' },
+  divergence: { stops: ['#fed7aa', '#ea580c', '#0a1222', '#7c3aed', '#ede9fe'], lo: 'sink ∇·u<0', mid: '0', hi: 'source ∇·u>0' },
+};
+for (const k in MAPS) MAPS[k].lut = makeLUT(MAPS[k].stops);
+const DIV_SCALE = 4;
+
+function paint() {
+  const mode = S.color;
+  const d = texData;
+  const lut = MAPS[mode] && MAPS[mode].lut;
+  const sS = 1 / scale.speed, sP = 1 / (scale.pressure * 0.85), sV = 1 / scale.vorticity, sD = 1 / DIV_SCALE;
+  for (let j = 1; j <= NY; j++) {
+    const row = NY - j;
+    for (let i = 1; i <= NX; i++) {
+      const c = IX(i, j), o = (row * NX + i - 1) * 4;
+      if (solid[c]) { d[o] = 200; d[o + 1] = 210; d[o + 2] = 225; d[o + 3] = 255; continue; }
+      let r, g, b;
+      if (mode === 'dye') {
+        r = BG[0] + (255 - BG[0]) * (1 - Math.exp(-1.3 * Math.max(0, dye[0][c])));
+        g = BG[1] + (255 - BG[1]) * (1 - Math.exp(-1.3 * Math.max(0, dye[1][c])));
+        b = BG[2] + (255 - BG[2]) * (1 - Math.exp(-1.3 * Math.max(0, dye[2][c])));
+      } else {
+        let k;
+        if (mode === 'speed') k = Math.min(255, Math.hypot(u[c], v[c]) * sS * 255) | 0;
+        else {
+          const val = mode === 'pressure' ? pDisp[c] * sP : mode === 'vorticity' ? vort[c] * sV : divg[c] * sD;
+          k = (127.5 + Math.max(-1, Math.min(1, val)) * 127.5) | 0;
+        }
+        r = lut[k * 3]; g = lut[k * 3 + 1]; b = lut[k * 3 + 2];
+      }
+      d[o] = r; d[o + 1] = g; d[o + 2] = b; d[o + 3] = 255;
+    }
+  }
+  tex.needsUpdate = true;
+}
+
+function updateHeights(dtReal) {
+  const target = S.relief ? 1 : 0;
+  reliefAmt += (target - reliefAmt) * Math.min(1, dtReal * 4);
+  if (Math.abs(reliefAmt - target) < 0.002) reliefAmt = target;
+  const on = reliefAmt > 0.001;
+  if (!on && !reliefWasOn) return;
+  const sP = 1 / (scale.pressure * 0.85);
+  const pos = surfGeo.attributes.position;
+  for (let j = 1; j <= NY; j++) for (let i = 1; i <= NX; i++) {
+    let s = 0, n = 0;                     // light 3x3 blur so the relief reads cleanly
+    for (let b = -1; b <= 1; b++) for (let a = -1; a <= 1; a++) {
+      const ii = i + a, jj = j + b;
+      if (ii < 1 || ii > NX || jj < 1 || jj > NY) continue;
+      const c = IX(ii, jj);
+      if (solid[c]) continue;
+      s += pDisp[c]; n++;
+    }
+    const h = n ? Math.max(-1.2, Math.min(1.2, (s / n) * sP)) : 0;
+    const k = (j - 1) * NX + (i - 1);
+    hgt[k] = h;
+    pos.setY(k, on ? h * reliefAmt * HSCALE : 0);
+  }
+  pos.needsUpdate = true;
+  surfGeo.computeVertexNormals();
+  reliefWasOn = on;
+}
+
+/* ---------- Camera framing ---------- */
+const eqEl = document.getElementById('eq');
+const storyEl = document.getElementById('story');
+const ctlEl = document.getElementById('controls');
+let userMovedCamera = false;
+controls.addEventListener('start', () => { userMovedCamera = true; });
+
+function layout() {
+  const w = window.innerWidth, h = window.innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  const eqB = eqEl.getBoundingClientRect().bottom;
+  const narrow = w < 760;
+  if (w < 1240) ctlEl.style.top = (eqB + 10) + 'px'; else ctlEl.style.top = '16px';
+  storyEl.style.maxHeight = narrow ? '' : `calc(100vh - ${Math.round(eqB + 30)}px)`;
+
+  let left = 0, right = 0, top = eqB + 8, bottom = 0;
+  if (narrow) bottom = storyEl.offsetHeight + 16;
+  else { left = storyEl.offsetWidth + 32; right = ctlEl.classList.contains('collapsed') ? 16 : ctlEl.offsetWidth + 32; }
+  const fw = Math.max(200, w - left - right), fh = Math.max(160, h - top - bottom);
+  const offX = -((left - right) / 2), offY = (h / 2) - (top + (h - bottom)) / 2;
+  camera.setViewOffset(w, h, offX, offY, w, h);
+  camera.updateProjectionMatrix();
+
+  if (!userMovedCamera) {
+    const dir = narrow ? new THREE.Vector3(0, 1, 0.38) : new THREE.Vector3(0, 1, 0.62);
+    dir.normalize();
+    const elev = Math.asin(dir.y);
+    const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    const dW = (W * (narrow ? 1.06 : 1.0) * w) / (2 * tanV * camera.aspect * fw);
+    const dH = ((H * Math.sin(elev) + 0.8 * Math.cos(elev)) * 1.15 * h) / (2 * tanV * fh);
+    const d = Math.max(dW, dH);
+    controls.target.set(0, 0, 0);
+    camera.position.copy(dir.multiplyScalar(d));
+    controls.update();
+  }
+}
+
+/* ---------- Pointer: stir the fluid ---------- */
+const raycaster = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+const hitPt = new THREE.Vector3();
+function toGrid(e, clampOut) {
+  const r = canvas.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  raycaster.setFromCamera(ndc, camera);
+  if (!raycaster.ray.intersectPlane(groundPlane, hitPt)) return null;
+  let gx = (hitPt.x / W + 0.5) * (NX - 1) + 1, gy = (hitPt.z / H + 0.5) * (NY - 1) + 1;
+  const inside = gx >= 1 && gx <= NX && gy >= 1 && gy <= NY;
+  if (!inside && !clampOut) return null;
+  gx = Math.max(1, Math.min(NX, gx)); gy = Math.max(1, Math.min(NY, gy));
+  return { x: gx, y: gy };
+}
+const activePointers = new Set();
+// Runs before OrbitControls sees the event: drag on the fluid stirs, drag elsewhere orbits
+window.addEventListener('pointerdown', e => {
+  if (e.target !== canvas) return;
+  activePointers.add(e.pointerId);
+  const g = (e.button === 0 && activePointers.size === 1) ? toGrid(e, false) : null;
+  controls.mouseButtons.LEFT = g ? -1 : THREE.MOUSE.ROTATE;
+  controls.touches.ONE = g ? -1 : THREE.TOUCH.ROTATE;
+  if (g) {
+    brush.down = true; brush.id = e.pointerId; brush.x = g.x; brush.y = g.y; brush.has = false;
+    autoStir = false;
+  } else if (activePointers.size > 1) {
+    brush.down = false;
+  }
+}, { capture: true });
+window.addEventListener('pointermove', e => {
+  if (!brush.down || e.pointerId !== brush.id) return;
+  const g = toGrid(e, true);
+  if (g) { brush.x = g.x; brush.y = g.y; }
+});
+const endPointer = e => {
+  activePointers.delete(e.pointerId);
+  if (e.pointerId === brush.id) brush.down = false;
+};
+window.addEventListener('pointerup', endPointer);
+window.addEventListener('pointercancel', endPointer);
+
+/* =====================================================================
+   3. The guided explanation
+   ===================================================================== */
+const TERM_COLOR = { dudt: '--c-dudt', adv: '--c-adv', press: '--c-press', visc: '--c-visc', force: '--c-force', div: '--c-div' };
+const K = {
+  u: '<span class="k dudt"><b>u</b></span>',
+  dudt: '<span class="k dudt">∂<b>u</b>/∂<i>t</i></span>',
+  adv: '<span class="k adv">(<b>u</b>·∇)<b>u</b></span>',
+  press: '<span class="k press">−∇<i>p</i>/<i>ρ</i></span>',
+  visc: '<span class="k visc"><i>ν</i>∇²<b>u</b></span>',
+  nu: '<span class="k visc"><i>ν</i></span>',
+  f: '<span class="k force"><b>f</b></span>',
+  div: '<span class="k div">∇·<b>u</b> = 0</span>',
+};
+
+const STEPS = [
+  {
+    term: null, kicker: 'Overview', title: 'F = ma, for every drop of fluid',
+    html: `<p>The Navier–Stokes equations are Newton’s second law applied to every tiny parcel of a fluid. The left side is the parcel’s <em>acceleration</em>. The right side lists the <em>forces</em> on it, per unit mass: pressure, viscosity and anything external.</p>
+           <p>The second equation, ${K.div}, says the fluid can’t be squashed.</p>
+           <p>This tank isn’t an animation. It’s a real solver integrating those equations on a 160 × 80 grid, 60 times a second. Click any term in the equation, or step through them with <b>Next</b>.</p>`,
+    setup() { scene_('stir'); set({ color: 'dye', arrows: false, particles: false, relief: false }); },
+  },
+  {
+    term: 'dudt', kicker: 'Term 1 · Local acceleration', title: 'How the velocity at a point changes',
+    html: `<p>${K.dudt} is how fast the velocity at one fixed spot is changing.</p>
+           <p>The unknown isn’t the speed of a single object. It’s a whole <em>vector field</em> ${K.u}, an arrow at every point in the fluid. The yellow arrows sample it. Solving the equations means marching this entire field forward one small time step at a time (here Δ<i>t</i> = 1/60 s).</p>`,
+    setup() { scene_('stir'); set({ color: 'speed', arrows: true, particles: false, relief: false }); },
+  },
+  {
+    term: 'adv', kicker: 'Term 2 · Advection', title: 'The fluid carries its own motion',
+    html: `<p>A parcel can speed up even when the flow at every fixed point is steady, just by drifting into a faster region. ${K.adv} accounts for that: velocity carried along by velocity.</p>
+           <p>Because ${K.u} multiplies its own gradient, this is the <em>nonlinear</em> term. It’s what rolls flow up into vortices and, at high speed, into turbulence. The white specks are massless tracers riding the flow past a cylinder.</p>
+           <div class="acts"><button class="act" data-act="advect"></button></div>
+           <p>With advection off, the wake stops shedding vortices and settles into a smooth, symmetric pattern.</p>`,
+    setup() { scene_('cylinder'); set({ color: 'dye', arrows: false, particles: true, relief: false }); },
+  },
+  {
+    term: 'press', kicker: 'Term 3 · Pressure gradient', title: 'Pushed from high pressure to low',
+    html: `<p>Fluid is shoved from high pressure toward low pressure. ${K.press} points “downhill”.</p>
+           <p>The surface is now raised by pressure. Where the two jets collide they pile up into a high-pressure hill (red) that deflects them sideways, and they accelerate down its slopes.</p>
+           <div class="acts"><button class="act" data-act="relief"></button></div>
+           <p>In an incompressible flow pressure isn’t set independently. It takes whatever value is needed to keep ${K.div} (see the last term).</p>`,
+    setup() { scene_('jets'); set({ color: 'pressure', arrows: true, particles: false, relief: true }); },
+  },
+  {
+    term: 'visc', kicker: 'Term 4 · Viscosity', title: 'Internal friction smooths the flow',
+    html: `<p>The Laplacian ∇²<b>u</b> compares the velocity at a point with the average of its neighbours. ${K.visc} nudges every point toward that average, smearing out sharp differences in speed, like friction between sliding layers.</p>
+           <p>Honey has a large ${K.nu}, water a small one. Inertia versus viscosity is the <b>Reynolds number</b> Re = <i>UD</i>/<i>ν</i>. Colours show vorticity (local spin): at high Re the cylinder sheds an alternating <em>vortex street</em>.</p>
+           <div class="acts"><button class="act" data-act="water">Water-like (low ν)</button><button class="act" data-act="honey">Honey-like (high ν)</button></div>`,
+    setup() { scene_('cylinder'); S.nu = NU_DEFAULT.cylinder; set({ color: 'vorticity', arrows: false, particles: false, relief: false }); },
+  },
+  {
+    term: 'force', kicker: 'Term 5 · External force', title: 'Anything pushing from outside',
+    html: `<p>${K.f} is a body force such as gravity, a fan or a spoon. Here, ${K.f} is <b>you</b>: drag across the tank to inject momentum (and some dye so you can see it).</p>
+           <p>Notice that a single straight push curls into a pair of counter-rotating vortices. The fluid in front has to get out of the way, and the only way out is around the sides.</p>
+           <p>Without ${K.f} (or moving walls), viscosity eventually brings everything to rest.</p>`,
+    setup() { scene_('stir'); set({ color: 'dye', arrows: true, particles: false, relief: false }); },
+  },
+  {
+    term: 'div', kicker: 'Constraint · Incompressibility', title: 'What flows in must flow out',
+    html: `<p>The divergence ∇·<b>u</b> measures how much more fluid leaves a tiny box than enters it. ${K.div} means none is created or destroyed: mass is conserved, and liquids can’t be squeezed.</p>
+           <p>The solver enforces it every step by solving for the pressure that cancels any divergence, then subtracting its gradient. That step is called the <em>projection</em>.</p>
+           <div class="acts"><button class="act" data-act="project"></button></div>
+           <p>Switch it off and stir. The divergence map lights up with sources and sinks, the RMS readout jumps, and pushes stop curling into vortex pairs.</p>`,
+    setup() { scene_('stir'); set({ color: 'divergence', arrows: false, particles: false, relief: false }); },
+  },
+  {
+    term: null, kicker: 'Why it matters', title: 'Simple to write, famously hard to solve',
+    html: `<p>Engineers solve these equations numerically every day for aircraft, weather forecasts, blood flow, ocean currents and this page. But no one has yet <em>proved</em> that smooth solutions in 3D always exist and never blow up into singularities.</p>
+           <p>It’s one of the seven Clay Millennium Prize Problems, with a $1,000,000 reward.</p>
+           <p>Each frame here uses Jos Stam’s <em>Stable Fluids</em> method, which handles the equation one term at a time:</p>
+           <div class="chips">
+             <span class="chip">1 · add ${K.f}</span><span class="chip">2 · diffuse ${K.visc}</span>
+             <span class="chip">3 · advect ${K.adv}</span><span class="chip">4 · project ${K.press} → ${K.div}</span>
+           </div>`,
+    setup() { scene_('cylinder'); set({ color: 'dye', arrows: false, particles: true, relief: false }); },
+  },
+];
+
+function scene_(name) { if (S.scenario !== name) { S.scenario = name; S.nu = NU_DEFAULT[name]; resetFields(); } }
+function set(o) { Object.assign(S, { advect: true, project: true }, o); }
+
+const $ = id => document.getElementById(id);
+const dotsEl = $('st-dots');
+STEPS.forEach((s, k) => {
+  const b = document.createElement('button');
+  b.className = 'dot'; b.setAttribute('aria-label', `Step ${k + 1}: ${s.title}`);
+  b.addEventListener('click', () => goStep(k));
+  dotsEl.appendChild(b);
+});
+
+function goStep(k) {
+  k = Math.max(0, Math.min(STEPS.length - 1, k));
+  S.step = k;
+  const s = STEPS[k];
+  const col = s.term ? `var(${TERM_COLOR[s.term]})` : '#e2e8f0';
+  storyEl.style.setProperty('--sc', col);
+  $('st-kicker').textContent = s.kicker;
+  $('st-title').textContent = s.title;
+  $('st-body').innerHTML = s.html;
+  $('st-body').scrollTop = 0;
+  $('st-prev').disabled = k === 0;
+  $('st-next').textContent = k === STEPS.length - 1 ? 'Start over' : 'Next →';
+  [...dotsEl.children].forEach((d, i) => d.classList.toggle('on', i === k));
+  document.querySelectorAll('.term').forEach(t => t.classList.toggle('on', t.dataset.term === s.term));
+  s.setup();
+  syncUI();
+  layout();
+}
+
+$('st-prev').addEventListener('click', () => goStep(S.step - 1));
+$('st-next').addEventListener('click', () => goStep(S.step === STEPS.length - 1 ? 0 : S.step + 1));
+document.querySelectorAll('.term').forEach(t => t.addEventListener('click', () => {
+  const k = STEPS.findIndex(s => s.term === t.dataset.term);
+  if (k >= 0) goStep(k);
+}));
+window.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight') goStep(S.step + 1);
+  else if (e.key === 'ArrowLeft') goStep(S.step - 1);
+});
+
+$('st-body').addEventListener('click', e => {
+  const b = e.target.closest('.act');
+  if (!b) return;
+  const a = b.dataset.act;
+  if (a === 'advect') S.advect = !S.advect;
+  else if (a === 'project') { S.project = !S.project; if (!S.project) pA.fill(0); }
+  else if (a === 'relief') S.relief = !S.relief;
+  else if (a === 'water') S.nu = 0.3;
+  else if (a === 'honey') S.nu = 30;
+  syncUI();
+});
+
+const isTouch = matchMedia('(pointer: coarse)').matches;
+$('st-hint').textContent = isTouch
+  ? 'Drag on the fluid to stir · two fingers to orbit and zoom'
+  : 'Drag on the fluid to stir · drag outside it or right-drag to orbit · scroll to zoom';
+
+/* ---------- Controls panel ---------- */
+const nuEl = $('nu');
+const sliderToNu = t => t <= 0 ? 0 : 0.02 * Math.pow(10, (t / 100) * 3.3);
+const nuToSlider = n => n <= 0 ? 0 : Math.max(1, Math.min(100, Math.log10(n / 0.02) / 3.3 * 100));
+
+document.querySelectorAll('.seg').forEach(seg => seg.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (seg.dataset.key === 'scenario') { if (b.dataset.v !== S.scenario) { S.scenario = b.dataset.v; S.nu = NU_DEFAULT[S.scenario]; resetFields(); } }
+  else S[seg.dataset.key] = b.dataset.v;
+  syncUI();
+}));
+document.querySelectorAll('input[data-bool]').forEach(inp => inp.addEventListener('change', () => {
+  S[inp.dataset.bool] = inp.checked;
+  if (inp.dataset.bool === 'project' && !inp.checked) pA.fill(0);
+  syncUI();
+}));
+nuEl.addEventListener('input', () => { S.nu = sliderToNu(+nuEl.value); syncUI(); });
+$('btn-pause').addEventListener('click', () => { S.paused = !S.paused; syncUI(); });
+$('btn-reset').addEventListener('click', () => { resetFields(); });
+$('ctl-toggle').addEventListener('click', () => {
+  ctlEl.classList.toggle('collapsed');
+  $('ctl-toggle').setAttribute('aria-expanded', String(!ctlEl.classList.contains('collapsed')));
+  layout();
+});
+if (window.innerWidth < 1240) { ctlEl.classList.add('collapsed'); $('ctl-toggle').setAttribute('aria-expanded', 'false'); }
+
+function fmtNu(n) { return n === 0 ? '0' : n < 1 ? n.toFixed(2) : n < 10 ? n.toFixed(1) : n.toFixed(0); }
+
+function syncUI() {
+  document.querySelectorAll('.seg').forEach(seg => {
+    const val = S[seg.dataset.key];
+    seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === val));
+  });
+  document.querySelectorAll('input[data-bool]').forEach(inp => { inp.checked = !!S[inp.dataset.bool]; });
+  nuEl.value = nuToSlider(S.nu);
+  $('ro-nu').textContent = fmtNu(S.nu) + ' cells²/s';
+  $('btn-pause').textContent = S.paused ? 'Play' : 'Pause';
+  document.querySelectorAll('.act[data-act]').forEach(b => {
+    const a = b.dataset.act;
+    if (a === 'advect') b.textContent = S.advect ? 'Turn advection off' : 'Turn advection back on';
+    if (a === 'project') b.textContent = S.project ? 'Turn projection off' : 'Turn projection back on';
+    if (a === 'relief') b.textContent = S.relief ? 'Flatten the surface' : 'Raise the pressure relief';
+  });
+  const m = MAPS[S.color];
+  const lg = $('legend');
+  if (!m) lg.innerHTML = '<div class="note">Dye is a passive tracer: it doesn’t push on the fluid, it just shows where the fluid goes.</div>';
+  else lg.innerHTML = `<div class="grad" style="background:linear-gradient(90deg,${m.stops.join(',')})"></div>
+    <div class="ends"><span>${m.lo}</span>${m.mid ? `<span>${m.mid}</span>` : ''}<span>${m.hi}</span></div>`;
+  updateReadouts();
+}
+
+function updateReadouts() {
+  const D = 2 * CYL.r;
+  $('ro-re').textContent = S.scenario !== 'cylinder' ? 'cylinder only'
+    : S.nu === 0 ? '∞ (numerical only)' : '≈ ' + Math.round(U_IN * D / S.nu).toLocaleString();
+  $('ro-div').textContent = rmsDiv.toFixed(2) + ' s⁻¹';
+  $('ro-divbar').style.width = Math.min(100, rmsDiv / 6 * 100) + '%';
+}
+
+/* =====================================================================
+   4. Main loop
+   ===================================================================== */
+window.addEventListener('resize', layout);
+resetFields();
+goStep(0);
+layout();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
+
+let acc = 0, last = performance.now(), frameNo = 0;
+function frame(now) {
+  requestAnimationFrame(frame);
+  let el = (now - last) / 1000; last = now;
+  if (el > 0.1) el = 0.1;
+  let steps = 0;
+  if (!S.paused) {
+    acc += el;
+    while (acc >= DT && steps < 2) { step(); acc -= DT; steps++; }
+    acc = Math.min(acc, DT);
+  }
+  if (steps > 0 || frameNo === 0) {
+    computeFields();
+    paint();
+    if (S.particles) updateParticles(steps * DT);
+  }
+  updateHeights(el);
+  points.visible = S.particles;
+  if (S.particles) writeParticles();
+  arrows.visible = S.arrows;
+  if (S.arrows) updateArrows();
+  if (frameNo % 10 === 0) updateReadouts();
+  controls.update();
+  renderer.render(scene, camera);
+  frameNo++;
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
